@@ -1,0 +1,157 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+:root {
+  --font-scale: 1.333;
+  --p: 1rem;
+  --h5: calc(var(--p) * var(--font-scale));
+  --h4: calc(var(--h5) * var(--font-scale));
+  --h3: calc(var(--h4) * var(--font-scale));
+  --h2: calc(var(--h3) * var(--font-scale));
+  --h1: calc(var(--h2) * var(--font-scale));
+  --small: calc(var(--p) / var(--font-scale));
+  --margin-lg: 0 12%;
+  --margin-md: 0 6%;
+
+  --text-color: #fef9ec;
+  --background-color: #140f00;
+  --primary-color: #ff8400;
+  --secondary-color: #291f00;
+  --accent-color: #f86c30;
+  --font-family: "Poppins", sans-serif; /* Hinzugefügt für Poppins */
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: var(--font-family);
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-image: url("files/backgroundBlur.png"); /* Dein Overlay-Bild */
+  background-size: cover;
+}
+
+h1 {
+  font-size: var(--h1);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+h2 {
+  font-size: var(--h2);
+  font-weight: 700;
+}
+
+h3 {
+  font-size: var(--h3);
+  font-weight: 700;
+}
+
+h4 {
+  font-size: var(--h4);
+  font-weight: 700;
+}
+
+h5 {
+  font-size: var(--h5);
+  font-weight: 700;
+}
+
+h6 {
+  font-size: var(--p);
+  font-weight: 700;
+}
+
+p {
+  line-height: 2.2;
+}
+
+.navbar {
+  background-color: rgb(0, 0, 0, 0);
+  height: 100px;
+  font-size: var(--h5);
+}
+
+.navbar-nav > li {
+  padding-left: 30px;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: var(--background-color);
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 1em 2em;
+  margin: 0.6em 0em;
+  border-radius: 6px;
+  display: inline-block;
+  font-size: var(--p);
+  z-index: 1;
+  cursor: pointer;
+  transition: transform ease 0.2s;
+  white-space: nowrap;
+  font-family: "Poppins", sans-serif;
+  border: none;
+}
+
+.gradient-text {
+  background-image: linear-gradient(
+    to right,
+    var(--primary-color),
+    var(--accent-color)
+  );
+  -webkit-background-clip: text;
+  color: transparent; /* Versteckt den Textinhalt, damit nur der Gradient sichtbar ist */
+}
+
+.outline-text {
+  color: rgb(0, 0, 0, 0);
+  -webkit-text-stroke-width: 1.2px;
+  -webkit-text-stroke-color: var(--text-color);
+  font-style: italic;
+}
+
+.card {
+  background-color: rgba(255, 255, 255, 0.03);
+  border: none;
+  color: var(--text-color);
+  padding: 2em 5em;
+}
+
+.bg-text-color {
+  background-color: var(--text-color);
+  color: var(--background-color);
+}
+.bg-background-color {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+.bg-primary-color {
+  background-color: var(--primary-color);
+  color: var(--background-color);
+}
+.bg-secondary-color {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+}
+.bg-accent-color {
+  background-color: var(--accent-color);
+  color: var(--background-color);
+}
+
+.bg-card {
+  background-color: rgba(255, 255, 255, 0.03);
+  border: none;
+  color: var(--text-color);
+  padding: 2em 5em;
+  border-radius: 0.375rem;
+}
