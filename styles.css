@@ -17,7 +17,17 @@
   --primary-color: #ff8400;
   --secondary-color: #291f00;
   --accent-color: #f86c30;
+  --transparent-card-color: rgba(255, 255, 255, 0.03);
   --font-family: "Poppins", sans-serif; /* Hinzugefügt für Poppins */
+}
+
+:root.light-mode {
+  --text-color: #130e01;
+  --background-color: #fffaeb;
+  --primary-color: #ff8400;
+  --secondary-color: #fff5d6;
+  --accent-color: #cf4307;
+  --transparent-card-color: rgba(0, 0, 0, 0.03);
 }
 
 body {
@@ -76,6 +86,11 @@ p {
 
 .navbar-nav > li {
   padding-left: 30px;
+  color: var(--text-color);
+}
+
+nav .navbar-nav li a {
+  color: var(--text-color) !important;
 }
 
 .btn-primary {
@@ -121,7 +136,6 @@ p {
 }
 
 .card {
-  background-color: rgba(255, 255, 255, 0.03);
   border: none;
   color: var(--text-color);
   padding: 2em 5em;
@@ -148,8 +162,24 @@ p {
   color: var(--background-color);
 }
 
+.text-color {
+  color: var(--text-color);
+}
+.background-color {
+  color: var(--background-color);
+}
+.primary-color {
+  color: var(--primary-color);
+}
+.secondary-color {
+  color: var(--secondary-color);
+}
+.accent-color {
+  color: var(--accent-color);
+}
+
 .bg-card {
-  background-color: rgba(255, 255, 255, 0.03);
+  background-color: var(--transparent-card-color);
   border: none;
   color: var(--text-color);
   padding: 2em 5em;

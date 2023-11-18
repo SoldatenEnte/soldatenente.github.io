@@ -1,0 +1,11 @@
+{
+  "name": "soldatenente.github.io",
+  "packageManager": "yarn@4.0.2",
+  "dependencies": {
+    "@splinetool/loader": "^0.9.506",
+    "@splinetool/runtime": "^0.9.506",
+    "on-change": "^4.0.2",
+    "semver-compare": "^1.0.0",
+    "three": "^0.158.0"
+  }
+}
