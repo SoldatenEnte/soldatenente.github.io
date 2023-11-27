@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
 :root {
   --font-scale: 1.333;
@@ -180,6 +180,14 @@ nav .navbar-nav li a {
 
 .bg-card {
   background-color: var(--transparent-card-color);
+  border: none;
+  color: var(--text-color);
+  padding: 2em 5em;
+  border-radius: 0.375rem;
+}
+
+.bg-card-2 {
+  background-color: var(--secondary-color);
   border: none;
   color: var(--text-color);
   padding: 2em 5em;
