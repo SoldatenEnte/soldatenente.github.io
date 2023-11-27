@@ -252,6 +252,11 @@ nav .navbar-nav li a {
   .pb-5-to768 {
     padding-bottom: 0;
   }
+
+  .chest-canvas {
+    height: 300px !important;
+    width: 300px !important;
+  }
 }
 
 @media (min-width: 768px) {
