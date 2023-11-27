@@ -136,7 +136,7 @@ nav .navbar-nav li a {
 
 .outline-text {
   color: rgb(0, 0, 0, 0);
-  -webkit-text-stroke-width: 1.2px;
+  -webkit-text-stroke-width: 0.02em;
   -webkit-text-stroke-color: var(--text-color);
   font-style: italic;
 }
@@ -282,6 +282,10 @@ nav .navbar-nav li a {
 
   .poppins-text-responsive {
     font-size: 37px;
+  }
+
+  .mr-to-992 {
+    margin-right: 1rem;
   }
 }
 
