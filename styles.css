@@ -254,7 +254,7 @@ nav .navbar-nav li a {
   }
 
   .chest-canvas {
-    height: 300px !important;
+    height: 500px !important;
     width: 300px !important;
   }
 }
@@ -270,6 +270,11 @@ nav .navbar-nav li a {
 
   .pb-5-to768 {
     padding-bottom: 0;
+  }
+
+  .chest-canvas {
+    height: 700px !important;
+    width: 520px !important;
   }
 }
 
