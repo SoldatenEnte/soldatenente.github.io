@@ -22,8 +22,8 @@
 }
 
 :root.light-mode {
-  --text-color: #130e01;
-  --background-color: #fffaeb;
+  --text-color: #140f00;
+  --background-color: #fef9ec;
   --primary-color: #ff8400;
   --secondary-color: #fff5d6;
   --accent-color: #cf4307;
@@ -97,6 +97,14 @@ p {
 
 nav .navbar-nav li a {
   color: var(--text-color) !important;
+}
+
+.brand-name {
+  font-size: var(--h3);
+  font-weight: 700;
+  margin-left: 0.5rem;
+  letter-spacing: 0.03rem;
+  color: var(--text-color);
 }
 
 .btn-primary {
@@ -255,7 +263,7 @@ nav .navbar-nav li a {
 
   .chest-canvas {
     height: 500px !important;
-    width: 300px !important;
+    width: 370px !important;
   }
 }
 
