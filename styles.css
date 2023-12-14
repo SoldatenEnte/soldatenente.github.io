@@ -265,6 +265,11 @@ nav .navbar-nav li a {
     height: 500px !important;
     width: 370px !important;
   }
+
+  .chest-canvas {
+    height: 448px !important;
+    width: 768px !important;
+  }
 }
 
 @media (min-width: 768px) {
@@ -283,6 +288,11 @@ nav .navbar-nav li a {
   .chest-canvas {
     height: 700px !important;
     width: 520px !important;
+  }
+
+  .book-canvas {
+    height: 700px !important;
+    width: 1200px !important;
   }
 }
 

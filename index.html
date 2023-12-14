@@ -20,7 +20,7 @@
     <script type="importmap">
       {
         "imports": {
-          "@splinetool/runtime": "https://unpkg.com/@splinetool/runtime@0.9.506/build/runtime.js"
+          "@splinetool/runtime": "https://unpkg.com/@splinetool/runtime@0.9.518/build/runtime.js"
         }
       }
     </script>
@@ -70,7 +70,6 @@
     <div class="container py-5 px-3">
       <div>
         <div class="row align-items-center justify-content-between h-auto">
-          <div></div>
           <div class="col-md-6 w-100-to-1200 center-to-1200">
             <h1 class="mb-5">
               Kampagnen<span class="outline-text">konzept</span>
@@ -92,8 +91,15 @@
             class="d-flex align-items-center col-md-5 w-100-to-1200 center-to-1200"
           >
             <canvas id="canvas3d" class="chest-canvas"></canvas>
-            <!-- <img src="files/chest.png" alt="treasure chest" width="800px" /> -->
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container py-5 px-3">
+      <div>
+        <div class="row align-items-center justify-content-center h-auto">
+          <canvas id="canvas3d_2" class="book-canvas"></canvas>
         </div>
       </div>
     </div>
@@ -237,6 +243,10 @@
           Whereas recognition of the inherent dignity
         </h5>
       </div>
+    </div>
+
+    <div class="container" style="margin-top: 100px">
+      <canvas id="canvas3d_2" class="chest-canvas"></canvas>
     </div>
 
     <script src="script.js"></script>
