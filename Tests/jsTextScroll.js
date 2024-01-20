@@ -8,9 +8,10 @@ textElements.forEach((text) => {
     ease: "none",
     scrollTrigger: {
       trigger: text,
-      start: "center 80%",
+      start: "-40% 80%",
       end: "center 20%",
-      scrub: true,
+      scrub: 3,
+      markers: true,
     },
   });
 });

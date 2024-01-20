@@ -1,0 +1,34 @@
+.root {
+  --text: #050315;
+  --background: #fbfbfe;
+  --primary: #2f27ce;
+  --secondary: #dedcff;
+  --accent: #433bff;
+
+  --text: #031113;
+  --background: #f1fafd;
+  --primary: #31c5de;
+  --secondary: #8989ec;
+  --accent: #755fe5;
+
+  --text: #131414;
+  --background: #fbfdfc;
+  --primary: #55af78;
+  --secondary: #8edcac;
+  --accent: #51e188;
+
+  --text: #f6faef;
+  --background: #060803;
+  --primary: #92bd3d;
+  --secondary: #236c43;
+  --accent: #2e8e83;
+
+  --text: #180b13;
+  --background: #faf1f7;
+  --primary: #d4349b;
+  --secondary: #f07ec8;
+  --accent: #f93fb7;
+
+  /* sieht geil aus, für den fall der fälle
+  https://www.realtimecolors.com/?colors=e5f0f0-050a0a-97dadd-20888d-4adbe3&fonts=Poppins-Poppins */
+}

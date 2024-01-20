@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Schatzklippen</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+        <h1 class="counter">0</h1>
+      <div class="preloader_icon icon-container">
+        <img
+          class="filter-bright"
+          id="ship-icon-preloader"
+          src="/files/icons/ship_light.svg"
+        ></img>
+      </div>
+    <div class="overlay">
+      <div class="bar bar-1"><h1 class="bar-text">U</h1></div>
+      <div class="bar bar-2"><h1 class="bar-text">S</h1></div>
+      <div class="bar bar-3"><h1 class="bar-text">E</h1></div>
+      <div class="bar bar-2"><h1 class="bar-text">E</h1></div>
+      <div class="bar bar-1"><h1 class="bar-text">K</h1></div>
+    </div>
+
+
+    <div class="parallax">
+      <img src="/files/parallax/schatzklippen/0.png" id="parallax-0" />
+      <img src="/files/parallax/schatzklippen/1.png" id="parallax-1" />
+      <img src="/files/parallax/schatzklippen/2.png" id="parallax-2" />
+      <img src="/files/parallax/schatzklippen/3.png" id="parallax-3" />
+      <img src="/files/parallax/schatzklippen/4.png" id="parallax-4" />
+      <img src="/files/parallax/schatzklippen/5.png" id="parallax-5" />
+      <img src="/files/parallax/schatzklippen/6.png" id="parallax-6" />
+      <h1 id="parallax-text">SCHATZKLIPPEN</h1>
+      <img src="/files/parallax/schatzklippen/7.png" id="parallax-7" />
+      <img src="/files/parallax/schatzklippen/8.png" id="parallax-8" />
+    </div>
+
+    <div class="spacer">
+
+    </div><div class="spacer">
+
+    </div><div class="spacer">
+
+    </div><div class="spacer">
+
+    </div>
+  </body>
+
+  <!-- SCRIPTS -->
+  <!-- SPLINE -->
+  <script
+    async
+    src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"
+  ></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "@splinetool/runtime": "https://unpkg.com/@splinetool/runtime@0.9.518/build/runtime.js"
+      }
+    }
+  </script>
+  <!-- BOOTSTRAP -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"
+  ></script>
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/ScrollTrigger.min.js"></script>
+  <!-- LENIS: https://github.com/studio-freight/lenis -->
+  <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+  <!-- CUSTOM -->
+  <script type="module" src=".js/main.js"></script>
+  <script src="../js/preloader.js"></script>
+  <script src="../js/lenis.js"></script>
+  <script src="../js/script.js"></script>
+</html>

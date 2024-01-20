@@ -1,3 +1,25 @@
+:root {
+  /* Define numbers */
+  --font-scale: 1.333;
+  --p: 1rem;
+  --h5: calc(var(--p) * var(--font-scale));
+  --h4: calc(var(--h5) * var(--font-scale));
+  --h3: calc(var(--h4) * var(--font-scale));
+  --h2: calc(var(--h3) * var(--font-scale));
+  --h1: calc(var(--h2) * var(--font-scale));
+  --small: calc(var(--p) / var(--font-scale));
+  --margin-lg: 0 12%;
+  --margin-md: 0 6%;
+
+  /* Define main color variables */
+  --text-color: #fef9ec;
+  --background-color: #140f00;
+  --primary-color: #ff8400;
+  --secondary-color: #291f00;
+  --accent-color: #f86c30;
+  --transparent-card-color: rgba(255, 255, 255, 0.03);
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -17,7 +39,7 @@ body {
 .text {
   font-size: 8vw;
   letter-spacing: -0.01em;
-  line-height: 100%;
+  line-height: 120%;
   margin: 0;
 
   width: 100%;
@@ -32,7 +54,7 @@ body {
 
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   position: relative;
 }
@@ -41,12 +63,13 @@ span {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: #ff8400;
-  color: #140f00;
+  background-color: var(--primary-color);
+  color: var(--background-color);
+  text-align: center;
 
-  clip-path: polygon(0 50%, 100% 50%, 100% 50%, 0 50%);
+  clip-path: polygon(50% 80%, 50% 80%, 50% 20%, 50% 20%);
   transform-origin: center;
-  transition: all cubic-bezier(0.1, 0.5, 0.5, 1) 0.4s;
+  transition: all cubic-bezier(0.1, 0.5, 0.5, 1) 0.6s;
 
   display: flex;
   flex-direction: column;
@@ -54,7 +77,7 @@ span {
 }
 
 .text:hover > span {
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+  clip-path: polygon(0% 100%, 100% 100%, 100% 0%, 0% 0%);
 }
 
 a {
