@@ -290,7 +290,6 @@ nav .navbar-nav li a {
 
 .spacer {
   height: 100vh;
-  background-color: var(--accent-800);
 }
 
 .card {
