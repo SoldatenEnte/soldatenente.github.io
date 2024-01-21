@@ -200,7 +200,7 @@ tl_parallax_5.to("#parallax-5", {
 });
 
 tl_parallax_6.to("#parallax-6", {
-  y: -100,
+  y: -150,
   x: 200,
 });
 

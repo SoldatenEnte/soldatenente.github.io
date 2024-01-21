@@ -135,6 +135,7 @@ body {
   padding: 0;
   cursor: url("files/cursor.png") 32 32, auto;
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .bg {
@@ -213,6 +214,7 @@ nav .navbar-nav li a {
   height: 100vh;
   z-index: 100;
   display: flex;
+  overflow: hidden;
 }
 
 .bar {
@@ -434,6 +436,7 @@ nav .navbar-nav li a {
   text-align: center;
   flex-direction: column;
   justify-content: center;
+  overflow: hidden;
 }
 
 .parallax img {
@@ -503,6 +506,10 @@ a {
   .bg-card {
     width: 100% !important;
     margin-bottom: 20px !important;
+  }
+
+  .parallax img {
+    width: 160vh;
   }
 
   .num {
@@ -579,12 +586,6 @@ a {
     display: flex;
     flex-direction: column !important;
     align-items: center;
-  }
-
-  .parallax img {
-    top: 0;
-    left: 0;
-    width: 160vh;
   }
 
   .parallax h1 {
