@@ -134,7 +134,7 @@ body {
   margin: 0;
   padding: 0;
   cursor: url("files/cursor.png") 32 32, auto;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 .bg {
