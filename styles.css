@@ -544,13 +544,12 @@ nav .navbar-nav li a {
 #photo {
   position: relative;
   margin: 0;
-  padding: 0 1%;
+  padding: 0;
   height: auto;
-  border-radius: 1em;
   width: 100%;
-  background: url("/files/img/donnerbucht.jpg") no-repeat;
-  background-size: 100% auto;
+  background-size: 100% auto !important;
   user-select: none;
+  border-radius: 1em;
 }
 
 #xray {
@@ -562,6 +561,7 @@ nav .navbar-nav li a {
   mask-size: 150px;
   cursor: help;
   user-select: none;
+  border-radius: 1em;
 }
 
 #star-container {

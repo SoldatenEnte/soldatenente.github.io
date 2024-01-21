@@ -1,4 +1,5 @@
 //XRAY für die Fotos und die Hinweise. Hinweise? Nee, es gibt sicherlich keine Hinweise :)
+//Inspiration: https://codepen.io/erikrahm/pen/qBwMMR
 $(document).ready(function () {
   var $photo = $("#photo");
   var $xray = $("#xray");
@@ -13,9 +14,14 @@ $(document).ready(function () {
 });
 
 // Damit die Schlingel nicht Bild so leicht in neuem Tab öffnen können :)
-document.getElementById("xray").addEventListener("contextmenu", function (e) {
-  e.preventDefault();
-});
+var xrayElement = document.getElementById("xray");
+
+if (xrayElement) {
+  xrayElement.addEventListener("contextmenu", function (e) {
+    // Verhindere das Standardkontextmenü
+    e.preventDefault();
+  });
+}
 
 // Malen auf der Sternenkarte
 document.addEventListener("DOMContentLoaded", function () {
