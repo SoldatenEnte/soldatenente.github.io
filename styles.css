@@ -430,7 +430,7 @@ nav .navbar-nav li a {
   display: flex;
   background-color: var(--accent-50);
   width: 100vw;
-  height: 100vh;
+  height: 50vw;
   text-align: center;
   flex-direction: column;
   justify-content: center;
@@ -450,9 +450,10 @@ nav .navbar-nav li a {
 .parallax h1 {
   position: absolute;
   width: 100%;
-  font-size: 8vw;
+  font-size: 9vw;
   font-weight: 900;
   color: var(--text-color);
+  mix-blend-mode: overlay;
 }
 
 a {
@@ -578,6 +579,18 @@ a {
     display: flex;
     flex-direction: column !important;
     align-items: center;
+  }
+
+  .parallax img {
+    top: 0;
+    left: 0;
+    width: 160vh;
+  }
+
+  .parallax h1 {
+    font-size: 10vw;
+    z-index: 10;
+    mix-blend-mode: hard-light;
   }
 }
 
