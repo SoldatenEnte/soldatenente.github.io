@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
     e.preventDefault();
   });
   canvas.addEventListener("touchmove", function (e) {
+    e.startDrawing();
     e.preventDefault();
   });
 
