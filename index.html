@@ -13,46 +13,41 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="bg">
-    <nav class="navbar navbar-expand-lg navbar-dark" style="opacity: 100%">
-      <div class="container px-3">
-        <a class="navbar-brand" href="#">
-          <div class="d-flex align-items-center">
-            <img id="logo" src="files/logo_light.svg" alt="uSeek Logo" height="80" />
-            <h2 class="brand-name">uSeek</h2>
-          </div>
-        </a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div
-          class="collapse navbar-collapse justify-content-end"
-          id="navbarNav"
-        >
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Page 2</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Page 3</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Impressum</a>
-            </li>
-          </ul>
+
+    <div class="sidebar">
+      <div class="sidebar-top">
+        <div id="logo" style="filter: drop-shadow(3px 5px 2px rgb(0 0 0 / 0.4));">
+          <a href="../index.html">
+            <img src="/files/logo_light.svg" alt="" />
+          </a>
+        </div>
+
+        <div id="impressum">
+          <a href="../impressum.html">
+            <img src="/files/icons/impressum.svg" alt="" />
+          </a>
         </div>
       </div>
-    </nav>
+
+
+      <div class="sidebar-right">
+        <button id="mode-toggle">
+          <img src="/files/icons/light.svg" alt="Dark/Light-mode" />
+        </button>
+
+        <div>
+          <a href="../index.html">
+            <img src="/files/icons/ship_button.svg" alt="" />
+          </a>
+        </div>
+
+        <div>
+          <a href="../hilfe.html">
+            <img src="/files/icons/help_light.svg" alt="" />
+          </a>
+        </div>
+      </div>
+    </div>
 
     <!-- PRELOADER -->
     <h1 class="counter">0</h1>
@@ -74,7 +69,7 @@
     
     <!-- CONTENT -->
     <div class="container py-5 px-3">
-      <div>
+      <div  style="margin-top: 10vh;">
         <div class="row align-items-center justify-content-between h-auto">
           <div class="col-md-6 w-100-to-1200 center-to-1200">
             <h1 class="mb-5">

@@ -133,7 +133,7 @@ body {
   font-family: var(--font-family);
   margin: 0;
   padding: 0;
-  cursor: url("files/cursor.png") 32 32, auto;
+  cursor: url("files/cursor.png") 32 32, pointer;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -186,6 +186,13 @@ p {
   line-height: 1.5;
 }
 
+button {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+
 hr {
   border: 2px solid var(--text-color);
   margin-bottom: 2em;
@@ -218,7 +225,7 @@ nav .navbar-nav li a {
   width: 100vw;
   height: 100vh;
   display: flex;
-  z-index: 100;
+  z-index: 999;
 }
 
 .bar {
@@ -427,6 +434,76 @@ nav .navbar-nav li a {
   bottom: 15px;
   right: 15px;
   opacity: 1;
+}
+
+.sidebar {
+  position: fixed;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  height: 100%;
+  right: 20px;
+}
+
+.sidebar-top {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  z-index: 999;
+}
+
+.sidebar-top div {
+  width: 90%;
+  margin-top: 1.5em;
+  transition: transform 0.5s, opacity 0.5s;
+  transform-origin: center;
+}
+
+.sidebar-top #logo {
+  transform: translateX(7px);
+}
+
+.sidebar-top #impressum {
+  opacity: 0.3;
+  width: 90%;
+  margin-top: 1.5em;
+  transition: transform 0.5s, opacity 0.5s;
+  transform-origin: center;
+}
+
+.sidebar-top #impressum:hover,
+.sidebar-top div:hover {
+  transform: scale(1.1);
+}
+
+.sidebar-top #impressum:hover {
+  opacity: 0.7;
+}
+
+.sidebar-right {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  width: calc(2vw + 60px);
+  z-index: 999;
+  margin-bottom: 1em;
+}
+
+.sidebar-right div,
+.sidebar-right button {
+  width: 90%;
+  margin-top: 1.5em;
+  opacity: 0.3;
+  transition: transform 0.5s, opacity 0.5s;
+  transform-origin: center;
+}
+
+.sidebar-right div:hover,
+.sidebar-right button:hover {
+  transform: scale(1.1);
+  opacity: 0.7;
 }
 
 .icon-container {
