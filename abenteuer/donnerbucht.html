@@ -20,7 +20,7 @@
       </a>
     </div>
 
-    <h1 class="counter">0</h1>
+    <!-- <h1 class="counter">0</h1>
     <div class="preloader_icon icon-container">
       <img
         class="filter-bright"
@@ -35,7 +35,7 @@
       <div class="bar bar-3"><h1 class="bar-text">E</h1></div>
       <div class="bar bar-2"><h1 class="bar-text">E</h1></div>
       <div class="bar bar-1"><h1 class="bar-text">K</h1></div>
-    </div>
+    </div> -->
 
 
     <div class="parallax">
@@ -130,19 +130,34 @@
           <img src="/files/piraten/juwelenjäger_jan.webp" alt="blutiger bill">
           <div class="pirate-welcome-text">
             <h2>Juwelenjäger Jan:</h2>
-            <p><i>"Ich habe hier ein Foto für dich von der Schatztruhe in der Donnerbucht, allerdings habe ich es nicht geschafft, das Schloss zu öffnen..."</i></p>
+            <p><i>"Ich habe hier ein Foto für dich von der Schatztruhe in der Donnerbucht, allerdings habe ich es nicht geschafft, das Schloss zu öffnen... Vielleicht kannst du einmal einen genaueren Blick auf das Bild werfen."</i></p>
           </div>
         </div>
         <hr style="width:80%; border: 2px solid #92bd3d; opacity: 1; margin-left: auto; margin-right: auto;">
-    <img src="/files/img/donnerbucht.jpg" alt="Donnerbucht Schatzkarte" style="filter: sepia(60%) brightness(80%) saturate(150%); margin: 0; padding: 0; border-radius: 1em;">
+        <article id="photo">
+          <img src="/files/img/krakeninseln.jpg" id="xray">
+        </article>
+        </div>  
+    </div>
+
+    <div class="container" style="margin-top: 100px;">
+      <div class="map-container bg-card row justify-content-between" style="margin: 0; padding: 2em 2em;"> 
+        <div class="pirate-welcome">
+          <img src="/files/piraten/juwelenjäger_jan.webp" alt="blutiger bill">
+          <div class="pirate-welcome-text">
+            <h2>Juwelenjäger Jan:</h2>
+            <p><i>"Ach, und bevor ich es vergesse! Ich habe auch noch dieses schöne Foto eines Sternenhimmel gefunden. Die Sterne sehen hier echt interessant aus, nicht wahr?"</i></p>
+          </div>
+        </div>
+        <hr style="width:80%; border: 2px solid #92bd3d; opacity: 1; margin-left: auto; margin-right: auto;">
+        <div id="star-container">
+          <img src="/files/img/stars.png" id="starmap" alt="Donnerbucht Schatzkarte" style="margin: 0; padding: 0; border-radius: 1em;">
+          <canvas id="star-canvas"></canvas>
+       </div>
       </div>  
     </div>
 
-
-
     </div><div class="spacer" style="background-color: #0C2716">
-
-    </div><div class="spacer" style="background-color: #11c754">
 
     </div>
   </body>
@@ -171,8 +186,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/ScrollTrigger.min.js"></script>
   <!-- LENIS: https://github.com/studio-freight/lenis -->
   <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <!-- CUSTOM -->
-  <script type="module" src=".js/main.js"></script>
   <script src="../js/preloader.js"></script>
   <script src="../js/lenis.js"></script>
   <script src="../js/script.js"></script>
