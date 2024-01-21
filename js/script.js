@@ -36,6 +36,9 @@ document.addEventListener("DOMContentLoaded", function () {
   canvas.addEventListener("contextmenu", function (e) {
     e.preventDefault();
   });
+  canvas.addEventListener("touchmove", function (e) {
+    e.preventDefault();
+  });
 
   function startDrawing(e) {
     isDrawing = true;
