@@ -2,13 +2,20 @@
 
 const lenis = new Lenis();
 
-lenis.on("scroll", (e) => {
-  console.log(e);
-});
+const isTouchDevice =
+  "ontouchstart" in window ||
+  navigator.maxTouchPoints > 0 ||
+  navigator.msMaxTouchPoints > 0;
 
-function raf(time) {
-  lenis.raf(time);
+if (!isTouchDevice) {
+  lenis.on("scroll", (e) => {
+    console.log(e);
+  });
+
+  function raf(time) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
+  }
+
   requestAnimationFrame(raf);
 }
-
-requestAnimationFrame(raf);
