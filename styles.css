@@ -711,6 +711,10 @@ a {
     font-size: var(--h1);
   }
 
+  .note-container h5 {
+    font-size: var(--h2);
+  }
+
   .note-lowres {
     padding: 2em !important;
     margin-top: 0px;

@@ -5,12 +5,14 @@
   --secondary: #dedcff;
   --accent: #433bff;
 
+  /* Krakeninseln */
   --text: #031113;
   --background: #f1fafd;
   --primary: #31c5de;
   --secondary: #8989ec;
   --accent: #755fe5;
 
+  /* Donnerbucht */
   --text: #131414;
   --background: #fbfdfc;
   --primary: #55af78;
@@ -23,6 +25,7 @@
   --secondary: #236c43;
   --accent: #2e8e83;
 
+  /* Säbelriff */
   --text: #180b13;
   --background: #faf1f7;
   --primary: #d4349b;
