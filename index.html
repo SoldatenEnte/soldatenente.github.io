@@ -16,15 +16,15 @@
 
     <div class="sidebar">
       <div class="sidebar-top">
-        <div id="logo" style="filter: drop-shadow(3px 5px 2px rgb(0 0 0 / 0.4));">
+        <div id="logo_container" style="filter: drop-shadow(3px 5px 2px rgb(0 0 0 / 0.4));">
           <a href="../index.html">
-            <img src="/files/logo_light.svg" alt="" />
+            <img id="logo" src="/files/logo_light.svg" alt="" />
           </a>
         </div>
 
         <div id="impressum">
           <a href="../impressum.html">
-            <img src="/files/icons/impressum.svg" alt="" />
+            <img id="impressumIcon" src="/files/icons/impressum.svg" alt="" />
           </a>
         </div>
       </div>
@@ -32,18 +32,18 @@
 
       <div class="sidebar-right">
         <button id="mode-toggle">
-          <img src="/files/icons/light.svg" alt="Dark/Light-mode" />
+          <img id="light" src="/files/icons/light.svg" alt="Dark/Light-mode" />
         </button>
 
         <div>
-          <a href="../index.html">
-            <img src="/files/icons/ship_button.svg" alt="" />
+          <a href="#navigator-menu">
+            <img id="ship-button" src="/files/icons/ship_button.svg" alt="" />
           </a>
         </div>
 
         <div>
           <a href="../hilfe.html">
-            <img src="/files/icons/help_light.svg" alt="" />
+            <img id="help" src="/files/icons/help_light.svg" alt="" />
           </a>
         </div>
       </div>
@@ -69,7 +69,7 @@
     
     <!-- CONTENT -->
     <div class="container py-5 px-3">
-      <div  style="margin-top: 10vh;">
+      <div style="margin-top: 10vh;">
         <div class="row align-items-center justify-content-between h-auto">
           <div class="col-md-6 w-100-to-1200 center-to-1200">
             <h1 class="mb-5">
@@ -96,7 +96,7 @@
       </div>
     </div>
 
-    <div class="container navigator_container">
+    <div id="navigator-menu" class="container navigator_container">
       <div class="icon-container">
         <img
           id="ship-icon"
