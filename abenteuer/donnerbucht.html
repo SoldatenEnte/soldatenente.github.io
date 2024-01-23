@@ -13,14 +13,13 @@
     <link rel="stylesheet" href="../styles.css" />
   </head>
   <body style="background-color: #0c2716">
-    
     <div class="home_button">
       <a href="../index.html">
-        <img src="/files/icons/ship_button.svg" alt="Back to Home" />
+        <img src="/files/icons/ship_button.svg" alt="Zur Startseite" />
       </a>
     </div>
 
-    <h1 class="counter">0</h1>
+    <!-- <h1 class="counter">0</h1>
     <div class="preloader_icon icon-container">
       <img
         class="filter-bright"
@@ -35,8 +34,7 @@
       <div class="bar bar-3"><h1 class="bar-text">E</h1></div>
       <div class="bar bar-2"><h1 class="bar-text">E</h1></div>
       <div class="bar bar-1"><h1 class="bar-text">K</h1></div>
-    </div>
-
+    </div> -->
 
     <div class="parallax">
       <img src="/files/parallax/donnerbucht/0.png" id="parallax-0" />
@@ -57,7 +55,10 @@
         style="margin: 0; padding: 3em 3em"
       >
         <div class="pirate-welcome">
-          <img src="/files/piraten/juwelenjäger_jan.webp" alt="blutiger bill" />
+          <img
+            src="/files/piraten/juwelenjäger_jan.webp"
+            alt="Juwelenjäger Jan"
+          />
           <div class="pirate-welcome-text">
             <h2>Juwelenjäger Jan:</h2>
             <p>
@@ -101,7 +102,7 @@
           <div>
             <img
               src="/files/piraten/unfassbarer_udo.webp"
-              alt="blutiger bill"
+              alt="Unfassbarer Udo"
               style="
                 border-radius: 50%;
                 width: 60%;
@@ -135,7 +136,7 @@
           <div>
             <img
               src="/files/piraten/heldenhafter_haga.webp"
-              alt="blutiger bill"
+              alt="Heldenhafter Haga"
               style="
                 border-radius: 50%;
                 width: 60%;
@@ -171,7 +172,7 @@
           <div>
             <img
               src="/files/piraten/tapferer_tim.webp"
-              alt="blutiger bill"
+              alt="Tapferer Tim"
               style="
                 border-radius: 50%;
                 width: 60%;
@@ -209,7 +210,10 @@
         style="margin: 0; padding: 2em 2em"
       >
         <div class="pirate-welcome">
-          <img src="/files/piraten/juwelenjäger_jan.webp" alt="blutiger bill" />
+          <img
+            src="/files/piraten/juwelenjäger_jan.webp"
+            alt="Juwelenjäger Jan"
+          />
           <div class="pirate-welcome-text">
             <h2>Juwelenjäger Jan:</h2>
             <p>
@@ -231,7 +235,10 @@
             margin-right: auto;
           "
         />
-        <article id="photo" style="background: url('/files/img/donnerbucht.jpg') no-repeat;">
+        <article
+          id="photo"
+          style="background: url('/files/img/donnerbucht.jpg') no-repeat"
+        >
           <img src="/files/img/donnerbucht_xray.jpg" id="xray" />
         </article>
       </div>
@@ -243,14 +250,17 @@
         style="margin: 0; padding: 2em 2em"
       >
         <div class="pirate-welcome">
-          <img src="/files/piraten/juwelenjäger_jan.webp" alt="blutiger bill" />
+          <img
+            src="/files/piraten/juwelenjäger_jan.webp"
+            alt="Juwelenjäger Jan"
+          />
           <div class="pirate-welcome-text">
             <h2>Juwelenjäger Jan:</h2>
             <p>
               <i
-                >"Ach, und bevor ich es vergesse! Ich habe auch noch dieses
-                schöne Foto eines Sternenhimmels gefunden. Die Sterne sehen hier
-                echt interessant aus, nicht wahr?"</i
+                >"Ich habe auch noch dieses schöne Foto des Sternenhimmels
+                gefunden. Die Sterne sehen hier echt interessant aus, nicht
+                wahr?"</i
               >
             </p>
           </div>
@@ -266,12 +276,42 @@
         />
         <div id="star-container">
           <img
-            src="/files/img/stars.png"
+            src="/files/img/stars.webp"
             id="starmap"
-            alt="Donnerbucht Schatzkarte"
+            alt="Sternenhimmel"
             style="margin: 0; padding: 0; border-radius: 1em"
           />
           <canvas id="star-canvas"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="container" style="margin-bottom: 2em">
+      <div
+        class="map-container bg-card row justify-content-between"
+        style="margin: 0; padding: 2em 2em"
+      >
+        <div class="pirate-welcome">
+          <img
+            class="m-0"
+            src="/files/piraten/unfassbarer_udo.webp"
+            alt="Unfassbarer Udo"
+          />
+          <div class="vl mx-4" style="border: 2px solid #55af78"></div>
+          <div id="pirate-home-welcome">
+            <h2 class="m-0">Unfassbarer Udo:</h2>
+            <p style="color: #55af78">
+              "Hallo allerseits! Wie auf jeder Insel gebe ich dir auch hier
+              einen Hinweis:"
+            </p>
+            <p class="m-0 pirate-home-p">
+              <i>
+                "Die korrekten Piratennotizen offenbaren die Anzahl der
+                Schritte, die bei dem jeweiligen Piratensymbol gemacht werden
+                müssen, um die richtigen Hieroglyphen zu erhalten."
+              </i>
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -301,9 +341,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/ScrollTrigger.min.js"></script>
   <!-- LENIS: https://github.com/studio-freight/lenis -->
   <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <!-- CUSTOM -->
+  <script type="module" src="../js/main.js"></script>
   <script src="../js/preloader.js"></script>
   <script src="../js/lenis.js"></script>
   <script src="../js/script.js"></script>

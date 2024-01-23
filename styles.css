@@ -16,10 +16,12 @@
   /* Define main color variables */
   --text-color: #fef9ec;
   --background-color: #140f00;
-  --primary-color: #ff8400;
+  --primary-color: rgb(255, 132, 0);
   --secondary-color: #291f00;
-  --accent-color: #f86c30;
+  --accent-color: rgb(248, 108, 48);
   --transparent-card-color: rgba(255, 255, 255, 0.03);
+  --transparent-card-color-accent: rgba(248, 108, 48, 0.03);
+  --transparent-card-color-primary: rgba(255, 132, 0, 0.1);
 
   /* Define linear gradients */
   --linearPrimarySecondary: linear-gradient(
@@ -121,12 +123,14 @@
 
 /* Define light-mode colors (if needed) */
 :root.light-mode {
-  --text-color: #140f00;
+  --text-color: rgb(20, 15, 0);
   --background-color: #fef9ec;
   --primary-color: #ff8400;
   --secondary-color: #fff5d6;
-  --accent-color: #cf4307;
+  --accent-color: rgb(207, 67, 7);
   --transparent-card-color: rgba(0, 0, 0, 0.03);
+  --transparent-card-color-accent: rgba(148, 48, 5, 0.1);
+  --transparent-card-color-primary: rgba(255, 132, 0, 0.21);
 }
 
 body {
@@ -134,8 +138,7 @@ body {
   margin: 0;
   padding: 0;
   cursor: url("files/cursor.png") 32 32, pointer;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .bg {
@@ -143,6 +146,7 @@ body {
   color: var(--text-color);
   background-image: url("files/backgroundBlur.png");
   background-size: cover;
+  z-index: -10;
 }
 
 h1 {
@@ -194,8 +198,18 @@ button {
 }
 
 hr {
-  border: 2px solid var(--text-color);
-  margin-bottom: 2em;
+  border: 2px solid var(--accent-color);
+  margin: 2em;
+  width: 80%;
+  opacity: 1;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.vl {
+  border-left: 3px solid var(--accent-color);
+  height: 200px;
+  margin: 0 1%;
 }
 
 .navbar {
@@ -310,25 +324,49 @@ nav .navbar-nav li a {
   padding: 2em 5em;
 }
 
+.underline-text {
+  position: relative;
+  display: inline-block;
+}
+
+.underline-text::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  border-bottom: 2px solid #000; /* Ändere die Farbe und Dicke nach Bedarf */
+}
+
 .bg-text-color {
-  background-color: var(--text-color);
-  color: var(--background-color);
+  background-color: var(--text-color) !important;
+  color: var(--background-color) !important;
 }
 .bg-background-color {
-  background-color: var(--background-color);
-  color: var(--text-color);
+  background-color: var(--background-color) !important;
+  color: var(--text-color) !important;
 }
 .bg-primary-color {
-  background-color: var(--primary-color);
-  color: var(--background-color);
+  background-color: var(--primary-color) !important;
+  color: var(--background-color) !important;
 }
 .bg-secondary-color {
-  background-color: var(--secondary-color);
-  color: var(--text-color);
+  background-color: var(--secondary-color) !important;
+  color: var(--text-color) !important;
 }
 .bg-accent-color {
-  background-color: var(--accent-color);
-  color: var(--background-color);
+  background-color: var(--accent-color) !important;
+  color: var(--background-color) !important;
+}
+
+.bg-card-accent-color {
+  background-color: var(--transparent-card-color-accent) !important;
+  color: var(--text-color) !important;
+}
+
+.bg-card-primary-color {
+  background-color: var(--transparent-card-color-primary) !important;
+  color: var(--text-color) !important;
 }
 
 .text-color {
@@ -364,6 +402,128 @@ nav .navbar-nav li a {
 -
 */
 
+.landing-page {
+  position: relative;
+  background-color: var(--background-color);
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  z-index: 10;
+}
+
+.landing-page h1 {
+  font-size: calc(var(--h1) * 4);
+  font-weight: 900;
+  color: var(--primary-color);
+  margin: 0;
+}
+
+.landing-page h2 {
+  text-align: center;
+  white-space: nowrap;
+  font-size: var(--h1);
+  font-weight: 300;
+  color: var(--text-color);
+  opacity: 0.6;
+  margin-top: -0.6em;
+}
+
+.landing-page a {
+  user-select: none;
+  border: calc(var(--p) * 0.3) solid var(--text-color);
+  border-radius: 1.3em;
+  padding: calc(var(--p) * 0.2);
+  display: flex;
+  align-items: center;
+  margin-top: 1em;
+}
+
+.landing-page a h3 {
+  font-size: calc(var(--h1) * 1.1);
+  font-weight: 900;
+}
+
+.triangle {
+  border-left: var(--p) solid transparent;
+  border-right: var(--p) solid transparent;
+  border-top: var(--h4) solid var(--text-color);
+}
+
+.background-landingpage {
+  position: absolute;
+  opacity: 0.08;
+}
+
+.logo-landingpage {
+  position: absolute;
+  width: 70vw;
+  height: 70vh;
+  content: "";
+  top: 15vh;
+  left: 18vw;
+  bottom: 15vh;
+  right: 15vw;
+  z-index: -1;
+}
+
+.t1 {
+  border-left: 0px solid transparent;
+  border-right: 6em solid transparent;
+  border-top: 6em solid var(--text-color);
+  left: 4vw;
+  top: 4vw;
+}
+
+.t2 {
+  border-left: 6em solid transparent;
+  border-right: 0px solid transparent;
+  border-top: 6em solid var(--text-color);
+  right: 4vw;
+  top: 4vw;
+}
+
+.t3 {
+  border-left: 0px solid transparent;
+  border-right: 6em solid transparent;
+  border-bottom: 6em solid var(--text-color);
+  left: 4vw;
+  bottom: 4vw;
+}
+
+.t4 {
+  border-left: 6em solid transparent;
+  border-right: 0px solid transparent;
+  border-bottom: 6em solid var(--text-color);
+  right: 4vw;
+  bottom: 4vw;
+}
+
+.start-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 60%;
+}
+
+.start-menu a {
+  display: flex;
+  justify-content: center;
+}
+
+#play-button {
+  width: 50%;
+}
+
+.useek-heading {
+  font-size: calc(var(--h1) * 2);
+}
+
+.useek-text {
+  font-size: var(--h4);
+}
+
 .navigator_container {
   display: flex;
   flex-direction: column;
@@ -382,7 +542,6 @@ nav .navbar-nav li a {
   font-size: calc(var(--h1) * 1.7);
   font-weight: 900;
   user-select: none;
-  letter-spacing: -0.01em;
   line-height: 120%;
   margin: 0;
 
@@ -390,15 +549,33 @@ nav .navbar-nav li a {
   color: var(--transparent-card-color);
   background: linear-gradient(to right, var(--text-color), var(--text-color))
     no-repeat;
-  -webkit-background-clip: text;
   background-clip: text;
-  background-size: 0%;
-  transition: background-size cubic-bezier(0.1, 0.5, 0.5, 1) 0.5s;
-
   border-bottom: 1px solid var(--secondary-color);
 }
 
+.pirate-home-text {
+  position: relative;
+  color: var(--transparent-card-color);
+  background: linear-gradient(
+      to right,
+      var(--accent-color),
+      var(--primary-color)
+    )
+    no-repeat;
+  background-clip: text;
+}
+
+.pirate-home-p {
+  font-size: var(--h5);
+  opacity: 0.8;
+  margin: 0;
+  line-height: 1.5em;
+}
+
 .navigator_text span {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   position: absolute;
   width: 100%;
   height: 100%;
@@ -409,10 +586,6 @@ nav .navbar-nav li a {
   clip-path: polygon(50% 80%, 50% 80%, 50% 20%, 50% 20%);
   transform-origin: center;
   transition: all cubic-bezier(0.1, 0.5, 0.5, 1) 0.6s;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 }
 
 .navigator_text:hover > span {
@@ -443,6 +616,7 @@ nav .navbar-nav li a {
   flex-direction: column;
   height: 100%;
   right: 20px;
+  z-index: 999;
 }
 
 .sidebar-top {
@@ -450,7 +624,6 @@ nav .navbar-nav li a {
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  z-index: 999;
 }
 
 .sidebar-top div {
@@ -560,8 +733,31 @@ nav .navbar-nav li a {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  align-items: center;
   margin: 3% 0;
   padding: 0;
+}
+
+.pirate-lock {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 3% 0;
+  padding: 0;
+}
+
+.pirate-lock img {
+  width: 60%;
+  border-radius: 50%;
+}
+
+#pirate-home-lock {
+  width: 90%;
+}
+
+#pirate-home-welcome {
+  width: 55%;
 }
 
 .pirate-welcome-text {
@@ -569,23 +765,31 @@ nav .navbar-nav li a {
   flex-direction: column;
   justify-content: center;
   width: 40%;
-  margin-left: 3%;
+  margin-left: 1.5%;
   color: var(--text-color);
 }
 
 .pirate-welcome-text p {
   font-size: var(--h5);
   opacity: 0.8;
+  margin: 0;
 }
 
 .pirate-welcome img {
   border-radius: 50%;
   width: 240px;
   height: 240px;
+  margin-right: 1.5%;
 }
 
 .map-container {
   width: 100%;
+}
+
+.poem {
+  font-size: var(--p);
+  text-align: center;
+  opacity: 0.8;
 }
 
 .note-heading {
@@ -765,6 +969,21 @@ a {
     align-items: center;
     margin: 3% 0;
     padding: 0;
+  }
+
+  #pirate-home-welcome {
+    width: 90%;
+  }
+
+  .vl {
+    border: 2px solid var(--accent-color);
+    margin-bottom: 2em;
+    width: 60%;
+    height: 0%;
+  }
+
+  #pirate-home-welcome {
+    text-align: center;
   }
 
   .pirate-welcome-text {

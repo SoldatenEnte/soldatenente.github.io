@@ -1,16 +1,25 @@
 //XRAY für die Fotos und die Hinweise. Hinweise? Nee, es gibt sicherlich keine Hinweise :)
 //Inspiration: https://codepen.io/erikrahm/pen/qBwMMR
-$(document).ready(function () {
-  var $photo = $("#photo");
-  var $xray = $("#xray");
+document.addEventListener("DOMContentLoaded", function () {
+  var photo = document.getElementById("photo");
+  var xray = document.getElementById("xray");
 
-  $photo.mousemove(function (e) {
-    var offset = $photo.offset();
+  photo.addEventListener("mousemove", function (e) {
+    var offset = getOffset(photo);
     var mouseX = e.pageX - offset.left;
     var mouseY = e.pageY - offset.top;
 
-    $xray.css("mask-position", mouseX - 75 + "px " + (mouseY - 75) + "px");
+    xray.style.maskPosition = mouseX - 75 + "px " + (mouseY - 75) + "px";
   });
+
+  // Function to get the offset of an element
+  function getOffset(el) {
+    var rect = el.getBoundingClientRect();
+    return {
+      left: rect.left + window.pageXOffset,
+      top: rect.top + window.pageYOffset,
+    };
+  }
 });
 
 // Damit die Schlingel nicht Bild so leicht in neuem Tab öffnen können :)
@@ -29,49 +38,49 @@ document.addEventListener("DOMContentLoaded", function () {
   const canvas = document.getElementById("star-canvas");
   const context = canvas.getContext("2d");
   let isDrawing = false;
+  if (container && canvas) {
+    canvas.width = starmap.width;
+    canvas.height = starmap.height;
 
-  canvas.width = starmap.width;
-  canvas.height = starmap.height;
+    canvas.addEventListener("mousedown", startDrawing);
+    canvas.addEventListener("mousemove", draw);
+    canvas.addEventListener("mouseup", stopDrawing);
+    canvas.addEventListener("mouseout", stopDrawing);
 
-  canvas.addEventListener("mousedown", startDrawing);
-  canvas.addEventListener("mousemove", draw);
-  canvas.addEventListener("mouseup", stopDrawing);
-  canvas.addEventListener("mouseout", stopDrawing);
+    canvas.addEventListener("contextmenu", resetDrawing);
+    canvas.addEventListener("contextmenu", function (e) {
+      e.preventDefault();
+    });
+    canvas.addEventListener("touchmove", function (e) {
+      e.startDrawing();
+      e.preventDefault();
+    });
 
-  canvas.addEventListener("contextmenu", resetDrawing);
-  canvas.addEventListener("contextmenu", function (e) {
-    e.preventDefault();
-  });
-  canvas.addEventListener("touchmove", function (e) {
-    e.startDrawing();
-    e.preventDefault();
-  });
+    function startDrawing(e) {
+      isDrawing = true;
+      draw(e);
+    }
 
-  function startDrawing(e) {
-    isDrawing = true;
-    draw(e);
-  }
+    function draw(e) {
+      if (!isDrawing) return;
 
-  function draw(e) {
-    if (!isDrawing) return;
+      const x = e.clientX - container.getBoundingClientRect().left;
+      const y = e.clientY - container.getBoundingClientRect().top;
 
-    const x = e.clientX - container.getBoundingClientRect().left;
-    const y = e.clientY - container.getBoundingClientRect().top;
+      context.beginPath();
+      context.arc(x, y, 5, 0, 2 * Math.PI);
+      context.fillStyle = "red"; // Set color to black
+      context.fill();
+      context.closePath();
+    }
 
-    context.beginPath();
-    context.arc(x, y, 5, 0, 2 * Math.PI);
-    context.fillStyle = "red"; // Set color to black
-    context.fill();
-    context.closePath();
-  }
+    function stopDrawing() {
+      isDrawing = false;
+    }
 
-  function stopDrawing() {
-    console.log("Help");
-    isDrawing = false;
-  }
-
-  function resetDrawing() {
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    function resetDrawing() {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+    }
   }
 });
 
@@ -87,12 +96,50 @@ textElements.forEach((text) => {
     ease: "none",
     scrollTrigger: {
       trigger: text,
-      start: "50% 80%",
-      end: "600% 20%",
+      start: "1300% 80%",
+      end: "1600% 20%",
       scrub: 4,
       markers: false,
     },
   });
+});
+
+const pirate_textElements = gsap.utils.toArray(".pirate-home-text");
+
+pirate_textElements.forEach((text) => {
+  gsap.to(text, {
+    backgroundSize: "100%",
+    ease: "none",
+    scrollTrigger: {
+      trigger: text,
+      start: "50% 80%",
+      end: "2600% 20%",
+      scrub: 2,
+      markers: false,
+    },
+  });
+});
+
+// JAN
+const tl_pirate_welcome = gsap.timeline({
+  scrollTrigger: {
+    trigger: ".jan-1",
+    start: "center center",
+    end: "250% 20%",
+    toggleActions: "play reverse play reverse",
+    pin: true,
+  },
+});
+
+const tl_pirate_lock = gsap.timeline({
+  scrollTrigger: {
+    trigger: ".jan-2",
+    start: "center center",
+    end: "100% 20%",
+    toggleActions: "play reverse play reverse",
+    pin: true,
+    markers: true,
+  },
 });
 
 const tl = gsap.timeline({
@@ -100,7 +147,6 @@ const tl = gsap.timeline({
     trigger: ".navigator_container",
     start: "center center",
     end: "100% 20%",
-    markers: false,
     pin: true,
   },
 });
