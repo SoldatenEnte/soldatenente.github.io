@@ -4,13 +4,15 @@ document.addEventListener("DOMContentLoaded", function () {
   var photo = document.getElementById("photo");
   var xray = document.getElementById("xray");
 
-  photo.addEventListener("mousemove", function (e) {
-    var offset = getOffset(photo);
-    var mouseX = e.pageX - offset.left;
-    var mouseY = e.pageY - offset.top;
+  if (photo) {
+    photo.addEventListener("mousemove", function (e) {
+      var offset = getOffset(photo);
+      var mouseX = e.pageX - offset.left;
+      var mouseY = e.pageY - offset.top;
 
-    xray.style.maskPosition = mouseX - 75 + "px " + (mouseY - 75) + "px";
-  });
+      xray.style.maskPosition = mouseX - 75 + "px " + (mouseY - 75) + "px";
+    });
+  }
 
   // Function to get the offset of an element
   function getOffset(el) {
@@ -36,50 +38,52 @@ if (xrayElement) {
 document.addEventListener("DOMContentLoaded", function () {
   const container = document.getElementById("star-container");
   const canvas = document.getElementById("star-canvas");
-  const context = canvas.getContext("2d");
-  let isDrawing = false;
   if (container && canvas) {
-    canvas.width = starmap.width;
-    canvas.height = starmap.height;
+    const context = canvas.getContext("2d");
+    let isDrawing = false;
+    if (container && canvas) {
+      canvas.width = starmap.width;
+      canvas.height = starmap.height;
 
-    canvas.addEventListener("mousedown", startDrawing);
-    canvas.addEventListener("mousemove", draw);
-    canvas.addEventListener("mouseup", stopDrawing);
-    canvas.addEventListener("mouseout", stopDrawing);
+      canvas.addEventListener("mousedown", startDrawing);
+      canvas.addEventListener("mousemove", draw);
+      canvas.addEventListener("mouseup", stopDrawing);
+      canvas.addEventListener("mouseout", stopDrawing);
 
-    canvas.addEventListener("contextmenu", resetDrawing);
-    canvas.addEventListener("contextmenu", function (e) {
-      e.preventDefault();
-    });
-    canvas.addEventListener("touchmove", function (e) {
-      e.startDrawing();
-      e.preventDefault();
-    });
+      canvas.addEventListener("contextmenu", resetDrawing);
+      canvas.addEventListener("contextmenu", function (e) {
+        e.preventDefault();
+      });
+      canvas.addEventListener("touchmove", function (e) {
+        e.startDrawing();
+        e.preventDefault();
+      });
 
-    function startDrawing(e) {
-      isDrawing = true;
-      draw(e);
-    }
+      function startDrawing(e) {
+        isDrawing = true;
+        draw(e);
+      }
 
-    function draw(e) {
-      if (!isDrawing) return;
+      function draw(e) {
+        if (!isDrawing) return;
 
-      const x = e.clientX - container.getBoundingClientRect().left;
-      const y = e.clientY - container.getBoundingClientRect().top;
+        const x = e.clientX - container.getBoundingClientRect().left;
+        const y = e.clientY - container.getBoundingClientRect().top;
 
-      context.beginPath();
-      context.arc(x, y, 5, 0, 2 * Math.PI);
-      context.fillStyle = "red"; // Set color to black
-      context.fill();
-      context.closePath();
-    }
+        context.beginPath();
+        context.arc(x, y, 5, 0, 2 * Math.PI);
+        context.fillStyle = "red"; // Set color to black
+        context.fill();
+        context.closePath();
+      }
 
-    function stopDrawing() {
-      isDrawing = false;
-    }
+      function stopDrawing() {
+        isDrawing = false;
+      }
 
-    function resetDrawing() {
-      context.clearRect(0, 0, canvas.width, canvas.height);
+      function resetDrawing() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+      }
     }
   }
 });

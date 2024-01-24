@@ -1,21 +1,13 @@
-// Lenis for smoother scrolling: https://github.com/studio-freight/lenis
-
 const lenis = new Lenis();
 
-const isTouchDevice =
-  "ontouchstart" in window ||
-  navigator.maxTouchPoints > 0 ||
-  navigator.msMaxTouchPoints > 0;
+lenis.on("scroll", (e) => {
+  console.log(e);
+});
 
-if (!isTouchDevice) {
-  lenis.on("scroll", (e) => {
-    console.log(e);
-  });
+lenis.on("scroll", ScrollTrigger.update);
 
-  function raf(time) {
-    lenis.raf(time);
-    requestAnimationFrame(raf);
-  }
+gsap.ticker.add((time) => {
+  lenis.raf(time * 1000);
+});
 
-  requestAnimationFrame(raf);
-}
+gsap.ticker.lagSmoothing(0);

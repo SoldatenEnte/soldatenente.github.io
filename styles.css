@@ -138,7 +138,7 @@ body {
   margin: 0;
   padding: 0;
   cursor: url("files/cursor.png") 32 32, pointer;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 .bg {
@@ -1067,7 +1067,7 @@ html.lenis {
 }
 
 .lenis.lenis-smooth {
-  scroll-behavior: auto;
+  scroll-behavior: auto !important;
 }
 
 .lenis.lenis-smooth [data-lenis-prevent] {
