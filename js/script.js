@@ -88,6 +88,18 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
+function toggleColor(element) {
+  // Wenn die Hintergrundfarbe transparent ist oder nicht festgelegt wurde
+  if (
+    !element.style.backgroundColor ||
+    element.style.backgroundColor === "transparent"
+  ) {
+    element.style.backgroundColor = "#f86c30"; // Setze die Farbe auf #f86c30
+  } else {
+    element.style.backgroundColor = "transparent"; // Setze die Farbe auf transparent
+  }
+}
+
 gsap.registerPlugin(ScrollTrigger);
 
 console.log("Script loaded successfully.");

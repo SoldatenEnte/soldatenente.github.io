@@ -786,6 +786,26 @@ nav .navbar-nav li a {
   width: 100%;
 }
 
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(5, 10em);
+  grid-template-rows: repeat(5, 10em);
+  gap: 1em;
+  text-align: center;
+  justify-content: center;
+}
+
+.grid-item {
+  font-size: var(--h5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 0.3em solid #f86c30;
+  border-radius: 1em;
+  height: 8em;
+  width: 8em;
+}
+
 .poem {
   font-size: var(--p);
   text-align: center;
@@ -964,6 +984,18 @@ a {
 }
 
 @media (max-width: 992px) {
+  .grid-container {
+    grid-template-columns: repeat(5, 4.4em);
+    grid-template-rows: repeat(5, 4.4em);
+    gap: 0.3em;
+  }
+
+  .grid-item {
+    font-size: calc(var(--p) * 0.8);
+    height: 5.4em;
+    width: 5.4em;
+  }
+
   .pirate-welcome {
     flex-direction: column;
     align-items: center;
