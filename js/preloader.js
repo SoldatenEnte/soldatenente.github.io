@@ -6,7 +6,7 @@ function startLoader() {
     function updateCounter() {
       if (curValue === 100) return;
 
-      curValue += Math.floor(Math.random() * 3) + 2;
+      curValue += Math.floor(Math.random() * 4) + 2;
 
       if (curValue > 100) curValue = 100;
 
@@ -20,6 +20,7 @@ function startLoader() {
 
       setTimeout(updateCounter, Math.floor(Math.random() * 200));
       window.scrollTo(0, document.body.scrollHeight);
+      console.log("Scroll");
     }
 
     updateCounter();
@@ -34,6 +35,7 @@ gsap.to(".counter", 0.25, {
   opacity: 0,
   onComplete: function () {
     window.scrollTo(0, 0);
+    console.log("WÄÄ");
   },
 });
 
