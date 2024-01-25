@@ -112,10 +112,9 @@ textElements.forEach((text) => {
     ease: "none",
     scrollTrigger: {
       trigger: text,
-      start: "1300% 80%",
-      end: "1600% 20%",
+      start: "1900% 80%",
+      end: "2200% 20%",
       scrub: 4,
-      markers: false,
     },
   });
 });
@@ -131,7 +130,6 @@ pirate_textElements.forEach((text) => {
       start: "50% 80%",
       end: "2600% 20%",
       scrub: 2,
-      markers: false,
     },
   });
 });
@@ -154,7 +152,6 @@ const tl_pirate_lock = gsap.timeline({
     end: "100% 20%",
     toggleActions: "play reverse play reverse",
     pin: true,
-    markers: true,
   },
 });
 
@@ -173,7 +170,6 @@ const tl_ship = gsap.timeline({
     start: "center center",
     end: "100% 20%",
     scrub: 3,
-    markers: false,
     onUpdate: (self) => {
       const progress = self.progress;
       const rotation = Math.sin(progress * Math.PI * 3) * 30;
@@ -208,7 +204,6 @@ tl_parallax_0 = gsap.timeline({
     start: "center center",
     end: "100% 0%",
     scrub: 3,
-    markers: false,
     toggleActions: "play reverse play reverse",
   },
 });
@@ -219,7 +214,6 @@ tl_parallax_1 = gsap.timeline({
     start: "center center",
     end: "100% 0%",
     scrub: 3,
-    markers: false,
     toggleActions: "play reverse play reverse",
   },
 });
@@ -230,7 +224,6 @@ tl_parallax_2 = gsap.timeline({
     start: "center center",
     end: "100% 0%",
     scrub: 3,
-    markers: false,
     toggleActions: "play reverse play reverse",
   },
 });
@@ -241,7 +234,6 @@ tl_parallax_3 = gsap.timeline({
     start: "center center",
     end: "100% 0%",
     scrub: 3,
-    markers: false,
     toggleActions: "play reverse play reverse",
   },
 });
@@ -252,7 +244,6 @@ tl_parallax_4 = gsap.timeline({
     start: "center center",
     end: "100% 0%",
     scrub: 3,
-    markers: false,
     toggleActions: "play reverse play reverse",
   },
 });
@@ -263,7 +254,6 @@ tl_parallax_5 = gsap.timeline({
     start: "center center",
     end: "100% 0%",
     scrub: 3,
-    markers: false,
     toggleActions: "play reverse play reverse",
   },
 });
@@ -274,7 +264,6 @@ tl_parallax_6 = gsap.timeline({
     start: "center center",
     end: "100% 0%",
     scrub: 3,
-    markers: false,
     toggleActions: "play reverse play reverse",
   },
 });
@@ -285,7 +274,6 @@ tl_parallax_text = gsap.timeline({
     start: "center center",
     end: "100% 0%",
     scrub: 2,
-    markers: false,
     toggleActions: "play reverse play reverse",
   },
 });
@@ -296,7 +284,6 @@ tl_parallax_7 = gsap.timeline({
     start: "center center",
     end: "100% 0%",
     scrub: 4,
-    markers: false,
     toggleActions: "play reverse play reverse",
   },
 });
@@ -307,7 +294,6 @@ tl_parallax_8 = gsap.timeline({
     start: "center center",
     end: "100% 0%",
     scrub: 4,
-    markers: false,
     toggleActions: "play reverse play reverse",
   },
 });

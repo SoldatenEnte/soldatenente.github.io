@@ -144,7 +144,7 @@ body {
 .bg {
   background-color: var(--background-color);
   color: var(--text-color);
-  background-image: url("files/backgroundBlur.png");
+  background-image: url("files/background.png");
   background-size: cover;
   z-index: -10;
 }
@@ -722,7 +722,6 @@ nav .navbar-nav li a {
   font-size: 9vw;
   font-weight: 900;
   color: var(--text-color);
-  mix-blend-mode: overlay;
 }
 
 .island-margin {
