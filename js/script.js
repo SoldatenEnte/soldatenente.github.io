@@ -102,7 +102,7 @@ function toggleColor(element) {
 
 gsap.registerPlugin(ScrollTrigger);
 
-console.log("Script loaded successfully.");
+console.log("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
 
 const textElements = gsap.utils.toArray(".navigator_text");
 
@@ -186,8 +186,6 @@ function updateContainerWidth() {
 
   if (navigatorContainer) {
     containerWidth = navigatorContainer.offsetWidth;
-  } else {
-    console.error("AAAAAAAHHHHHHHHHHHHHHH... (dies inside)");
   }
 }
 

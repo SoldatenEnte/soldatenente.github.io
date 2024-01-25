@@ -1,7 +1,7 @@
 const lenis = new Lenis();
 
 lenis.on("scroll", (e) => {
-  console.log(e);
+  console.log("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
 });
 
 lenis.on("scroll", ScrollTrigger.update);

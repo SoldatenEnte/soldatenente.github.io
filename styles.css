@@ -211,29 +211,7 @@ hr {
   height: 200px;
   margin: 0 1%;
 }
-
-.navbar {
-  background-color: rgb(0, 0, 0, 0);
-  height: 100px;
-  font-size: var(--h5);
-}
-
-.navbar-nav > li {
-  padding-left: 30px;
-  color: var(--text-color);
-}
-
-nav .navbar-nav li a {
-  color: var(--text-color) !important;
-}
-
-.brand-name {
-  font-weight: 800;
-  margin-left: 0.5rem;
-  letter-spacing: 0.03rem;
-  color: var(--primary-color);
-}
-
+/* PRELOADER */
 .overlay {
   position: fixed;
   width: 100vw;
@@ -539,7 +517,7 @@ nav .navbar-nav li a {
   justify-content: center;
   position: relative;
 
-  font-size: calc(var(--h1) * 1.7);
+  font-size: calc(var(--h1) * 1.5);
   font-weight: 900;
   user-select: none;
   line-height: 120%;
@@ -755,7 +733,7 @@ nav .navbar-nav li a {
   width: 90%;
 }
 
-#pirate-home-welcome {
+.pirate-home-welcome {
   width: 55%;
 }
 
@@ -1002,7 +980,8 @@ a {
     padding: 0;
   }
 
-  #pirate-home-welcome {
+  .pirate-home-welcome {
+    text-align: center;
     width: 90%;
   }
 
@@ -1011,10 +990,6 @@ a {
     margin-bottom: 2em;
     width: 60%;
     height: 0%;
-  }
-
-  #pirate-home-welcome {
-    text-align: center;
   }
 
   .pirate-welcome-text {

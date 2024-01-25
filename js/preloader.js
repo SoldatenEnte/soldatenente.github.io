@@ -1,27 +1,29 @@
 function startLoader() {
   let counterElement = document.querySelector(".counter");
-  let curValue = 0;
+  if(counterElement){
+    let curValue = 0;
 
-  function updateCounter() {
-    if (curValue === 100) return;
+    function updateCounter() {
+      if (curValue === 100) return;
 
-    curValue += Math.floor(Math.random() * 3) + 2;
+      curValue += Math.floor(Math.random() * 3) + 2;
 
-    if (curValue > 100) curValue = 100;
+      if (curValue > 100) curValue = 100;
 
-    counterElement.textContent = curValue;
+      counterElement.textContent = curValue;
 
-    const rotation = Math.sin((curValue / 100) * Math.PI * 4) * 25;
-    gsap.to(".preloader_icon", {
-      x: (curValue / 70) * window.innerWidth,
-      rotation: rotation,
-    });
+      const rotation = Math.sin((curValue / 100) * Math.PI * 4) * 25;
+      gsap.to(".preloader_icon", {
+        x: (curValue / 70) * window.innerWidth,
+        rotation: rotation,
+      });
 
-    setTimeout(updateCounter, Math.floor(Math.random() * 200));
-    window.scrollTo(0, document.body.scrollHeight);
+      setTimeout(updateCounter, Math.floor(Math.random() * 200));
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    updateCounter();
   }
-
-  updateCounter();
 }
 
 startLoader();
