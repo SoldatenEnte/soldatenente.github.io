@@ -4,6 +4,7 @@ const logo_2 = document.getElementById("logo_2");
 const ship = document.getElementById("ship-icon");
 
 const impressum = document.getElementById("impressumIcon");
+const radiospot = document.getElementById("radio-icon");
 const shipbutton = document.getElementById("ship-button");
 const light = document.getElementById("light");
 
@@ -18,6 +19,7 @@ modeToggle.addEventListener("click", function () {
     if (impressum) impressum.src = "files/icons/impressum.svg";
     if (shipbutton) shipbutton.src = "files/icons/ship_button.svg";
     if (light) light.src = "files/icons/light.svg";
+    if (radiospot) radiospot.src = "files/icons/radio-light.svg";
   } else {
     root.classList.add("light-mode");
     if (logo) logo.src = "files/logo_dark.svg";
@@ -26,5 +28,6 @@ modeToggle.addEventListener("click", function () {
     if (impressum) impressum.src = "files/icons/impressum_dark.svg";
     if (shipbutton) shipbutton.src = "files/icons/ship_button_dark.svg";
     if (light) light.src = "files/icons/dark.svg";
+    if (radiospot) radiospot.src = "files/icons/radio-dark.svg";
   }
 });

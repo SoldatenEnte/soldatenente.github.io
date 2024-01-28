@@ -615,7 +615,8 @@ hr {
   transform: translateX(7px);
 }
 
-.sidebar-top #impressum {
+.sidebar-top #impressum,
+.sidebar-top #radio{
   opacity: 0.5;
   width: 90%;
   margin-top: 1.5em;
@@ -623,7 +624,8 @@ hr {
   transform-origin: center;
 }
 
-.sidebar-top #impressum:hover {
+.sidebar-top #impressum:hover,
+.sidebar-top #radio:hover {
   transform: scale(1.1);
   opacity: 0.9;
 }
