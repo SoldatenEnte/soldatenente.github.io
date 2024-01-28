@@ -832,7 +832,7 @@ hr {
   width: 100%;
   margin: 0;
   padding: 0;
-  mask-image: url("files/cursor_mask.png") !important;
+  mask-image: url("/files/cursor_mask.png") !important;
   mask-repeat: no-repeat;
   mask-size: 150px;
   cursor: help;
