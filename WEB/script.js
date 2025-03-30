@@ -1,45 +1,43 @@
 const canvas = document.getElementById('textWallCanvas');
 const ctx = canvas.getContext('2d');
 
-// --- Configuration ---
+// Configuration
 const LOREM_IPSUM = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam nibh. Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit.`;
 
 const inputText = LOREM_IPSUM;
-const words = inputText.split(/\s+/); // Split into words
+const words = inputText.split(/\s+/);
 
 const MIN_CHUNK_SIZE = 2;
-const MAX_CHUNK_SIZE = 5; // Allow slightly larger chunks
+const MAX_CHUNK_SIZE = 5;
 const FONT_SIZE = 24;
 const LINE_HEIGHT = FONT_SIZE * 1.5;
-const CANVAS_PADDING = 50; // Left/Right padding for text lines
+const CANVAS_PADDING = 50; // Padding on left/right for text lines
 
-// --- Animation Randomness ---
+// Animation Randomness
 const MIN_FALL_SPEED = 0.4;
-const MAX_FALL_SPEED = 1.2; // Wider speed range
+const MAX_FALL_SPEED = 1.2;
 const MIN_SINE_AMPLITUDE = 15;
-const MAX_SINE_AMPLITUDE = 60; // Wider amplitude range
+const MAX_SINE_AMPLITUDE = 60;
 const MIN_SINE_FREQUENCY = 0.005;
-const MAX_SINE_FREQUENCY = 0.02; // Wider frequency range
+const MAX_SINE_FREQUENCY = 0.02;
 
-// --- Timing Control ---
-// Controls how many frames between the *target landing time* of consecutive chunks.
-// Lower value = faster text appearance. Higher value = slower.
-const CHUNK_LANDING_INTERVAL_FRAMES = 5; // Make text appear reasonably fast
-const LINE_START_DELAY_FRAMES = 30; // Delay before the first chunk of a new line starts falling
+// Timing Control
+// Frames between the *target landing* of consecutive chunks on the same line.
+const CHUNK_LANDING_INTERVAL_FRAMES = 5;
+// Delay before the first chunk of a *new line* starts falling (relative to previous line's end).
+const LINE_START_DELAY_FRAMES = 30;
+// How many frames the smooth landing interpolation takes.
+const LANDING_DURATION_FRAMES = 20;
 
-const LANDING_DURATION_FRAMES = 20; // How long the smooth landing interpolation takes
-
-// --- State Variables ---
-let wrappedLines = []; // Array of strings, where each string is a pre-wrapped line
-let preparedChunks = []; // Holds ALL chunks for ALL lines, pre-calculated
+// State Variables
+let wrappedLines = []; // Pre-wrapped lines of text based on canvas width
+let preparedChunks = []; // Holds ALL chunk objects with pre-calculated properties and timing
 let fallingChunks = []; // Chunks currently animating (falling or landing)
-let landedChunks = []; // Chunks that have fully landed
-let currentLineY = LINE_HEIGHT; // Starting Y for the first line
+let landedChunks = []; // Chunks that have finished animating and are stationary
 let frameCount = 0;
-let nextChunkIndexToSpawn = 0; // Index into the preparedChunks array
+let nextChunkIndexToSpawn = 0; // Tracks which chunk from preparedChunks is next
 
-// --- Helper Functions ---
-
+// Helper Functions
 function getRandom(min, max) {
     return Math.random() * (max - min) + min;
 }
@@ -49,49 +47,53 @@ function getRandomChunkSize() {
 }
 
 function lerp(start, end, t) {
+    // Clamp t between 0 and 1
     t = Math.max(0, Math.min(1, t));
     return start * (1 - t) + end * t;
 }
 
-// --- Text Processing ---
-
+// Text Processing
 function wrapText(textWords, maxWidth) {
     const lines = [];
     let currentLine = '';
-    ctx.font = `${FONT_SIZE}px Arial`; // Set font for measurement
+    // Need the font set to measure text accurately
+    ctx.font = `${FONT_SIZE}px Arial`;
 
     textWords.forEach(word => {
         const testLine = currentLine ? `${currentLine} ${word}` : word;
         const testWidth = ctx.measureText(testLine).width;
 
         if (testWidth <= maxWidth) {
+            // Word fits, add it to the current line
             currentLine = testLine;
         } else {
-            // Word doesn't fit, finalize the previous line (if any)
+            // Word doesn't fit, push the previous line
             if (currentLine) {
                 lines.push(currentLine);
             }
-            // Start new line with the current word
+            // Start a new line with the current word
             currentLine = word;
-             // Handle case where a single word is longer than the line - it will overflow
-             // A more complex solution would break the word, but let's keep it simple
+            // Handle the edge case where a single word is wider than the max width
             if (ctx.measureText(currentLine).width > maxWidth && lines.length > 0) {
                  console.warn("Word longer than line width:", currentLine);
+                 // It will just overflow for now
             }
         }
     });
 
-    // Add the last line
+    // Add the very last line
     if (currentLine) {
         lines.push(currentLine);
     }
-    console.log("Wrapped Lines:", lines);
+    console.log(`Wrapped text into ${lines.length} lines.`);
     return lines;
 }
 
+// Pre-calculates all chunk properties, including animation timings.
+// This is the core logic for the staggered falling effect.
 function prepareAllChunks() {
-    preparedChunks = []; // Reset
-    globalChunkIndex = 0;
+    preparedChunks = [];
+    let globalChunkIndex = 0; // Simple ID for debugging/ordering
 
     const actualLines = wrappedLines.filter(line => line.trim());
     const totalLines = actualLines.length;
@@ -100,78 +102,92 @@ function prepareAllChunks() {
         return;
     }
 
-    const bottomPadding = CANVAS_PADDING;
-    const firstLineY = canvas.height - bottomPadding;
+    // Text is drawn from bottom up, so calculate Y positions relative to canvas bottom
+    const bottomPadding = CANVAS_PADDING; // Use padding for bottom too
+    const firstLineY = canvas.height - bottomPadding; // Y position of the *baseline* of the last line
 
-    // --- Calculate Initial Buffer ---
-    // Estimate the maximum time any chunk might need to fall the full height
-    const estimatedMaxFallDistance = canvas.height - (-FONT_SIZE); // Max possible distance
-    // Ensure MIN_FALL_SPEED is not zero to avoid division errors
-    const safeMinFallSpeed = Math.max(0.01, MIN_FALL_SPEED);
-    const estimatedMaxFallDuration = estimatedMaxFallDistance / safeMinFallSpeed; // Time for slowest chunk over max distance
+    // --- Calculate Initial Time Buffer ---
+    // We need to schedule chunks based on when they *land*. To avoid chunks
+    // needing to spawn in the past (negative spawnFrame), we calculate a buffer
+    // based on the maximum possible fall time and add it to the schedule.
+    const estimatedMaxFallDistance = canvas.height; // From top to bottom
+    const safeMinFallSpeed = Math.max(0.01, MIN_FALL_SPEED); // Avoid division by zero
+    const estimatedMaxFallDuration = estimatedMaxFallDistance / safeMinFallSpeed;
 
-    // Add a substantial initial delay based on max fall time + landing + initial delay config
-    // This pushes the entire schedule forward so initial spawnFrames are likely positive
+    // Buffer = estimated slowest fall + landing time + initial delay between lines
     const initialTimeBuffer = Math.ceil(estimatedMaxFallDuration) + LANDING_DURATION_FRAMES + LINE_START_DELAY_FRAMES;
-    console.log(`Initial Time Buffer added: ${initialTimeBuffer} frames (MaxFallDur: ${Math.ceil(estimatedMaxFallDuration)}, Landing: ${LANDING_DURATION_FRAMES}, LineDelay: ${LINE_START_DELAY_FRAMES})`);
+    //console.log(`Initial Time Buffer added: ${initialTimeBuffer} frames`);
 
-    // This is the target settle time for the very *first* chunk (id: 0)
+    // This is the target frame number when the *very first* chunk (index 0) should finish landing.
     let currentChunkTargetSettleTime = frameCount + initialTimeBuffer;
 
-    ctx.font = `${FONT_SIZE}px Arial`;
+    ctx.font = `${FONT_SIZE}px Arial`; // Ensure font is set for measurements
 
-    // --- Iterate through lines FORWARDS (Same as before) ---
+    // Iterate through lines (bottom line of text is lineIndex 0 visually)
     actualLines.forEach((lineText, lineIndex) => {
+        // Calculate Y position for this specific line (moving upwards from firstLineY)
         const currentLineTargetY = firstLineY - lineIndex * LINE_HEIGHT;
-        let currentX = CANVAS_PADDING;
-        const lineChunkData = [];
+        let currentX = CANVAS_PADDING; // Start X for the first chunk on this line
+        const lineChunkData = []; // Temporary array for chunks on this line
 
-        // Split line (Same as before)
+        // Split the line into random-sized chunks
         let i = 0;
         while (i < lineText.length) {
             const chunkSize = getRandomChunkSize();
             const chunkText = lineText.substring(i, Math.min(i + chunkSize, lineText.length));
+            // Ignore chunks that are only whitespace
             if (chunkText.trim()) {
                 lineChunkData.push({ text: chunkText });
             }
             i += chunkText.length;
         }
 
-        // Apply inter-line delay adjustment *before* processing chunks for this line
+        // Apply delay *before* processing this line's chunks if it's not the first line.
+        // This ensures a pause between the last chunk of the previous line landing
+        // and the first chunk of this line landing.
         if (lineIndex > 0 && preparedChunks.length > 0) {
             const lastChunkSettleTime = preparedChunks[preparedChunks.length - 1].targetSettleTime;
-            // Ensure this line's first chunk starts settling *after* the previous line finished + delay
-            // Also ensures it doesn't go backward in time if intervals are small.
+            // This line's first chunk should settle *at least* LINE_START_DELAY_FRAMES
+            // after the previous line's last chunk settled.
             currentChunkTargetSettleTime = Math.max(currentChunkTargetSettleTime, lastChunkSettleTime + LINE_START_DELAY_FRAMES);
         }
 
-        // Process chunks in this line (Same timing logic as before)
+        // Calculate properties for each chunk on this line
         for (let c_idx = 0; c_idx < lineChunkData.length; c_idx++) {
-            // ... (rest of the chunk property calculation is identical) ...
-
             const chunkInfo = lineChunkData[c_idx];
             const text = chunkInfo.text;
             const textWidth = ctx.measureText(text).width;
-            const targetX = currentX;
-            const targetY = currentLineTargetY;
+            const targetX = currentX; // Final X position when landed
+            const targetY = currentLineTargetY; // Final Y position when landed
 
+            // Randomize animation properties
             const speed = getRandom(MIN_FALL_SPEED, MAX_FALL_SPEED);
             const amplitude = getRandom(MIN_SINE_AMPLITUDE, MAX_SINE_AMPLITUDE);
             const frequency = getRandom(MIN_SINE_FREQUENCY, MAX_SINE_FREQUENCY);
-            const sineOffset = Math.random() * Math.PI * 2;
-            const startY = -FONT_SIZE;
-            const fallDistance = targetY - startY;
-            const fallDurationFrames = fallDistance / speed; // Can be very large for bottom lines
+            const sineOffset = Math.random() * Math.PI * 2; // Random start phase for sine wave
 
-             // Calculate this specific chunk's settle time based on sequence
-             // The base 'currentChunkTargetSettleTime' incorporates the initial buffer and inter-line delays
+            // Calculate timing based on landing sequence
+            const startY = -FONT_SIZE; // Start position above the canvas
+            const fallDistance = targetY - startY;
+            const fallDurationFrames = fallDistance / speed;
+
+            // Calculate *this specific chunk's* target settle time based on its sequence in the line.
+            // The base `currentChunkTargetSettleTime` already includes the initial buffer and inter-line delays.
             const chunkTargetSettleTime = currentChunkTargetSettleTime + c_idx * CHUNK_LANDING_INTERVAL_FRAMES;
 
+            // When should the chunk *arrive* at targetY to start its landing interpolation?
             const targetArrivalTimeY = chunkTargetSettleTime - LANDING_DURATION_FRAMES;
-            // Crucial step: Calculate spawn frame relative to calculated arrival time
+
+            // Crucial: Calculate when the chunk needs to *spawn* to arrive at targetArrivalTimeY.
+            // Ensure spawn frame isn't in the past relative to the current frameCount.
             const spawnFrame = Math.max(frameCount, Math.round(targetArrivalTimeY - fallDurationFrames));
-             // Because chunkTargetSettleTime is now much larger due to initialTimeBuffer,
-             // targetArrivalTimeY - fallDurationFrames is much less likely to be <= frameCount for initial chunks
+            // The initialTimeBuffer makes it highly unlikely spawnFrame will be < frameCount initially.
+
+            // Total duration from spawn to full settlement (for alpha fade-in)
+            let totalAnimDuration = chunkTargetSettleTime - spawnFrame;
+            if (totalAnimDuration <= 0) {
+                 totalAnimDuration = 1; // Prevent division by zero, just appear instantly
+            }
 
             preparedChunks.push({
                 id: globalChunkIndex,
@@ -179,51 +195,55 @@ function prepareAllChunks() {
                 targetX: targetX, targetY: targetY, width: textWidth,
                 speed: speed, amplitude: amplitude, frequency: frequency, sineOffset: sineOffset,
                 spawnFrame: spawnFrame,
-                targetSettleTime: chunkTargetSettleTime,
-                hasSpawned: false, x: 0, y: 0, time: 0,
-                isLanding: false, landingProgress: 0, startXBeforeLand: 0,
-                totalAnimDuration: 1
+                targetSettleTime: chunkTargetSettleTime, // When it should be fully landed
+                hasSpawned: false, // Track if it's been added to fallingChunks
+                // Dynamic state updated during animation:
+                x: 0, y: 0, time: 0, // Current position and time for sine wave
+                isLanding: false, landingProgress: 0, startXBeforeLand: 0, // State for landing interpolation
+                totalAnimDuration: totalAnimDuration
             });
 
-            currentX += textWidth;
+            currentX += textWidth; // Move X for the next chunk on this line
             globalChunkIndex++;
         }
 
-        // Update the base time for the *next* line's potential delay calculation
+        // Update the base time reference for the *next* line's delay calculation.
+        // The next line's delay should be relative to when *this* line's *last* chunk settles.
         if (lineChunkData.length > 0) {
-            // The next line should start relative to when *this* line's last chunk settles
              currentTargetSettleTime = preparedChunks[preparedChunks.length - 1].targetSettleTime;
         }
-        // The inter-line delay itself is added at the *start* of the next line's processing loop.
+        // The LINE_START_DELAY_FRAMES is added at the *start* of the next line's loop.
 
-    }); // End actualLines.forEach
+    }); // End iterating through actualLines
 
-    // --- Final Sort (Same as before) ---
+    // Sort all prepared chunks globally by their calculated spawn frame.
+    // This ensures they appear in the correct visual order, even if lines overlap in time.
+    // Use ID as a tie-breaker for stability.
     preparedChunks.sort((a, b) => a.spawnFrame - b.spawnFrame || a.id - b.id);
 
-    console.log(`Prepared ${preparedChunks.length} total chunks (Snow Pile effect).`);
-    if(preparedChunks.length > 0) {
-         const firstChunk = preparedChunks.find(c => c.id === 0);
-         const lastChunk = preparedChunks[preparedChunks.length - 1];
-         console.log(`Chunk 0 Target Y: ${firstChunk?.targetY}, Settle: ${firstChunk?.targetSettleTime}, Spawn: ${firstChunk?.spawnFrame}`);
-         console.log(`Chunk ${lastChunk?.id} Target Y: ${lastChunk?.targetY}, Settle: ${lastChunk?.targetSettleTime}, Spawn: ${lastChunk?.spawnFrame}`);
-    }
+    console.log(`Prepared ${preparedChunks.length} total chunks.`);
+    // Optional: Log first/last chunk details for debugging timing
+    // if(preparedChunks.length > 0) {
+    //      const firstChunk = preparedChunks.find(c => c.id === 0);
+    //      const lastChunk = preparedChunks[preparedChunks.length - 1];
+    //      console.log(`Chunk 0: Target Y: ${firstChunk?.targetY}, Settle: ${firstChunk?.targetSettleTime}, Spawn: ${firstChunk?.spawnFrame}`);
+    //      console.log(`Chunk ${lastChunk?.id}: Target Y: ${lastChunk?.targetY}, Settle: ${lastChunk?.targetSettleTime}, Spawn: ${lastChunk?.spawnFrame}`);
+    // }
 }
 
 
-// --- Animation Logic ---
-
+// Animation Loop
 function updateAndDraw() {
     // Clear canvas
-    ctx.fillStyle = '#000'; // Background color
+    ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Default text settings (can be overridden per chunk)
+    // Default text settings
     ctx.font = `${FONT_SIZE}px Arial`;
-    ctx.textBaseline = 'bottom';
-    const baseFillColor = '255, 255, 255'; // Base color (white) as RGB components
+    ctx.textBaseline = 'bottom'; // Align text baseline to the calculated Y positions
+    const baseFillColor = '255, 255, 255'; // White
 
-    // 1. Spawn new chunks (same as before)
+    // 1. Spawn new chunks if it's their time
     while (nextChunkIndexToSpawn < preparedChunks.length &&
            frameCount >= preparedChunks[nextChunkIndexToSpawn].spawnFrame)
     {
@@ -231,155 +251,149 @@ function updateAndDraw() {
         if (!chunkData.hasSpawned) {
             chunkData.hasSpawned = true;
 
-            // Set initial position and state for animation
-             // Use a calculated startX based on where the sine *would* be at spawn, or just random? Let's stick to random offset near target for now.
-            chunkData.x = chunkData.targetX + (Math.random() - 0.5) * 50; // Initial random X near target
-            chunkData.y = -FONT_SIZE; // Start above screen
-            chunkData.time = 0; // Reset animation time counter for sine wave
+            // Initialize dynamic properties for animation start
+            chunkData.x = chunkData.targetX + (Math.random() - 0.5) * 50; // Start near target X with some randomness
+            chunkData.y = -FONT_SIZE; // Start above the canvas
+            chunkData.time = 0; // Reset time for sine wave calculation
             chunkData.isLanding = false;
             chunkData.landingProgress = 0;
 
-            // Calculate total animation duration for alpha calculation later
-            chunkData.totalAnimDuration = chunkData.targetSettleTime - chunkData.spawnFrame;
-            if (chunkData.totalAnimDuration <= 0) {
-                 chunkData.totalAnimDuration = 1; // Avoid division by zero, make it instantly opaque
-            }
-
-
-            fallingChunks.push(chunkData);
+            fallingChunks.push(chunkData); // Add to the list of active chunks
         }
         nextChunkIndexToSpawn++;
     }
 
 
-    // 2. Update and draw falling/landing chunks
-    const stillAnimating = []; // Chunks still falling or landing
+    // 2. Update and draw currently falling/landing chunks
+    const stillAnimating = []; // Build a new list of chunks that are still moving
     for (let i = 0; i < fallingChunks.length; i++) {
         const chunk = fallingChunks[i];
-        let chunkHasLanded = false;
+        let chunkHasJustLanded = false; // Flag to know if it finished landing *this frame*
 
-        // Calculate alpha based on progress towards settlement
+        // Calculate alpha fade-in based on progress towards settlement time
         const elapsedFrames = frameCount - chunk.spawnFrame;
-        // Ensure progress doesn't exceed 1, especially important before it starts landing
         const rawProgress = Math.max(0, elapsedFrames / chunk.totalAnimDuration);
         const alpha = Math.min(1, rawProgress); // Clamp alpha between 0 and 1
 
         if (chunk.isLanding) {
-            // --- Landing Phase ---
+            // --- Landing Phase: Interpolate X smoothly to target ---
             chunk.landingProgress += 1 / LANDING_DURATION_FRAMES;
             chunk.x = lerp(chunk.startXBeforeLand, chunk.targetX, chunk.landingProgress);
-            chunk.y = chunk.targetY; // Lock Y
+            chunk.y = chunk.targetY; // Keep Y fixed at target
 
             if (chunk.landingProgress >= 1) {
-                chunk.x = chunk.targetX; // Ensure final position
+                // Finished landing!
+                chunk.x = chunk.targetX; // Ensure exact final position
                 chunk.y = chunk.targetY;
-                landedChunks.push(chunk); // Move to landed
-                chunkHasLanded = true;
-                // Don't draw here, let landed section handle it with full alpha
+                landedChunks.push(chunk); // Move to the landed list
+                chunkHasJustLanded = true;
+                // Don't draw it here; it will be drawn by the landedChunks loop below
             }
 
         } else {
-            // --- Falling Phase ---
+            // --- Falling Phase: Move Y down and apply sine wave to X ---
             chunk.y += chunk.speed;
-            chunk.time += 1;
+            chunk.time += 1; // Increment time for sine calculation
 
-            // Calculate sine wave (same as before)
+            // Calculate horizontal position with damping sine wave
+            // Damping makes the wave smaller as it approaches the target Y
             const distanceToTargetY = Math.max(0, chunk.targetY - chunk.y);
+            // Damping factor decreases rapidly as it gets closer (quadratic falloff)
             const dampingFactor = Math.min(1, distanceToTargetY / (LINE_HEIGHT * 3));
             const effectiveAmplitude = chunk.amplitude * dampingFactor * dampingFactor;
+            // Calculate current X based on target + sine offset
             const currentSineX = chunk.targetX + Math.sin(chunk.time * chunk.frequency + chunk.sineOffset) * effectiveAmplitude;
             chunk.x = currentSineX;
 
-            // Check if crossed the landing threshold
+            // Check if it has reached or passed its target Y position
             if (chunk.y >= chunk.targetY) {
-                chunk.y = chunk.targetY;
-                chunk.isLanding = true;
+                chunk.y = chunk.targetY; // Snap to target Y
+                chunk.isLanding = true; // Start the landing phase
                 chunk.landingProgress = 0;
-                chunk.startXBeforeLand = chunk.x;
-                 // Don't reset alpha here, let it continue increasing during landing
+                chunk.startXBeforeLand = chunk.x; // Store current X for interpolation start
+                // Alpha continues increasing during the landing phase
             }
         }
 
-        // Draw the chunk if it hasn't fully landed yet in *this frame*
-         if (!chunkHasLanded) {
-             // Set the fill style with calculated alpha
+        // Draw the chunk if it hasn't fully landed *in this frame*
+         if (!chunkHasJustLanded) {
+             // Apply the calculated alpha for fade-in effect
              ctx.fillStyle = `rgba(${baseFillColor}, ${alpha})`;
              ctx.fillText(chunk.text, chunk.x, chunk.y);
-             stillAnimating.push(chunk); // Keep animating it
+             stillAnimating.push(chunk); // Keep it in the active list for the next frame
          }
     }
-    fallingChunks = stillAnimating; // Update the list of animating chunks
+    fallingChunks = stillAnimating; // Update the active list
 
 
-    // 3. Draw fully landed chunks (ensure they are fully opaque)
-    ctx.fillStyle = `rgba(${baseFillColor}, 1)`; // Set to full alpha for landed chunks
+    // 3. Draw fully landed chunks (always fully opaque)
+    ctx.fillStyle = `rgba(${baseFillColor}, 1)`; // Full white
     for (let i = 0; i < landedChunks.length; i++) {
         const chunk = landedChunks[i];
-        // Draw at final target position
+        // Draw at their final, exact target position
         ctx.fillText(chunk.text, chunk.targetX, chunk.targetY);
     }
 
-    // 4. Check if animation is complete (same as before)
+    // 4. Check if the entire animation is complete
     if (landedChunks.length === preparedChunks.length && preparedChunks.length > 0) {
          console.log("All chunks landed. Animation complete.");
-         return; // Stop the animation loop
+         // Stop the animation loop by not requesting the next frame
+         return;
     }
 
-
     frameCount++;
-    requestAnimationFrame(updateAndDraw); // Loop the animation
+    requestAnimationFrame(updateAndDraw); // Continue the loop
 }
 
-// --- Initialization ---
-
+// Initialization and Setup
 function setup() {
-    // Reset state completely
+    // Reset all state variables for a fresh start (e.g., on resize)
     frameCount = 0;
     nextChunkIndexToSpawn = 0;
     fallingChunks = [];
     landedChunks = [];
     preparedChunks = [];
 
+    // Match canvas dimensions to the window size
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // Calculate available width for text
+    // Determine the maximum width available for text lines
     const maxLineWidth = canvas.width - (CANVAS_PADDING * 2);
     if (maxLineWidth <= 0) {
-         console.error("Canvas too narrow for padding.");
-         return; // Avoid errors if canvas is extremely small
+         console.error("Canvas too narrow for padding. Cannot display text.");
+         return; // Stop if canvas is impossibly small
     }
 
-
-    // 1. Wrap text based on canvas width
+    // 1. Wrap the input text into lines based on the available width
     wrappedLines = wrapText(words, maxLineWidth);
 
-    // 2. Pre-calculate all chunk data, including spawn times
+    // 2. Pre-calculate all chunk data, including animation timing
     prepareAllChunks();
 
-     if (preparedChunks.length === 0) {
-         console.warn("No chunks were prepared. Check input text or wrapping logic.");
-         return;
-     }
+    if (preparedChunks.length === 0) {
+        // This might happen if the input text is empty or wrapping fails
+        console.warn("No chunks were prepared. Check input text or wrapping logic.");
+        return;
+    }
 
     // 3. Start the animation loop
     requestAnimationFrame(updateAndDraw);
 }
 
-// --- Start ---
+// Initial Start
 setup();
 
-// --- Resize Handling ---
+// Handle window resizing
 let resizeTimeout;
 window.addEventListener('resize', () => {
-    // Debounce resize event
+    // Use debouncing to avoid restarting the animation excessively during resize
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(() => {
         console.log("Resizing... Restarting animation.");
-        // Stop the current animation loop before restarting
-        // How to reliably stop requestAnimationFrame? We can't directly.
-        // The best way is to prevent the *next* call within the loop,
-        // but since setup() starts a new one, we just reset state.
-        setup(); // Re-calculate everything and restart
-    }, 250); // Wait 250ms after resize stops
+        // A simple way to restart is to call setup() again.
+        // This will reset state and recalculate everything based on the new size.
+        // Note: This cancels the *current* animation and starts a completely new one.
+        setup();
+    }, 250); // Wait 250ms after the user stops resizing
 });
