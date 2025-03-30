@@ -91,105 +91,123 @@ function wrapText(textWords, maxWidth) {
 
 function prepareAllChunks() {
     preparedChunks = []; // Reset
-    currentLineY = LINE_HEIGHT;
-    let globalChunkIndex = 0;
-    // Target time for the *first chunk of the first line* to be fully settled
-    let targetSettleTimeBase = frameCount + LINE_START_DELAY_FRAMES + LANDING_DURATION_FRAMES; // Allow time for fall + landing
+    globalChunkIndex = 0;
 
-    ctx.font = `${FONT_SIZE}px Arial`; // Ensure font is set for measurements
+    const actualLines = wrappedLines.filter(line => line.trim());
+    const totalLines = actualLines.length;
+    if (totalLines === 0) {
+        console.warn("No lines to display after wrapping.");
+        return;
+    }
 
-    wrappedLines.forEach((lineText, lineIndex) => {
-        if (!lineText.trim()) return; // Skip empty lines
+    const bottomPadding = CANVAS_PADDING;
+    const firstLineY = canvas.height - bottomPadding;
 
+    // --- Calculate Initial Buffer ---
+    // Estimate the maximum time any chunk might need to fall the full height
+    const estimatedMaxFallDistance = canvas.height - (-FONT_SIZE); // Max possible distance
+    // Ensure MIN_FALL_SPEED is not zero to avoid division errors
+    const safeMinFallSpeed = Math.max(0.01, MIN_FALL_SPEED);
+    const estimatedMaxFallDuration = estimatedMaxFallDistance / safeMinFallSpeed; // Time for slowest chunk over max distance
+
+    // Add a substantial initial delay based on max fall time + landing + initial delay config
+    // This pushes the entire schedule forward so initial spawnFrames are likely positive
+    const initialTimeBuffer = Math.ceil(estimatedMaxFallDuration) + LANDING_DURATION_FRAMES + LINE_START_DELAY_FRAMES;
+    console.log(`Initial Time Buffer added: ${initialTimeBuffer} frames (MaxFallDur: ${Math.ceil(estimatedMaxFallDuration)}, Landing: ${LANDING_DURATION_FRAMES}, LineDelay: ${LINE_START_DELAY_FRAMES})`);
+
+    // This is the target settle time for the very *first* chunk (id: 0)
+    let currentChunkTargetSettleTime = frameCount + initialTimeBuffer;
+
+    ctx.font = `${FONT_SIZE}px Arial`;
+
+    // --- Iterate through lines FORWARDS (Same as before) ---
+    actualLines.forEach((lineText, lineIndex) => {
+        const currentLineTargetY = firstLineY - lineIndex * LINE_HEIGHT;
         let currentX = CANVAS_PADDING;
-        let lineChunkIndex = 0;
-        const lineChunksTemp = []; // Temporary array to calculate line timing
+        const lineChunkData = [];
 
-        // 1. Split the wrapped line into smaller chunks (same as before)
+        // Split line (Same as before)
         let i = 0;
         while (i < lineText.length) {
             const chunkSize = getRandomChunkSize();
             const chunkText = lineText.substring(i, Math.min(i + chunkSize, lineText.length));
-             if (chunkText.trim()) {
-                 lineChunksTemp.push(chunkText);
-             }
+            if (chunkText.trim()) {
+                lineChunkData.push({ text: chunkText });
+            }
             i += chunkText.length;
         }
 
-        // 2. Pre-calculate properties and spawn times for each chunk in the line
-        lineChunksTemp.forEach((text) => {
+        // Apply inter-line delay adjustment *before* processing chunks for this line
+        if (lineIndex > 0 && preparedChunks.length > 0) {
+            const lastChunkSettleTime = preparedChunks[preparedChunks.length - 1].targetSettleTime;
+            // Ensure this line's first chunk starts settling *after* the previous line finished + delay
+            // Also ensures it doesn't go backward in time if intervals are small.
+            currentChunkTargetSettleTime = Math.max(currentChunkTargetSettleTime, lastChunkSettleTime + LINE_START_DELAY_FRAMES);
+        }
+
+        // Process chunks in this line (Same timing logic as before)
+        for (let c_idx = 0; c_idx < lineChunkData.length; c_idx++) {
+            // ... (rest of the chunk property calculation is identical) ...
+
+            const chunkInfo = lineChunkData[c_idx];
+            const text = chunkInfo.text;
             const textWidth = ctx.measureText(text).width;
             const targetX = currentX;
-            const targetY = currentLineY;
+            const targetY = currentLineTargetY;
 
-            // --- Calculate Animation Parameters (Random) ---
             const speed = getRandom(MIN_FALL_SPEED, MAX_FALL_SPEED);
             const amplitude = getRandom(MIN_SINE_AMPLITUDE, MAX_SINE_AMPLITUDE);
             const frequency = getRandom(MIN_SINE_FREQUENCY, MAX_SINE_FREQUENCY);
             const sineOffset = Math.random() * Math.PI * 2;
-            const startY = -FONT_SIZE; // Start above canvas
-
-            // --- Calculate Timing (Revised) ---
+            const startY = -FONT_SIZE;
             const fallDistance = targetY - startY;
-            // Time needed just to fall from startY to targetY
-            const fallDurationFrames = fallDistance / speed;
+            const fallDurationFrames = fallDistance / speed; // Can be very large for bottom lines
 
-            // Calculate the target frame number when this chunk should be *fully settled*
-            // This is sequenced based on its position in the line.
-            const targetSettleTime = targetSettleTimeBase + lineChunkIndex * CHUNK_LANDING_INTERVAL_FRAMES;
+             // Calculate this specific chunk's settle time based on sequence
+             // The base 'currentChunkTargetSettleTime' incorporates the initial buffer and inter-line delays
+            const chunkTargetSettleTime = currentChunkTargetSettleTime + c_idx * CHUNK_LANDING_INTERVAL_FRAMES;
 
-            // To settle at targetSettleTime, it must *arrive* at targetY at:
-            const targetArrivalTimeY = targetSettleTime - LANDING_DURATION_FRAMES;
-
-            // To arrive at targetY at targetArrivalTimeY, it must *spawn* at:
+            const targetArrivalTimeY = chunkTargetSettleTime - LANDING_DURATION_FRAMES;
+            // Crucial step: Calculate spawn frame relative to calculated arrival time
             const spawnFrame = Math.max(frameCount, Math.round(targetArrivalTimeY - fallDurationFrames));
-             // Ensure spawnFrame isn't in the past relative to the *current* frameCount when preparing.
-             // If calculation results in a past frame, spawn immediately (or very soon).
-
+             // Because chunkTargetSettleTime is now much larger due to initialTimeBuffer,
+             // targetArrivalTimeY - fallDurationFrames is much less likely to be <= frameCount for initial chunks
 
             preparedChunks.push({
-                id: globalChunkIndex, // Unique ID
+                id: globalChunkIndex,
                 text: text,
-                targetX: targetX,
-                targetY: targetY,
-                width: textWidth,
-                speed: speed,
-                amplitude: amplitude,
-                frequency: frequency,
-                sineOffset: sineOffset,
-                spawnFrame: spawnFrame, // Use the newly calculated spawn frame
-                targetSettleTime: targetSettleTime, // Store this for potential debugging/verification
-                hasSpawned: false,
-
-                // Initial state when spawned (will be set later)
-                x: 0, y: 0, time: 0,
-                isLanding: false, landingProgress: 0, startXBeforeLand: 0
+                targetX: targetX, targetY: targetY, width: textWidth,
+                speed: speed, amplitude: amplitude, frequency: frequency, sineOffset: sineOffset,
+                spawnFrame: spawnFrame,
+                targetSettleTime: chunkTargetSettleTime,
+                hasSpawned: false, x: 0, y: 0, time: 0,
+                isLanding: false, landingProgress: 0, startXBeforeLand: 0,
+                totalAnimDuration: 1
             });
 
             currentX += textWidth;
-            lineChunkIndex++;
             globalChunkIndex++;
-        });
-
-        currentLineY += LINE_HEIGHT;
-        // Update the base settle time for the *next* line.
-        // It should start after the last chunk of *this* line has settled, plus a delay.
-        if (lineChunksTemp.length > 0) {
-             const lastChunkSettleTime = targetSettleTimeBase + (lineChunksTemp.length - 1) * CHUNK_LANDING_INTERVAL_FRAMES;
-             // Add the inter-line delay. The next chunk also needs its landing duration accounted for.
-             targetSettleTimeBase = lastChunkSettleTime + LINE_START_DELAY_FRAMES;
-        } else {
-             // If line was empty, just add a small time step before next line potentially starts
-             targetSettleTimeBase += CHUNK_LANDING_INTERVAL_FRAMES;
         }
-    });
-    console.log(`Prepared ${preparedChunks.length} total chunks.`);
-    // Sort prepared chunks strictly by spawnFrame to handle any minor calculation overlaps
-    // This ensures that if two chunks calculate to the same frame, the one intended earlier appears first.
-    preparedChunks.sort((a, b) => a.spawnFrame - b.spawnFrame || a.id - b.id); // Primary sort by spawn, secondary by original order
-     console.log('Chunk 0 Target Settle:', preparedChunks[0]?.targetSettleTime, 'Spawn:', preparedChunks[0]?.spawnFrame);
-     console.log('Chunk 1 Target Settle:', preparedChunks[1]?.targetSettleTime, 'Spawn:', preparedChunks[1]?.spawnFrame);
 
+        // Update the base time for the *next* line's potential delay calculation
+        if (lineChunkData.length > 0) {
+            // The next line should start relative to when *this* line's last chunk settles
+             currentTargetSettleTime = preparedChunks[preparedChunks.length - 1].targetSettleTime;
+        }
+        // The inter-line delay itself is added at the *start* of the next line's processing loop.
+
+    }); // End actualLines.forEach
+
+    // --- Final Sort (Same as before) ---
+    preparedChunks.sort((a, b) => a.spawnFrame - b.spawnFrame || a.id - b.id);
+
+    console.log(`Prepared ${preparedChunks.length} total chunks (Snow Pile effect).`);
+    if(preparedChunks.length > 0) {
+         const firstChunk = preparedChunks.find(c => c.id === 0);
+         const lastChunk = preparedChunks[preparedChunks.length - 1];
+         console.log(`Chunk 0 Target Y: ${firstChunk?.targetY}, Settle: ${firstChunk?.targetSettleTime}, Spawn: ${firstChunk?.spawnFrame}`);
+         console.log(`Chunk ${lastChunk?.id} Target Y: ${lastChunk?.targetY}, Settle: ${lastChunk?.targetSettleTime}, Spawn: ${lastChunk?.spawnFrame}`);
+    }
 }
 
 
