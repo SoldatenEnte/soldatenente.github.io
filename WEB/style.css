@@ -1,0 +1,19 @@
+body {
+    margin: 0;
+    overflow: hidden; /* Hide scrollbars */
+    background-color: #000; /* Black background like a dark room */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Ensure body takes full viewport height */
+}
+
+canvas {
+    display: block;
+    /* You might want to set explicit width/height matching projector resolution later,
+       but this makes it fill the window for now. */
+    /* Example for fixed size (adjust aspect ratio for 8x10m, e.g., 1000x800 or 1250x1000) */
+    /* width: 1250px; */
+    /* height: 1000px; */
+    background-color: #111; /* Slightly lighter background for canvas if needed */
+}
