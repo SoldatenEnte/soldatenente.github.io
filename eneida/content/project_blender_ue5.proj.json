@@ -1,0 +1,6 @@
+{
+    "name": "Blender to UE5 Traffic Light",
+    "type": "Project",
+    "description": "Conceptualized, designed, and modelled a unique 'two-wheeled' traffic light asset in Blender. Processed it through compositing and successfully integrated it as a functional element within an Unreal Engine 5 environment as part of Medieninformatik 2 (2024).",
+    "tech": ["Blender", "3D Modeling", "Texturing", "Compositing", "Unreal Engine 5", "Asset Pipeline"]
+  }

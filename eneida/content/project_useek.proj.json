@@ -1,0 +1,8 @@
+{
+    "name": "uSeek Interactive Puzzle",
+    "type": "Project",
+    "description": "An immersive pirate-themed puzzle website designed for a multi-hour solving experience. Features complex animations and 3D object integration. Awarded 'Best Website' in Medieninformatik 1 (2023/2024).",
+    "tech": ["HTML", "CSS", "JavaScript", "GSAP (Animation)", "Web Graphics (3D)"],
+    "repo": "https://github.com/SoldatenEnte/mi1_website_wise23",
+    "link": "https://soldatenente.github.io/mi1_website_wise23/"
+  }

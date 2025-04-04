@@ -1,0 +1,8 @@
+{
+    "name": "DuckSlayer",
+    "type": "Project",
+    "description": "Play as a bubble guy surfing on soap, cleaning a bathtub by slaying rubber ducks and performing stunts. Built in 48h for Global Game Jam 2025, winning 'Best Game' at the University Bremen site.",
+    "tech": ["Godot Engine", "GDScript", "2D Game Development", "Game Jam"],
+    "repo": "https://github.com/SoldatenEnte/ggj25",
+    "link": "https://soldatenente.github.io/ggj25-page/"
+  }

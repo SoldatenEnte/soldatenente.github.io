@@ -1,0 +1,6 @@
+{
+    "name": "HueTogether",
+    "type": "Project",
+    "description": "A 2-player split-screen cooperative puzzle game. Player 1 (Red) and Player 2 (Blue) must work together, interacting only with objects matching their assigned color. Developed for Media Engineering (2024/2025).",
+    "tech": ["Unreal Engine 5", "Game Logic (Blueprints/C++)", "Split-Screen", "Puzzle Design"]
+  }

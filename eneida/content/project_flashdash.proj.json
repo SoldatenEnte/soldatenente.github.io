@@ -1,0 +1,6 @@
+{
+    "name": "FlashDash",
+    "type": "Project",
+    "description": "A large-scale physical game installation. Players on opposing podiums control light pulses sent along a ceiling-mounted LED strip, playing a 'Pong'-like reflex game. Features custom controllers, stereo sound, and a central score display.",
+    "tech": ["Electronics", "Arduino (C++)", "LED Strips", "Custom Hardware", "Physical Computing", "Game Design"]
+  }

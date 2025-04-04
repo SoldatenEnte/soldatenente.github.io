@@ -1,0 +1,4 @@
+{
+    "placeholder": "U3lzdGVtIFNlY3VyaXR5IExvZyBBbHBoYSAtIEZSRUdNRU5UXzAxCkBBdXRoZW50aWNhdGlvbiBhdHRlbXB0IGZyb20gSVAgMTkyLjE2OC4xLjk5IC0gW0ZBSUxVUkVdClBBQ2Nlc3MgZ3JhbnRlZCB0byB1c2VyIE9wZXJhdG9yIC0gW1NVQ0NFU1NdCkBBbGVydDogVW51c3VhbCBkYXRhIHBhY2tldCBzaWduYXR1cmUgZGV0ZWN0ZWQgZnJvbSBub2RlICdwcm9qZWN0X2JldGEnLgpaU2VjdXJpdHkgcHJvdG9jb2wgJ0RBVEFfR0hPU1QnIGFjdGl2YXRlZC4=",
+    "decrypted": "--- System Security Log Alpha - FRAGMENT_01 ---\nTimestamp: 4788.1\n[AUTH] Authentication attempt from IP 192.168.1.99 - [FAILURE]\n[AUTH] Access granted to user 'Operator' - [SUCCESS]\n[ALERT] Unusual data packet signature detected originating from node 'project_automata'. Possible data leak.\n[SYSTEM] Security protocol 'DATA_GHOST' activated due to anomaly.\n[WARN] Firewall rule modified externally: Port 7777 opened (Unknown Service).\n[INFO] Recommend immediate system audit and isolation of 'project_automata'. Further fragments may exist.\n--- End Fragment ---"
+  }

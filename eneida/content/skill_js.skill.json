@@ -1,0 +1,6 @@
+{
+    "name": "JavaScript (Proficient)",
+    "type": "Skill",
+    "level": "Proficient",
+    "details": "Strong understanding of modern JavaScript (ES6+), including asynchronous programming (async/await, Promises), DOM manipulation, and event handling. Experience applying JS in various contexts: creating interactive frontend experiences with libraries like GSAP (animations) and Three.js (3D graphics), integrating with backend services like Firebase, and building UIs with frameworks like React (basic familiarity)."
+}

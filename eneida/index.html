@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>INITIALIZING ACCESS :: [YOUR NAME] SECURE_TERMINAL</title>
+        <link rel="stylesheet" href="style.css">
+        <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
+        
+    </head>
+    <body>
+        <!-- Particle Background -->
+        <canvas id="particle-canvas"></canvas>
+
+        <!-- Boot Sequence Screen (Initially Visible) -->
+        <div id="boot-screen" class="visible">
+            <div id="boot-sequence"></div>
+            <div id="project-title-text">< PROJECT ></div>
+            <pre id="ascii-logo" aria-hidden="true"></pre>
+            <div id="boot-loader">
+                <span class="loader-text">SYSTEM CHECK</span> <span class="loader-bar">[          ]</span>
+            </div>
+            <div id="copyright-notice">
+                © Aaron Postels
+            </div>
+        </div>
+
+        <!-- Login Screen (Initially Hidden) -->
+        <div id="login-screen" class="hidden">
+            <div class="auth-module-wrapper">
+                <!-- Added wrapper for potential perspective/animations -->
+                <div id="auth-module" class="auth-module">
+                    <!-- Renamed main container, added ID -->
+                    <!-- Header -->
+                    <div class="auth-header">
+                        <!-- NEW: Top Brackets -->
+                        <div class="header-brackets">
+                            <span class="bracket top-left"></span>
+                            <span class="bracket top-right"></span>
+                        </div>
+                        <!-- End NEW -->
+                        <div class="auth-title-line top"></div>
+                        <h1>SECURE AUTHENTICATION</h1>
+                        <p class="auth-subtitle">// RETINAL SCAN & V-ID BYPASS MODE //</p>
+                        <div class="auth-title-line bottom"></div>
+                    </div>
+                    <!-- Core Input Area -->
+                    <div class="auth-core">
+                        <div class="input-container">
+                            <label for="password" class="password-label">ACCESS CODE:</label>
+                            <div class="input-field-wrapper">
+                                <span class="input-bracket left">[</span>
+                                <input type="password" id="password" class="password-input" autofocus>
+                                <span class="input-bracket right">]</span>
+                                <div class="input-glow"></div>
+                                <!-- Glow effect element -->
+                                <div class="scanline-indicator"></div>
+                                <!-- Animated scanline -->
+                            </div>
+                        </div>
+                        <p id="login-error" class="error-message"></p>
+                        <!-- Error message moved here -->
+                    </div>
+                    <!-- Footer/Hint Area -->
+                    <div class="auth-footer">
+                        <div class="status-lights">
+                            <span class="light red"></span>
+                            <span class="light amber active"></span>
+                            <span class="light green"></span>
+                        </div>
+                        <p class="hint">Hint: The year the replicants arrived.</p>
+                        <div class="footer-brackets">
+                            <span class="bracket bottom-left"></span>
+                            <span class="bracket bottom-right"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Access Granted Overlay (Initially Hidden) -->
+        <div id="access-granted-overlay" class="hidden">
+            <!-- Hexagonal Unlocking Mechanism -->
+            <div id="access-granted-mechanism">
+                <div class="hex-ring hex-ring-1"></div>
+                <div class="hex-ring hex-ring-2"></div>
+                <div class="hex-ring hex-ring-3"></div>
+                <div class="hex-ring hex-ring-4"></div>
+                <div class="hex-core"></div>
+            </div>
+
+            <!-- NEW: Text Container -->
+            <div id="access-granted-text-container">
+                <h1 id="access-granted-text">ACCESS GRANTED</h1>
+                <p id="access-granted-subtext">// Quantum Lock Disengaged //</p>
+            </div>
+            <!-- End Text Container -->
+
+        </div>
+
+        <!-- Main Terminal (Initially Hidden) -->
+        <div id="terminal" class="hidden">
+            <div id="output"></div>
+            <div id="input-line" tabindex="-1">
+                <span class="prompt">user@portfolio:~$</span>
+                <input type="text" id="command-input" autocomplete="off" spellcheck="false">
+            </div>
+        </div>
+
+        <!-- Annoying Popup Overlay (Initially Hidden) -->
+        <div id="annoying-popup" class="hidden">
+            <div class="popup-content glitch">
+                <h2>SYSTEM ALERT!</h2>
+                <p>Unauthorised access detected! Your data is compromised!</p>
+                <p>Do you want to sacrifice your files to appease the digital ghosts?</p>
+                <button id="popup-close-btn">Attempt to Close</button>
+                <p>(Closing might not work as expected...)</p>
+            </div>
+        </div>
+        
+        <!-- SCRIPT TAG UPDATED -->
+
+        <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+
+        <!-- Firestore Database - Compatibility Version -->
+        <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+
+        <!-- OPTIONAL: Analytics - Compatibility Version -->
+        <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics-compat.js"></script>
+
+        <script>
+          // Your web app's Firebase configuration (remains the same)
+          const firebaseConfig = {
+            apiKey: "AIzaSyAuR7FBPQNSekCIU_nS7N-w5rVn1slYizE", // Keep your actual key
+            authDomain: "eneida-tetris-leaderboard.firebaseapp.com",
+            projectId: "eneida-tetris-leaderboard",
+            storageBucket: "eneida-tetris-leaderboard.firebasestorage.app",
+            messagingSenderId: "557485070697",
+            appId: "1:557485070697:web:020fbfb1e56b394d5685f8",
+            measurementId: "G-LRV2PB1JMG"
+          };
+
+          // Initialize Firebase using the global 'firebase' object
+          // This will now work because the -compat scripts create it.
+          const app = firebase.initializeApp(firebaseConfig);
+
+          // Get Firestore instance using the compat API (firebase.firestore())
+          const db = firebase.firestore(); // <--- Use the compat way
+
+          // OPTIONAL: Initialize Analytics using the compat API
+          try {
+             // Check if the analytics service is available on the global firebase object
+             if (typeof firebase.analytics === 'function') {
+                 const analytics = firebase.analytics(); // <--- Use the compat way
+                 console.log("Firebase Analytics initialized (compat).");
+             }
+          } catch (e) {
+             console.warn("Could not initialize Firebase Analytics (compat):", e);
+          }
+
+          console.log("Firebase Initialized (compat). Firestore instance 'db' is ready.");
+
+        </script>
+
+        <!-- ========= FIREBASE SDK SCRIPTS & CONFIG END =========== -->
+
+
+        <!-- Your main application script *MUST* come AFTER Firebase init -->
+        <script type="module" src="js/main.js"></script>
+    </body>
+</html>
