@@ -2,9 +2,9 @@
 
 import { saveTetrisScore as saveScoreToFirebase } from './leaderboard.js';
 
-const DEFAULT_DAS = 120; // ms (Delayed Auto Shift)
-const DEFAULT_ARR = 7; 
-const DEFAULT_SDR = 15;
+const DEFAULT_DAS = 95; // ms (Delayed Auto Shift)
+const DEFAULT_ARR = 0; 
+const DEFAULT_SDR = 10;
 
 export const COLS = 10;
 export const ROWS = 20;
