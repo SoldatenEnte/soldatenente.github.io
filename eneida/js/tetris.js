@@ -269,14 +269,25 @@ function getRandomPiece() {
     };
 }
 
-function rotatePiece(piece) {
+function rotatePiece(piece) { // Clockwise Rotation
     const shape = piece.shape;
     const N = shape.length;
-    let newShape = shape.map((_, index) => shape.map(col => col[index]).reverse());
-    return {
-        ...piece,
-        shape: newShape
-    };
+    // Transpose then reverse rows for CW rotation
+    let newShape = shape.map((_, index) => shape.map(col => col[index])).map(row => row.reverse());
+    return { ...piece, shape: newShape };
+}
+
+function rotatePieceCounterClockwise(piece) {
+    const shape = piece.shape;
+    const N = shape.length;
+    const newShape = Array.from({ length: N }, () => Array(N).fill(0));
+    // Use the formula: new[r][c] = old[c][N-1-r]
+    for (let r = 0; r < N; r++) {
+        for (let c = 0; c < N; c++) {
+            newShape[r][c] = shape[c][N - 1 - r];
+        }
+    }
+    return { ...piece, shape: newShape };
 }
 
 function isValidMove(piece, board) {
@@ -924,36 +935,54 @@ function attemptMove(dx, dy) {
     return false;
 }
 
-function attemptRotate() {
+function tryRotation(rotationFunction) {
     if (!gameRunning || isPaused || isGameOver || !currentPiece) return false;
 
-    const rotated = rotatePiece(currentPiece);
-    const kickOffsets = [ [0, 0], [-1, 0], [1, 0], [0, -1], [-2, 0], [2, 0], [-1, -1], [1, -1] ];
-    let rotatedSuccessfully = false; // Flag to track success
+    const rotated = rotationFunction(currentPiece);
+    // Standard SRS kick offsets (can be expanded for full SRS if needed)
+    // Order: 0->R, R->0, R->L, L->R, L->0, 0->L, 0->T, T->0, T->R, R->T, T->L, L->T
+    // Simplified set often works for basic kicks:
+    const kickOffsets = [
+        [0, 0],   // No kick
+        [-1, 0],  // Left 1
+        [1, 0],   // Right 1
+        [0, -1],  // Up 1 (less common, but useful sometimes) - REMOVED FOR NOW, usually kick down first
+        [-2, 0],  // Left 2 (for I piece)
+        [2, 0],   // Right 2 (for I piece)
+        [0, 1],   // Down 1 (If needed - add to handle floor kicks)
+        // More complex kicks for T-spins etc. would go here if implementing full SRS
+        [-1, 1],  // Diagonal down-left
+        [1, 1],   // Diagonal down-right
+        [-1, -1], // Diagonal up-left
+        [1, -1],  // Diagonal up-right
+    ];
+    let rotatedSuccessfully = false;
 
     for (let offset of kickOffsets) {
-        const kickedPiece = { ...rotated, x: rotated.x + offset[0], y: rotated.y + offset[1] };
+        // Apply offset relative to the *original* piece position BEFORE rotation was applied conceptually
+        const kickedPiece = { ...rotated, x: currentPiece.x + offset[0], y: currentPiece.y + offset[1] };
 
         if (isValidMove(kickedPiece, board)) {
-            const movedUp = kickedPiece.y < currentPiece.y;
+            const movedUp = kickedPiece.y < currentPiece.y; // Check if kick moved piece upwards
             currentPiece = kickedPiece; // Apply the successful rotation/kick
 
-            if (movedUp) { // Reset lock state if kicked up
+            if (movedUp) { // If kicked upwards, definitely reset lock state
                 canLock = false;
                 clearLockDelayTimer();
-                clearForceLockTimer();
+                clearForceLockTimer(); // Also clear force lock timer
                 lockDelayResets = 0;
-            } else { // Try to reset lock delay if possible (didn't kick up)
+            } else { // If not kicked upwards, try to reset lock delay if possible
                 resetLockDelayTimerIfPossible();
+                // Also reset force lock timer on any successful rotation, even if not kicked up
+                clearForceLockTimer();
             }
-            clearForceLockTimer(); // Reset force lock on successful rotate
 
-            rotatedSuccessfully = true; // Mark success
+            rotatedSuccessfully = true;
             break; // Exit loop once valid rotation found
         }
     }
 
-    // --- FIX for movement interruption (AFTER checking all kicks) ---
+    // --- Movement Interruption (AFTER checking all kicks) ---
     if (rotatedSuccessfully) {
         clearDasArrSdrTimers(); // Clear any pending DAS or active SDR
 
@@ -964,37 +993,37 @@ function attemptRotate() {
              startARR(direction);
         }
     }
-    // --- End FIX ---
+    // --- End Movement Interruption ---
 
     return rotatedSuccessfully;
 }
+
 function handleKeyDown(evt) {
     if (!gameActive || !tetrisWindowElement || !tetrisWindowElement.classList.contains('active-window')) {
-         if (evt.key === 'F4' && gameActive) { evt.preventDefault(); restartGame(); } // Allow F4 even if not active window
+         if (evt.key === 'F4' && gameActive) { evt.preventDefault(); restartGame(); }
         return;
     }
-    // Ignore gameplay keys during countdown or pause/game over
     const allowGameplayKeys = gameRunning && !isPaused && !isGameOver;
-    // Always allow F4 if game is active
     if (evt.key === 'F4') {
          evt.preventDefault();
          restartGame();
-         return; // Don't process other keys if restarting
+         return;
     }
 
     if (!allowGameplayKeys) {
-        return; // Ignore other keys if not in active gameplay state
+        return;
     }
 
-    // Prevent default for gameplay keys
-    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' ', 'w', 'a', 's', 'd', 'c', 'C'].includes(evt.key)) {
+    // --- MODIFICATION: Add 'x' to preventDefault list ---
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' ', 'w', 'a', 's', 'd', 'c', 'C', 'x'].includes(evt.key)) {
         evt.preventDefault();
     }
 
     switch (evt.key) {
         case 'ArrowLeft':
         case 'a':
-            if (!isMovingLeft) {
+            // ... (no change needed for left movement) ...
+             if (!isMovingLeft) {
                 isMovingLeft = true;
                 isMovingRight = false;
                 clearDasArrSdrTimers();
@@ -1009,6 +1038,7 @@ function handleKeyDown(evt) {
             break;
         case 'ArrowRight':
         case 'd':
+            // ... (no change needed for right movement) ...
              if (!isMovingRight) {
                 isMovingRight = true;
                 isMovingLeft = false;
@@ -1024,6 +1054,7 @@ function handleKeyDown(evt) {
             break;
         case 'ArrowDown':
         case 's':
+            // ... (no change needed for soft drop) ...
             if (!isSoftDropping) { // First press for soft drop
                 isSoftDropping = true;
                 clearDasArrSdrTimers(); // Stop horizontal movement when soft dropping
@@ -1042,10 +1073,15 @@ function handleKeyDown(evt) {
                 }, currentSdr);
             }
             break;
+        // --- MODIFICATION: Use tryRotation for both directions ---
         case 'ArrowUp':
         case 'w':
-            attemptRotate();
+            tryRotation(rotatePiece); // Clockwise
             break;
+        case 'x': // NEW CASE
+            tryRotation(rotatePieceCounterClockwise); // Counter-clockwise
+            break;
+        // --- END MODIFICATION ---
         case ' ': // Hard drop
             hardDrop();
             break;
@@ -1053,7 +1089,6 @@ function handleKeyDown(evt) {
         case 'C':
             holdPiece();
             break;
-        // F4 handled earlier
     }
 }
 
