@@ -13,22 +13,50 @@ const GRID_COLOR_VAR = '--text-color'; // Grid line color
 const GAME_OVER_COLOR_VAR = '--error-color';
 const PAUSED_COLOR_VAR = '--warning-color';
 const SCORE_COLOR_VAR = '--accent-color';
+const DEFAULT_SNAKE_MODE = 'medium';
+
+export const SNAKE_MODES = {
+    easy: {
+        name: 'Easy',
+        type: 'score', // Always score for snake
+        initialSpeed: 180, // Slower start
+        speedIncrementFactor: 0.98, // Slower speed increase
+        maxSpeed: 80, // Higher min speed (slower max speed)
+    },
+    medium: {
+        name: 'Medium',
+        type: 'score',
+        initialSpeed: 140, // Original-ish start
+        speedIncrementFactor: 0.95, // Original speed increase
+        maxSpeed: 60, // Original max speed
+    },
+    hard: {
+        name: 'Hard',
+        type: 'score',
+        initialSpeed: 100, // Faster start
+        speedIncrementFactor: 0.92, // Faster speed increase
+        maxSpeed: 45, // Lower min speed (faster max speed)
+    }
+};
 
 // --- Game State ---
 let canvas, ctx;
+let snakeContext = null;
 let snakeWindowElement = null;
-let snake = []; // Array of {x, y} coordinates
-let dx = 1, dy = 0; // Initial direction (right)
+let snake = [];
+let dx = 1, dy = 0;
 let food = { x: 0, y: 0 };
 let score = 0;
 let gameRunning = false;
 let isPaused = false;
 let isGameOver = false;
-let animationFrameId = null; // Will use setTimeout instead for snake speed control
 let gameLoopTimeoutId = null;
-let currentSpeedMs = INITIAL_SPEED_MS;
-let changingDirection = false; // Prevent 180 turns in one step
-let pendingDirection = { dx: 1, dy: 0 }; // Store next intended direction
+let currentSpeedMs = SNAKE_MODES[DEFAULT_SNAKE_MODE].initialSpeed; // Initialize with default
+let currentSpeedIncrementFactor = SNAKE_MODES[DEFAULT_SNAKE_MODE].speedIncrementFactor; // Initialize
+let currentMaxSpeed = SNAKE_MODES[DEFAULT_SNAKE_MODE].maxSpeed; // Initialize
+let currentGameModeKey = DEFAULT_SNAKE_MODE; // <<< NEW: Track current mode
+let changingDirection = false;
+let pendingDirection = { dx: 1, dy: 0 };
 
 // --- Helper Functions ---
 function color(variableName, alpha = 1) {
@@ -70,8 +98,7 @@ function placeFood() {
 }
 
 function startGame() {
-    console.log("Starting Snake game...");
-    // Initial snake position (middle of the grid)
+    console.log(`Starting Snake game (Mode: ${currentGameModeKey})...`);
     const startX = Math.floor(GRID_SIZE / 2);
     const startY = Math.floor(GRID_SIZE / 2);
     snake = [
@@ -79,59 +106,62 @@ function startGame() {
         { x: startX - 1, y: startY },
         { x: startX - 2, y: startY },
     ];
-    dx = 1; dy = 0; // Move right initially
+    dx = 1; dy = 0;
     pendingDirection = { dx: 1, dy: 0 };
     score = 0;
-    currentSpeedMs = INITIAL_SPEED_MS;
+
+    // --- Use Mode Settings ---
+    const settings = SNAKE_MODES[currentGameModeKey] || SNAKE_MODES[DEFAULT_SNAKE_MODE];
+    currentSpeedMs = settings.initialSpeed;
+    currentSpeedIncrementFactor = settings.speedIncrementFactor;
+    currentMaxSpeed = settings.maxSpeed;
+    console.log(`[Snake startGame] Initial speed: ${currentSpeedMs}ms, Increment: ${currentSpeedIncrementFactor}, Max Speed: ${currentMaxSpeed}ms`);
+    // --- END Use Mode Settings ---
+
     isGameOver = false;
     isPaused = false;
     changingDirection = false;
     placeFood();
     gameRunning = true;
-    if (canvas) canvas.classList.remove('snake-paused-blur'); // Ensure blur removed
-    if (!gameLoopTimeoutId) gameLoop(); // Start game loop if not already running
+    if (canvas) canvas.classList.remove('snake-paused-blur');
+    if (gameLoopTimeoutId) clearTimeout(gameLoopTimeoutId); // Clear previous loop if restarting
+    gameLoopTimeoutId = null; // Reset timeout ID
+    gameLoop(); // Start game loop
 }
 
 function moveSnake() {
     if (!gameRunning || isPaused || isGameOver) return;
 
-    // Apply pending direction change if valid
-    if (pendingDirection) {
-        // Prevent reversing direction
+    // ... (apply pending direction - no changes) ...
+     if (pendingDirection) {
         const isOpposite = (pendingDirection.dx === -dx && dx !== 0) || (pendingDirection.dy === -dy && dy !== 0);
         if (!isOpposite) {
             dx = pendingDirection.dx;
             dy = pendingDirection.dy;
         }
-        pendingDirection = null; // Clear pending direction
+        pendingDirection = null;
     }
-    changingDirection = false; // Allow direction change for the next tick
+    changingDirection = false;
+
 
     const head = { x: snake[0].x + dx, y: snake[0].y + dy };
 
-    // --- Collision Detection ---
-    // Wall Collision
-    if (head.x < 0 || head.x >= GRID_SIZE || head.y < 0 || head.y >= GRID_SIZE) {
-        gameOver();
-        return;
-    }
-    // Self Collision
-    if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
-        gameOver();
-        return;
-    }
+    // ... (collision detection - no changes) ...
+     if (head.x < 0 || head.x >= GRID_SIZE || head.y < 0 || head.y >= GRID_SIZE) { gameOver(); return; }
+     if (snake.some(segment => segment.x === head.x && segment.y === head.y)) { gameOver(); return; }
 
-    // Add new head
+
     snake.unshift(head);
 
     // --- Food Eating ---
     if (head.x === food.x && head.y === food.y) {
         score++;
-        // Increase speed (make faster)
-        currentSpeedMs = Math.max(MAX_SPEED_MS, currentSpeedMs * SPEED_INCREMENT_FACTOR);
+        // --- Increase speed based on mode ---
+        currentSpeedMs = Math.max(currentMaxSpeed, currentSpeedMs * currentSpeedIncrementFactor);
+        // --- END Increase speed ---
         placeFood();
+        console.log(`[Snake moveSnake] Food eaten! New score: ${score}, New speed: ${currentSpeedMs.toFixed(2)}ms`);
     } else {
-        // Remove tail segment if food not eaten
         snake.pop();
     }
 }
@@ -142,6 +172,24 @@ function gameOver() {
     gameRunning = false;
     if (gameLoopTimeoutId) clearTimeout(gameLoopTimeoutId);
     gameLoopTimeoutId = null;
+
+    // --- Enhanced Score Saving ---
+    console.log("[Snake gameOver] Attempting to save score. Context available:", !!snakeContext);
+    if (snakeContext && typeof snakeContext.saveGameScore === 'function') {
+        const username = snakeContext.getState?.('username') || 'GUEST_SNAKE';
+        // Use currentGameModeKey which should be set during init/startGame
+        const modeToSave = currentGameModeKey || 'default'; // Fallback just in case
+        console.log(`[Snake gameOver] Saving score for: game=snake, mode=${modeToSave}, user=${username}, score=${score}`);
+        snakeContext.saveGameScore('snake', modeToSave, username, score, false) // isTimeValue = false
+            .then(success => console.log(`[Snake gameOver] Score save attempt result: ${success}`))
+            .catch(err => console.error("[Snake gameOver] Error saving snake score:", err));
+    } else {
+        console.warn("[Snake gameOver] Snake context or saveGameScore function not available, cannot save score.");
+        if(!snakeContext) console.warn("[Snake gameOver] Reason: snakeContext is null or undefined.");
+        else if(typeof snakeContext.saveGameScore !== 'function') console.warn("[Snake gameOver] Reason: snakeContext.saveGameScore is not a function.");
+    }
+    // --- END Enhanced Score Saving ---
+
     drawGame(); // Draw final game over screen
 }
 
@@ -355,69 +403,56 @@ export function resumeGame() {
     }
 }
 
-export function initSnake(canvasElement, windowDivElement) {
-    if (!canvasElement || !windowDivElement) {
-        console.error("Snake Init Error: Canvas or Window element missing!");
-        return;
+export function initSnake(canvasElement, windowDivElement, context, modeKey = DEFAULT_SNAKE_MODE) { // <<< Added modeKey
+    if (!canvasElement || !windowDivElement) { /* ... error ... */ return; }
+    if (!context) { /* ... error ... */ return; }
+
+    // <<< Validate modeKey >>>
+    if (!SNAKE_MODES[modeKey]) {
+        console.warn(`[Snake init] Invalid modeKey '${modeKey}', defaulting to '${DEFAULT_SNAKE_MODE}'.`);
+        modeKey = DEFAULT_SNAKE_MODE;
     }
+    // <<< END Validate >>>
+
     canvas = canvasElement;
     snakeWindowElement = windowDivElement;
+    snakeContext = context;
+    currentGameModeKey = modeKey; // <<< Store the selected mode
 
     ctx = canvas.getContext('2d');
-    if (!ctx) {
-        console.error("Snake Init Error: Failed to get 2D context.");
-        return;
-    }
+    if (!ctx) { /* ... error ... */ return; }
 
-    // Set canvas dimensions based on grid
     canvas.width = GRID_SIZE * BLOCK_SIZE;
     canvas.height = GRID_SIZE * BLOCK_SIZE;
 
-    // --- Add Event Listeners ---
-    // Use document level for keys so it works even if canvas doesn't have focus (but window does)
     document.addEventListener('keydown', handleKeyDown);
-    // Click listener on the window element itself
     snakeWindowElement.addEventListener('mousedown', handleSnakeWindowClick);
 
-    // Ensure blur state is correct initially
     if (canvas) canvas.classList.remove('snake-paused-blur');
 
-    // Initial game state setup
-    startGame(); // Start the game logic and drawing loop
+    // startGame will now use the correct currentGameModeKey to set speeds
+    startGame();
 
-    // Check if window is active to potentially pause immediately
     if (!snakeWindowElement.classList.contains('active-window')) {
         pauseGame();
     }
 
-    console.log("Snake Initialized in window:", snakeWindowElement.id);
+    console.log(`Snake Initialized (Mode: ${currentGameModeKey}) in window:`, snakeWindowElement.id);
 }
 
 export function stopSnake() {
     console.log("Stopping Snake game...");
-    gameRunning = false;
-    isPaused = false;
-    isGameOver = false; // Reset game over state as well
-    if (gameLoopTimeoutId) {
-        clearTimeout(gameLoopTimeoutId);
-        gameLoopTimeoutId = null;
-    }
-    if (canvas) canvas.classList.remove('snake-paused-blur'); // Remove blur
+    // ... existing cleanup code ...
 
-    // --- Remove Event Listeners ---
+    // Remove Listeners
     document.removeEventListener('keydown', handleKeyDown);
     if (snakeWindowElement) {
         snakeWindowElement.removeEventListener('mousedown', handleSnakeWindowClick);
     }
 
-    // --- Clear state variables ---
-    snake = [];
-    dx = 1; dy = 0;
-    pendingDirection = { dx: 1, dy: 0 };
-    changingDirection = false;
-    score = 0;
-    currentSpeedMs = INITIAL_SPEED_MS;
-    food = { x: 0, y: 0 };
+    // Clear state variables
+    // ... existing state clearing ...
+    snakeContext = null; // <<< Clear the context reference
     canvas = null;
     ctx = null;
     snakeWindowElement = null;

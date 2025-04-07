@@ -10,7 +10,7 @@ import { setupEffects, deactivateCompromise } from './effects.js';
 import { setupWindows, createWindow, closeWindow, closeAllWindows, spawnRandomWindow } from './windows.js';
 import { initializeFileSystem, getFileSystem, getFileEntry, fetchFileContent } from './filesystem.js';
 // *** NEW: Import leaderboard functions ***
-import { saveTetrisScore, fetchLeaderboardData } from './leaderboard.js';
+import { saveGameScore, fetchLeaderboardData } from './leaderboard.js';
 
 // --- Global State ---
 const appState = {
@@ -177,26 +177,25 @@ async function initialize() {
         escapeHTML,
         moveCursorToEnd,
         focusCommandInput,
-        // *** ADD Leaderboard functions HERE ***
-        saveTetrisScore,
-        fetchLeaderboardData,
+        // *** UPDATE Leaderboard functions HERE ***
+        saveGameScore, // Use the new generalized function name
+        fetchLeaderboardData, // Already generalized in previous steps, ensure it's here
     };
 
     // --- Step 1: Setup Terminal FIRST ---
-    // Pass baseContext (which now includes leaderboard funcs)
+    // Pass baseContext (which now includes the generalized saveGameScore)
     const terminalContext = setupTerminal(
         { output, commandInput, promptElement, terminal },
-        baseContext // baseContext now has the required functions
+        baseContext
     );
     // terminalContext will contain everything from baseContext + terminal additions
 
     // --- Step 2: Setup other modules using the COMPLETED terminalContext ---
-    // No need to add leaderboard funcs again here, they are in terminalContext
     const fullContext = {
         ...terminalContext,
         // Add functions/refs needed specifically by windows/effects
-        createWindow, // Expose the function itself
-        closeWindow,  // Expose close function
+        createWindow,
+        closeWindow,
         closeAllWindows,
         spawnRandomWindow,
         deactivateCompromise,
@@ -216,9 +215,9 @@ async function initialize() {
     setupLanding(
          { particleCanvas, bootScreen, bootSequenceContainer, asciiLogo, bootLoaderText, bootLoaderBar, loginScreen, passwordInput, loginError, loginBox, terminal },
         handleLoginSuccess,
-        fullContext 
+        fullContext // Pass the comprehensive context
     );
-
+    
     // ... (rest of initialize) ...
     window.addEventListener('resize', resizeCanvas);
      runBootSequence().then(() => {

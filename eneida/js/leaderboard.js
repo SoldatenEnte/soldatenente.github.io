@@ -33,18 +33,25 @@ export function formatTime(milliseconds) {
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(ms).padStart(2, '0')}`;
 }
 
-/**
- * Saves a new score to Firestore using v8 compat syntax.
- * @returns {Promise<boolean>} True on success, false on failure.
- */
-export async function saveTetrisScore(mode, username, value, isTimeValue) {
+export async function saveGameScore(gameName, modeName, username, value, isTimeValue) {
     const firestoreDb = getDb();
-    if (!firestoreDb || !mode || !username || typeof value !== 'number') {
-        console.error("Invalid data or DB connection for saveTetrisScore:", { mode, username, value, isTimeValue, firestoreDb });
+    if (!firestoreDb || !gameName || !modeName || !username || typeof value !== 'number') {
+        console.error("Invalid data or DB connection for saveGameScore:", { gameName, modeName, username, value, isTimeValue, firestoreDb });
         return false;
     }
+
+    const safeGameName = gameName.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+    const safeModeName = modeName.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+    if (!safeGameName || !safeModeName) {
+         console.error("Invalid gameName or modeName after sanitization.");
+         return false;
+    }
+
     try {
-        const leaderboardColRef = firestoreDb.collection(`leaderboards/${mode}/scores`);
+        // --- CORRECTED PATH ---
+        const leaderboardColRef = firestoreDb.collection(`leaderboards/${safeGameName}/modes/${safeModeName}/scores`);
+        // --- END CORRECTION ---
+
         const entryData = {
             username: username.substring(0, 14),
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
@@ -54,35 +61,39 @@ export async function saveTetrisScore(mode, username, value, isTimeValue) {
         } else {
             entryData.score = value;
         }
+
         await leaderboardColRef.add(entryData);
-        console.log(`Score submitted to Firestore for mode ${mode} (v8 compat):`, entryData);
+        // Log the corrected path being used
+        console.log(`Score submitted to Firestore path: leaderboards/${safeGameName}/modes/${safeModeName}/scores`, entryData);
         return true;
     } catch (error) {
-        console.error(`Error saving score to Firestore for mode ${mode} (v8 compat):`, error.message, error.stack);
+        console.error(`Error saving score to Firestore for game ${safeGameName}, mode ${safeModeName}:`, error.message, error.stack);
         return false;
     }
 }
 
-/**
- * Fetches and formats the leaderboard using v8 compat syntax.
- * @returns {Promise<string>} HTML string representation of the leaderboard.
- */
-export async function fetchLeaderboardData(mode, gameModesInfo) {
-    const firestoreDb = getDb(); // Get the db instance
+
+export async function fetchLeaderboardData(gameName, modeName, gameModesInfo) {
+    const firestoreDb = getDb();
     if (!firestoreDb) {
         throw new Error("Leaderboard database connection failed.");
     }
 
-    // Resolve GAME_MODES carefully
-    const resolvedGameModes = (typeof GAME_MODES !== 'undefined' ? GAME_MODES : (gameModesInfo || {}));
-    const modeInfo = resolvedGameModes[mode] || { name: mode.toUpperCase(), type: 'unknown' }; // Basic fallback
+    const safeGameName = gameName.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+    const safeModeName = modeName.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+     if (!safeGameName || !safeModeName) {
+         throw new Error("Invalid gameName or modeName provided.");
+     }
+
+    const modeInfo = gameModesInfo[safeModeName] || { name: safeModeName.toUpperCase(), type: 'score' };
     const isTimeBased = modeInfo.type === 'sprint';
 
     try {
-        // --- Use v8 syntax ---
-        const leaderboardColRef = firestoreDb.collection(`leaderboards/${mode}/scores`);
-        let queryRef;
+        // --- CORRECTED PATH ---
+        const leaderboardColRef = firestoreDb.collection(`leaderboards/${safeGameName}/modes/${safeModeName}/scores`);
+        // --- END CORRECTION ---
 
+        let queryRef;
         if (isTimeBased) {
             queryRef = leaderboardColRef.orderBy("time", "asc").limit(MAX_ENTRIES_PER_MODE);
         } else {
@@ -90,19 +101,18 @@ export async function fetchLeaderboardData(mode, gameModesInfo) {
         }
 
         const querySnapshot = await queryRef.get();
-        // --- End v8 syntax changes ---
-
         const scores = [];
         querySnapshot.forEach((doc) => {
-            // Add rank later during formatting if needed, just return raw data
             scores.push(doc.data());
         });
 
-        // Return the raw scores and the mode info for formatting later
+        // Log the corrected path being used
+        console.log(`Fetched ${scores.length} scores from path: leaderboards/${safeGameName}/modes/${safeModeName}/scores`);
         return { scores, modeInfo };
 
     } catch (error) {
-        console.error(`Error fetching leaderboard from Firestore for mode ${mode} (v8 compat):`, error.message, error.stack);
-        throw new Error(`Failed to fetch scores: ${error.message}`); // Re-throw for the command handler
+        console.error(`Error fetching leaderboard from Firestore for ${safeGameName}/${safeModeName}:`, error.message, error.stack);
+        // Add the incorrect path structure to the error message for clarity
+        throw new Error(`Failed to fetch scores from leaderboards/${safeGameName}/modes/${safeModeName}/scores: ${error.message}`);
     }
 }

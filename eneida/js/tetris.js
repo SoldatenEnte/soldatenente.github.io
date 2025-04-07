@@ -1,7 +1,5 @@
 // js/tetris.js
 
-import { saveTetrisScore as saveScoreToFirebase } from './leaderboard.js';
-
 const DEFAULT_DAS = 95; // ms (Delayed Auto Shift)
 const DEFAULT_ARR = 0; 
 const DEFAULT_SDR = 10;
@@ -352,13 +350,20 @@ function updateGameProgress(linesRemoved) {
             isGameOver = true;
             gameRunning = false;
             finalTime = elapsedTime;
-            clearTimers(); // <<< Ensure ALL timers cleared on win
-            const username = tetrisContext?.getState?.('username') || 'GUEST';
-            saveScoreToFirebase(currentGameModeKey, username, finalTime, true)
-                .then(success => console.log(`Sprint time save attempt: ${success}`));
+            clearTimers();
+
+            // --- UPDATED SCORE SAVING (Sprint Win) ---
+            if (tetrisContext?.saveGameScore) {
+                const username = tetrisContext.getState?.('username') || 'GUEST_TETRIS';
+                tetrisContext.saveGameScore('tetris', currentGameModeKey, username, finalTime, true) // isTimeValue = true
+                    .then(success => console.log(`Tetris Sprint time save attempt: ${success}`))
+                    .catch(err => console.error("Error saving Tetris Sprint time:", err));
+            } else {
+                console.warn("Tetris context or saveGameScore function not available, cannot save Sprint time.");
+            }
+            // --- END UPDATE ---
         }
-    } else {
-        // ... (level mode score/level logic remains the same) ...
+    } else { // Level Mode
         const points = [0, 100, 300, 500, 800];
         score += points[linesRemoved] * level;
         const newLevel = Math.floor(linesCleared / 10) + 1;
@@ -873,36 +878,102 @@ function holdPiece() {
 }
 
 function forceLockPiece() {
-    if (!currentPiece || isGameOver || isPaused || !gameRunning) return; // Add !currentPiece check
+    if (!currentPiece || isGameOver || isPaused || !gameRunning) return;
 
-    clearTimers(); // <<< Clear ALL timers before locking
+    clearTimers();
     canLock = false; lockDelayResets = 0;
 
-    // ... (rest of forceLockPiece logic, including game over checks and saving) ...
-    let isLockingAboveBoard = false; const { shape, y: lockedY } = currentPiece; for (let r = 0; r < shape.length; r++) { for (let c = 0; c < shape[r].length; c++) { if (shape[r][c] && (lockedY + r < 0)) { isLockingAboveBoard = true; break; } } if (isLockingAboveBoard) break; }
+    let isLockingAboveBoard = false;
+    const { shape, y: lockedY } = currentPiece;
+    for (let r = 0; r < shape.length; r++) {
+        for (let c = 0; c < shape[r].length; c++) {
+            if (shape[r][c] && (lockedY + r < 0)) {
+                isLockingAboveBoard = true;
+                break;
+            }
+        }
+        if (isLockingAboveBoard) break;
+    }
+
     mergePieceToBoard(currentPiece, board);
+
     if (isLockingAboveBoard) {
         isGameOver = true; gameRunning = false; currentPiece = null;
-        if (!isSprintMode) { const username = tetrisContext?.getState?.('username') || 'GUEST'; saveScoreToFirebase(currentGameModeKey, username, score, false).then(success => console.log(`Level score save attempt (lockout): ${success}`)); }
+        // --- UPDATED SCORE SAVING (Level Mode Game Over - Lockout) ---
+        if (!isSprintMode) {
+            if (tetrisContext?.saveGameScore) {
+                const username = tetrisContext.getState?.('username') || 'GUEST_TETRIS';
+                tetrisContext.saveGameScore('tetris', currentGameModeKey, username, score, false) // isTimeValue = false
+                    .then(success => console.log(`Tetris Level score save attempt (lockout): ${success}`))
+                    .catch(err => console.error("Error saving Tetris Level score (lockout):", err));
+            } else {
+                console.warn("Tetris context or saveGameScore function not available, cannot save Level score (lockout).");
+            }
+        }
+        // --- END UPDATE ---
         return; // Exit after game over
     }
-    const linesRemoved = clearLines(board); updateGameProgress(linesRemoved);
-    if (isGameOver && isSprintMode) { return; } // Exit if sprint ended
+
+    const linesRemoved = clearLines(board);
+    updateGameProgress(linesRemoved); // updateGameProgress now handles Sprint win saving
+
+    // Check if Sprint mode just ended in updateGameProgress
+    if (isGameOver && isSprintMode) {
+        return; // Don't spawn next piece if sprint just ended
+    }
+
     canHold = true;
     const pieceToSpawn = nextPiece;
-    if (!pieceToSpawn) { isGameOver = true; gameRunning = false; currentPiece = null; if (!isSprintMode) { const username = tetrisContext?.getState?.('username') || 'GUEST'; saveScoreToFirebase(currentGameModeKey, username, score, false).then(success => console.log(`Level score save attempt (nextPiece fail): ${success}`)); } return; }
-    nextPiece = getRandomPiece();
-    let spawnPositionPrimary = { ...pieceToSpawn }; let spawnPositionAlternative = { ...pieceToSpawn, y: pieceToSpawn.y - 1 };
-    let finalSpawnPosition = null;
-    if (isValidMove(spawnPositionPrimary, board)) { finalSpawnPosition = spawnPositionPrimary; }
-    else if (isValidMove(spawnPositionAlternative, board)) { finalSpawnPosition = spawnPositionAlternative; }
-    else {
-        isGameOver = true; gameRunning = false; currentPiece = null; finalSpawnPosition = null;
-        if (!isSprintMode) { const username = tetrisContext?.getState?.('username') || 'GUEST'; saveScoreToFirebase(currentGameModeKey, username, score, false).then(success => console.log(`Level score save attempt (spawn fail): ${success}`)); }
+
+    if (!pieceToSpawn) {
+        isGameOver = true; gameRunning = false; currentPiece = null;
+        // --- UPDATED SCORE SAVING (Level Mode Game Over - Next Piece Fail) ---
+        if (!isSprintMode) {
+            if (tetrisContext?.saveGameScore) {
+                const username = tetrisContext.getState?.('username') || 'GUEST_TETRIS';
+                tetrisContext.saveGameScore('tetris', currentGameModeKey, username, score, false) // isTimeValue = false
+                    .then(success => console.log(`Tetris Level score save attempt (nextPiece fail): ${success}`))
+                    .catch(err => console.error("Error saving Tetris Level score (nextPiece fail):", err));
+            } else {
+                 console.warn("Tetris context or saveGameScore function not available, cannot save Level score (nextPiece fail).");
+            }
+        }
+        // --- END UPDATE ---
+        return;
     }
+
+    nextPiece = getRandomPiece();
+    let spawnPositionPrimary = { ...pieceToSpawn };
+    let spawnPositionAlternative = { ...pieceToSpawn, y: pieceToSpawn.y - 1 };
+    let finalSpawnPosition = null;
+
+    if (isValidMove(spawnPositionPrimary, board)) {
+        finalSpawnPosition = spawnPositionPrimary;
+    } else if (isValidMove(spawnPositionAlternative, board)) {
+        finalSpawnPosition = spawnPositionAlternative;
+    } else {
+        isGameOver = true; gameRunning = false; currentPiece = null; finalSpawnPosition = null;
+        // --- UPDATED SCORE SAVING (Level Mode Game Over - Spawn Fail) ---
+        if (!isSprintMode) {
+            if (tetrisContext?.saveGameScore) {
+                const username = tetrisContext.getState?.('username') || 'GUEST_TETRIS';
+                tetrisContext.saveGameScore('tetris', currentGameModeKey, username, score, false) // isTimeValue = false
+                    .then(success => console.log(`Tetris Level score save attempt (spawn fail): ${success}`))
+                    .catch(err => console.error("Error saving Tetris Level score (spawn fail):", err));
+            } else {
+                 console.warn("Tetris context or saveGameScore function not available, cannot save Level score (spawn fail).");
+            }
+        }
+        // --- END UPDATE ---
+    }
+
     currentPiece = finalSpawnPosition;
-    if (currentPiece) { canLock = false; lockDelayResets = 0; } // Reset lock state for new piece
-    if (gameRunning && !isGameOver && !isPaused) { resetDropTimer(); } // Restart drop timer if game continues
+    if (currentPiece) {
+        canLock = false; lockDelayResets = 0; // Reset lock state for new piece
+    }
+    if (gameRunning && !isGameOver && !isPaused) {
+        resetDropTimer(); // Restart drop timer if game continues
+    }
 }
 
 function hardDrop() {
@@ -1341,11 +1412,10 @@ function gameLoop() {
    animationFrameId = requestAnimationFrame(gameLoop);
 }
 
-export function initTetris(mainCanvasElement, _ignored_, windowDivElement, modeKey = 'medium', context) {
-    // ... (Initial checks for elements, context, modeKey remain) ...
+export function initTetris(mainCanvasElement, _ignored_, windowDivElement, modeKey = 'medium', context) { // context already passed here
     if (!mainCanvasElement || !windowDivElement) { console.error("Tetris Init Error: Canvas or Window element missing."); return; }
-    if (!context) { console.error("Tetris Init Error: Context object not provided."); return; }
-    tetrisContext = context;
+    if (!context) { console.error("Tetris Init Error: Context object not provided."); return; } // Check context
+    tetrisContext = context; // Store context
     if (!GAME_MODES[modeKey]) { console.warn(`Tetris Init Warning: Invalid modeKey '${modeKey}', defaulting to 'medium'.`); modeKey = 'medium'; }
 
     // Stop previous instance if active
@@ -1372,15 +1442,12 @@ export function initTetris(mainCanvasElement, _ignored_, windowDivElement, modeK
     startGameFlow(); // Starts the "Ready, GO!" sequence
 
     // --- Handle Initial Pause State ---
-    // Defer pausing until *after* the countdown attempt starts,
-    // pauseGame will handle halting the countdown timer if needed.
     if (!tetrisWindowElement || !tetrisWindowElement.classList.contains('active-window')) {
-        // Use setTimeout to allow the initial draw of "Ready" to potentially happen
         setTimeout(() => {
             if (gameActive && (!tetrisWindowElement || !tetrisWindowElement.classList.contains('active-window'))) {
                 pauseGame();
             }
-        }, 50); // Small delay
+        }, 50);
     }
 
     // --- Start Render Loop ---
@@ -1390,6 +1457,7 @@ export function initTetris(mainCanvasElement, _ignored_, windowDivElement, modeK
 
     console.log(`Tetris Initialized (Mode: ${currentGameModeKey})`);
 }
+
 
 function startGameFlow() {
     if (!gameActive) return;

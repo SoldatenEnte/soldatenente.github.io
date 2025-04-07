@@ -4,11 +4,8 @@ import { escapeHTML, generateGibberish } from './utils.js';
 import { formatTime } from './leaderboard.js';
 import { setTypewriterSpeed, TYPEWRITER_BASE_DELAY, TYPEWRITER_RANDOM_FACTOR } from './config.js';
 import { initPong } from './pong.js';
-import { initTetris, GAME_MODES, COLS, ROWS, BLOCK_SIZE } from './tetris.js';
-import { initSnake } from './snake.js';
-
-// --- Context (Passed from terminal.js) ---
-// Holds { displayOutput, typewriterResponse, logTrace, portfolioData, getState, setState, createWindow, closeAllWindows, focusCommandInput, deactivateCompromise, ... }
+import { initTetris, GAME_MODES as TETRIS_MODES, COLS as TETRIS_COLS, ROWS as TETRIS_ROWS, BLOCK_SIZE as TETRIS_BLOCK_SIZE } from './tetris.js';
+import { initSnake, SNAKE_MODES } from './snake.js';
 
 // --- Helper for Basic Markdown to HTML ---
 // (Place this near the top of commands.js or move to utils.js)
@@ -181,17 +178,18 @@ export function setname(args, context) {
     context.logTrace('setname', `SUCCESS (${newName})`);
 }
 
-function formatLeaderboardDataToHtmlTable(data, modeInfo) {
-    const { scores } = data;
-    const modeDisplayName = escapeHTML(modeInfo.name || 'Leaderboard');
-    const isTimeBased = modeInfo.type === 'sprint';
+function formatLeaderboardDataToHtmlTable(data, gameName, modeName) { // Added gameName, modeName for context
+    const { scores, modeInfo } = data; // modeInfo comes from fetchLeaderboardData
+    const gameDisplayName = gameName === 'tetris' ? 'TETЯIS' : (gameName === 'snake' ? 'SNAKE' : gameName.toUpperCase());
+    const modeDisplayName = escapeHTML(modeInfo.name || modeName.toUpperCase());
+    const isTimeBased = modeInfo.type === 'sprint'; // Check type from modeInfo
     const headerValue = isTimeBased ? 'Time' : 'Score';
 
     let html = `<div class="leaderboard-content">`;
-    html += `<h2 class="leaderboard-title">🏆 ${modeDisplayName} 🏆</h2>`;
+    html += `<h2 class="leaderboard-title">🏆 ${gameDisplayName} - ${modeDisplayName} 🏆</h2>`; // Combined title
 
-    if (scores.length === 0) {
-        html += `<p class="no-scores-message">( No scores recorded yet for this mode )</p>`;
+    if (!scores || scores.length === 0) {
+        html += `<p class="no-scores-message">( No scores recorded yet )</p>`;
     } else {
         html += `<table class="leaderboard-table">`;
         html += `<thead><tr>
@@ -207,12 +205,11 @@ function formatLeaderboardDataToHtmlTable(data, modeInfo) {
             let valueStr;
 
             if (isTimeBased) {
-                valueStr = formatTime(entry.time); // Use formatTime directly
+                valueStr = formatTime(entry.time);
             } else {
-                valueStr = entry.score?.toLocaleString() || 'N/A'; // Format score with commas
+                valueStr = entry.score?.toLocaleString() || 'N/A';
             }
 
-            // Add alternating row class
             const rowClass = index % 2 === 0 ? 'even-row' : 'odd-row';
             html += `<tr class="${rowClass}">
                         <td class="rank-col">${rank}</td>
@@ -228,69 +225,92 @@ function formatLeaderboardDataToHtmlTable(data, modeInfo) {
     return html;
 }
 
-
 export async function leaderboard(args, context) {
-    const modeArg = args[0]?.toLowerCase();
-    const validModes = Object.keys(GAME_MODES);
+    const availableGames = {
+        tetris: TETRIS_MODES,
+        snake: SNAKE_MODES
+    };    
+    const gameNames = Object.keys(availableGames); // ['tetris', 'snake']
 
-    if (!modeArg) {
-        const modesString = validModes.map(m => `\`${m}\``).join(', ');
-        const usageMsg = context.simpleMarkdownToHtml ? context.simpleMarkdownToHtml(`Usage: \`leaderboard [mode]\`\nAvailable modes: ${modesString}`) : `Usage: leaderboard [mode]. Available: ${modesString}`;
+    if (args.length === 0) {
+        // Show available games if no args provided
+        const gamesString = gameNames.map(g => `\`${g}\``).join(', ');
+        const usageMsg = context.simpleMarkdownToHtml ? context.simpleMarkdownToHtml(`Usage: \`leaderboard [game] [mode]\`\nAvailable games: ${gamesString}`) : `Usage: leaderboard [game] [mode]. Available games: ${gamesString}`;
         context.typewriterResponse(usageMsg, "response-info");
-        context.logTrace('leaderboard', 'USAGE_SHOWN');
+        context.logTrace('leaderboard', 'USAGE_GAMES_SHOWN');
         return;
     }
 
-    if (!validModes.includes(modeArg)) {
-         context.typewriterResponse(`Error: Invalid leaderboard mode '<span style="color:var(--error-color);">${escapeHTML(modeArg)}</span>'. Use 'leaderboard' to see available modes.`, "response-error");
-         context.logTrace('leaderboard', `INVALID_MODE (${modeArg})`);
-         return;
+    const requestedGame = args[0]?.toLowerCase();
+    const requestedMode = args[1]?.toLowerCase();
+
+    if (!gameNames.includes(requestedGame)) {
+        context.typewriterResponse(`Error: Invalid game '<span style="color:var(--error-color);">${escapeHTML(requestedGame)}</span>'. Use 'leaderboard' to see available games.`, "response-error");
+        context.logTrace('leaderboard', `INVALID_GAME (${requestedGame})`);
+        return;
     }
 
-    context.logTrace('leaderboard', `VIEWING (${modeArg})`);
-    context.displayOutput(`Fetching leaderboard data for mode: ${modeArg}...`, 'response-info');
-    if (context.commandInputElement) context.commandInputElement.disabled = true; // Disable input
+    const selectedGameModes = availableGames[requestedGame];
+    const validModeNames = Object.keys(selectedGameModes);
+
+    if (!requestedMode) {
+        // Show available modes for the specified game
+        const modesString = validModeNames.map(m => `\`${m}\``).join(', ');
+        const usageMsg = context.simpleMarkdownToHtml ? context.simpleMarkdownToHtml(`Usage: \`leaderboard ${requestedGame} [mode]\`\nAvailable modes for ${requestedGame}: ${modesString}`) : `Usage: leaderboard ${requestedGame} [mode]. Available modes: ${modesString}`;
+        context.typewriterResponse(usageMsg, "response-info");
+        context.logTrace('leaderboard', `USAGE_MODES_SHOWN (${requestedGame})`);
+        return;
+    }
+
+    if (!validModeNames.includes(requestedMode)) {
+        context.typewriterResponse(`Error: Invalid mode '<span style="color:var(--error-color);">${escapeHTML(requestedMode)}</span>' for game '${requestedGame}'. Use 'leaderboard ${requestedGame}' to see available modes.`, "response-error");
+        context.logTrace('leaderboard', `INVALID_MODE (${requestedGame} ${requestedMode})`);
+        return;
+    }
+
+    // --- Fetch and Display ---
+    context.logTrace('leaderboard', `VIEWING (${requestedGame} ${requestedMode})`);
+    context.displayOutput(`Fetching leaderboard data for ${requestedGame} - ${requestedMode}...`, 'response-info');
+    if (context.commandInputElement) context.commandInputElement.disabled = true;
 
     try {
-        // Use the new function from context to fetch RAW data
-        const leaderboardData = await context.fetchLeaderboardData(modeArg, GAME_MODES);
+        // Call generalized fetchLeaderboardData, passing the relevant modes object
+        const leaderboardData = await context.fetchLeaderboardData(requestedGame, requestedMode, selectedGameModes);
 
-        // Format the raw data into an HTML table string
-        const leaderboardHTML = formatLeaderboardDataToHtmlTable(leaderboardData, leaderboardData.modeInfo);
+        // Format using the generalized formatter
+        const leaderboardHTML = formatLeaderboardDataToHtmlTable(leaderboardData, requestedGame, requestedMode);
 
-        // Determine window size (adjust as needed)
+        // Determine window size
         const windowWidth = Math.max(400, Math.min(window.innerWidth * 0.4, 500));
         const windowHeight = Math.max(350, Math.min(window.innerHeight * 0.6, 600));
 
-        // Create the window using the generated HTML
+        // Create window
+        const gameDisplayName = requestedGame === 'tetris' ? 'TETЯIS' : (requestedGame === 'snake' ? 'SNAKE' : requestedGame.toUpperCase());
+        const modeDisplayName = leaderboardData.modeInfo.name || requestedMode.toUpperCase();
         const win = context.createWindow(
-            `Leaderboard: ${leaderboardData.modeInfo.name || modeArg.toUpperCase()}`,
+            `Leaderboard: ${gameDisplayName} - ${modeDisplayName}`,
             { type: 'html', html: leaderboardHTML },
             {
                 width: windowWidth,
                 height: windowHeight,
                 resizable: true,
-                className: 'leaderboard-window' // Add specific class for styling
+                className: 'leaderboard-window'
             }
         );
 
         if (win) {
-            // Optional: Add a success message to the terminal (or remove if window is enough)
-            context.displayOutput(`Leaderboard for <span style="color:var(--text-color);">${modeArg}</span> opened in a new window.`, "response-success");
+            context.displayOutput(`Leaderboard for <span style="color:var(--text-color);">${requestedGame} - ${requestedMode}</span> opened.`, "response-success");
         } else {
-            // Error handled by createWindow logging, but add terminal feedback
-            context.displayOutput(`Failed to open leaderboard window for <span style="color:var(--text-color);">${modeArg}</span>.`, "response-error");
+            context.displayOutput(`Failed to open leaderboard window for <span style="color:var(--text-color);">${requestedGame} - ${requestedMode}</span>.`, "response-error");
         }
 
     } catch (error) {
         console.error("Error fetching/displaying leaderboard:", error);
-        // Display error in the terminal since the window won't open
         context.typewriterResponse(`Error fetching leaderboard: ${escapeHTML(error.message)}`, "response-error");
-        if (error.message.includes('network') || error.message.includes('database connection')) {
-             context.displayOutput(`<span style='color: var(--warning-color);'>(Tip: Check ad blockers, network connection, or Firebase setup)</span>`, "response-warning");
+        if (error.message.includes('network') || error.message.includes('database connection') || error.message.includes('permission')) {
+             context.displayOutput(`<span style='color: var(--warning-color);'>(Tip: Check network connection, Firebase setup/rules, or ad blockers)</span>`, "response-warning");
         }
     } finally {
-        // Always re-enable and refocus input
         if (context.commandInputElement) context.commandInputElement.disabled = false;
         context.focusCommandInput();
     }
@@ -1193,27 +1213,25 @@ export function pong(args, context) {
 }
 
 export function tetris(args, context) {
-    // Determine mode and feedback message (same logic as before)
-     const levelModes = ['easy', 'medium', 'hard'];
-     const sprintModeKeys = ['20l', '40l', '100l', '1000l'];
-     const allAllowedModes = [...levelModes, ...sprintModeKeys];
-     let requestedModeArg = args[0]?.toLowerCase();
-     let selectedModeKey = 'medium';
-     let feedbackMessage = "";
-
-     // ... (Mode selection logic remains the same) ...
+    // ... (existing mode selection logic remains the same) ...
+    const levelModes = ['easy', 'medium', 'hard'];
+    const sprintModeKeys = ['20l', '40l', '100l', '1000l'];
+    const allAllowedModes = [...levelModes, ...sprintModeKeys];
+    let requestedModeArg = args[0]?.toLowerCase();
+    let selectedModeKey = 'medium';
+    let feedbackMessage = "";
      if (requestedModeArg) {
         if (levelModes.includes(requestedModeArg)) { selectedModeKey = requestedModeArg; feedbackMessage = `Selected difficulty: <span style="color:var(--text-color);">${selectedModeKey.toUpperCase()}</span>. Launching TETЯIS module...`; context.logTrace('tetris', `LAUNCHING (${selectedModeKey})`); }
         else if (sprintModeKeys.includes(requestedModeArg)) { selectedModeKey = requestedModeArg; const goal = selectedModeKey.replace('l', ''); feedbackMessage = `Selected mode: <span style="color:var(--text-color);">SPRINT ${goal}L</span>. Launching TETЯIS module...`; context.logTrace('tetris', `LAUNCHING (${selectedModeKey})`); }
         else { const allowedModesString = allAllowedModes.join(', '); feedbackMessage = `Invalid mode '<span style="color:var(--error-color);">${escapeHTML(requestedModeArg)}</span>'. Allowed: ${allowedModesString}. Defaulting to 'medium'. Launching TETЯIS module...`; context.logTrace('tetris', `INVALID_MODE (${requestedModeArg}), LAUNCHING (medium)`); selectedModeKey = 'medium'; }
     } else { feedbackMessage = `No mode specified. Defaulting to 'medium'. Launching TETЯIS module...`; context.logTrace('tetris', `LAUNCHING (medium)`); selectedModeKey = 'medium'; }
 
-
     context.typewriterResponse(feedbackMessage, "response-info", () => {
         const canvasId = "tetris-canvas-" + Date.now();
-        const UI_AREA_WIDTH_FOR_CALC = 100; // Match tetris.js or import
-        const boardPixelWidth = COLS * BLOCK_SIZE;
-        const boardPixelHeight = ROWS * BLOCK_SIZE;
+        // Use imported constants for calculation
+        const UI_AREA_WIDTH_FOR_CALC = 100;
+        const boardPixelWidth = TETRIS_COLS * TETRIS_BLOCK_SIZE;
+        const boardPixelHeight = TETRIS_ROWS * TETRIS_BLOCK_SIZE;
         const totalCanvasWidth = boardPixelWidth + UI_AREA_WIDTH_FOR_CALC;
         const windowPaddingWidth = 20;
         const titleBarHeightEstimate = 30;
@@ -1221,13 +1239,11 @@ export function tetris(args, context) {
         const windowWidth = totalCanvasWidth + windowPaddingWidth;
         const windowHeight = boardPixelHeight + windowPaddingHeight;
 
-        // This componentInit function calls the modified initTetris
-        const initTetrisComponent = (canvasElement, windowElement, ctx) => {
+        const initTetrisComponent = (canvasElement, windowElement, ctx) => { // ctx here is the *commands* context
             if (canvasElement && canvasElement.tagName === 'CANVAS') {
                 console.log(`[initTetrisComponent] Initializing Tetris on canvas #${canvasElement.id}`);
-                 // Pass context to Tetris for leaderboard access
-                 // initTetris will now handle the countdown internally
-                 initTetris(canvasElement, null, windowElement, selectedModeKey, context);
+                 // <<< Pass the FULL context object to initTetris >>>
+                 initTetris(canvasElement, null, windowElement, selectedModeKey, ctx);
             } else {
                  console.error("Tetris init failed: Invalid canvas element provided.");
                  ctx.displayOutput("Error launching TETЯIS: Canvas setup failed.", "response-error");
@@ -1235,49 +1251,69 @@ export function tetris(args, context) {
             }
         };
 
-        // Create window (no change here)
+        // Create window
         const win = context.createWindow(
             `TETЯIS [${selectedModeKey.toUpperCase()}]`,
             {
                 type: 'component',
                 canvasId: canvasId,
-                componentInit: initTetrisComponent,
+                componentInit: initTetrisComponent, // Pass the initializer
                  canvasStyles: { cursor: 'none', width: `${totalCanvasWidth}px`, height: `${boardPixelHeight}px` }
             },
             {
                 width: windowWidth,
                 height: windowHeight,
                 resizable: false,
-                gameType: 'tetris'
+                gameType: 'tetris' // Mark as tetris game
             }
         );
          if (!win) {
              context.displayOutput("Error launching TETЯIS: Could not create window.", "response-error");
          }
-         // No further action needed here, initTetris takes over including countdown
     });
 }
 
 export function snake(args, context) {
-    context.logTrace('snake', `LAUNCHING`);
-    const feedbackMessage = `Launching SNAKE module...`;
+    const allowedDifficulties = Object.keys(SNAKE_MODES); // ['easy', 'medium', 'hard']
+    let requestedDifficulty = args[0]?.toLowerCase();
+    let selectedDifficulty = 'medium'; // Default
+    let feedbackMessage = "";
+
+    // Determine difficulty and feedback message
+    if (requestedDifficulty && allowedDifficulties.includes(requestedDifficulty)) {
+        selectedDifficulty = requestedDifficulty;
+        feedbackMessage = `Selected difficulty: <span style="color:var(--text-color);">${selectedDifficulty.toUpperCase()}</span>. Launching SNAKE module...`;
+        context.logTrace('snake', `LAUNCHING (${selectedDifficulty})`);
+    } else {
+        if (requestedDifficulty) {
+            const allowedStr = allowedDifficulties.map(d => `\`${d}\``).join(', ');
+            feedbackMessage = `Invalid difficulty '<span style="color:var(--error-color);">${escapeHTML(requestedDifficulty)}</span>'. Allowed: ${allowedStr}. Defaulting to 'medium'. Launching SNAKE module...`;
+            context.logTrace('snake', `INVALID_DIFFICULTY (${requestedDifficulty}), LAUNCHING (medium)`);
+        } else {
+            feedbackMessage = `No difficulty specified. Defaulting to 'medium'. Launching SNAKE module...`;
+            context.logTrace('snake', `LAUNCHING (medium)`);
+        }
+        selectedDifficulty = 'medium'; // Ensure default is set
+    }
 
     context.typewriterResponse(feedbackMessage, "response-info", () => {
         const canvasId = "snake-canvas-" + Date.now();
-        const SNAKE_GRID_SIZE = 20; // Match snake.js
-        const SNAKE_BLOCK_SIZE = 18; // Match snake.js
+        const SNAKE_GRID_SIZE = 20; // Keep these consistent or import
+        const SNAKE_BLOCK_SIZE = 18;
         const canvasWidth = SNAKE_GRID_SIZE * SNAKE_BLOCK_SIZE;
         const canvasHeight = SNAKE_GRID_SIZE * SNAKE_BLOCK_SIZE;
-        const windowPaddingWidth = 20; // Reduced padding
+        const windowPaddingWidth = 20;
         const titleBarHeightEstimate = 30;
         const windowPaddingHeight = titleBarHeightEstimate + 10;
         const windowWidth = canvasWidth + windowPaddingWidth;
         const windowHeight = canvasHeight + windowPaddingHeight;
 
+        // Define the component initializer function
         const initSnakeComponent = (canvasElement, windowElement, ctx) => {
              if (canvasElement && canvasElement.tagName === 'CANVAS') {
                  console.log(`[initSnakeComponent] Initializing Snake on canvas #${canvasElement.id}`);
-                 initSnake(canvasElement, windowElement);
+                 // <<< Pass the selected difficulty modeKey to initSnake >>>
+                 initSnake(canvasElement, windowElement, ctx, selectedDifficulty);
              } else {
                  console.error("Snake init failed: Invalid canvas element provided.");
                  ctx.displayOutput("Error launching SNAKE: Canvas setup failed.", "response-error");
@@ -1285,8 +1321,9 @@ export function snake(args, context) {
              }
         };
 
+        // Create the window using the generalized createWindow
         const win = context.createWindow(
-             `SNAKE`,
+             `SNAKE [${selectedDifficulty.toUpperCase()}]`, // <<< Update window title
              {
                  type: 'component',
                  canvasId: canvasId,

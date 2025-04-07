@@ -403,7 +403,7 @@ function handleOutputClick(event) {
         }
     } else if (!linkElement && commandInputElement && !commandInputElement.disabled) {
         pauseAllGames();
-        commandContext?.focusCommandInput();
+        //commandContext?.focusCommandInput();
    }
     // If it was a linkElement, do nothing and let the browser handle it.
 }
