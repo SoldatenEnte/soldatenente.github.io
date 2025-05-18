@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap'); /* Poppins bold und semi-bold */
+
+body {
+    font-family: 'Poppins', sans-serif; /* Fette Schriftart */
+    background-color: #f0f0f0; /* Heller Hintergrund */
+    color: #333; /* Dunkler Text für guten Kontrast */
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center;
+    line-height: 1.6;
+}
+
+.container {
+    background-color: #ffffff; /* Weißer Container */
+    padding: 30px;
+    border-radius: 12px; /* Abgerundete Ecken */
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1); /* Subtiler Schatten */
+    max-width: 600px;
+    width: 90%;
+}
+
+h1 {
+    font-weight: 700; /* Extra fett für die Hauptüberschrift */
+    font-size: 2.2em;
+    color: #e91e63; /* Akzentfarbe (z.B. ein warmes Pink/Rot) */
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-weight: 600; /* Etwas weniger fett für Sektionsüberschriften */
+    font-size: 1.4em;
+    color: #555;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.timer-display {
+    font-weight: 700; /* Fett für die Timer-Zahlen */
+    font-size: 1.8em;
+    color: #333;
+    padding: 10px;
+    background-color: #f9f9f9; /* Leicht anderer Hintergrund für Timer */
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.timer-display span {
+    display: inline-block; /* Sorgt dafür, dass Zeilenumbrüche korrekt funktionieren */
+}
+
+.date-info {
+    font-size: 0.9em;
+    color: #777;
+    margin-top: 30px;
+}
+
+/* Responsive Anpassungen */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.8em;
+    }
+    h2 {
+        font-size: 1.2em;
+    }
+    .timer-display {
+        font-size: 1.4em;
+    }
+    .container {
+        padding: 20px;
+    }
+}
