@@ -2,10 +2,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const idlePortal = document.getElementById("idlePortal");
   const scannedPortal = document.getElementById("scannedPortal");
   const scanButton = document.getElementById("scanButton");
+
+  const splashScreen = document.getElementById("splashScreen");
+  const startButton = document.getElementById("startButton");
+
   const fullscreenPrompt = document.getElementById("fullscreenPrompt");
   const enableFullscreenBtn = document.getElementById("enableFullscreenBtn");
 
-  idlePortal.play();
+  function hideModal(modalElement) {
+    modalElement.classList.add("hidden");
+  }
+
+  function showModal(modalElement) {
+    modalElement.classList.remove("hidden");
+  }
 
   function requestFullscreen() {
     if (document.documentElement.requestFullscreen) {
@@ -17,42 +27,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function hideFullscreenPrompt() {
-    fullscreenPrompt.classList.add("hidden");
-  }
+  startButton.addEventListener("click", () => {
+    hideModal(splashScreen);
+
+    idlePortal.play().catch((error) => {
+      console.error("Idle video autoplay failed after user gesture:", error);
+    });
+
+    if (
+      document.documentElement.requestFullscreen ||
+      document.documentElement.webkitRequestFullscreen ||
+      document.documentElement.msRequestFullscreen
+    ) {
+      showModal(fullscreenPrompt);
+    } else {
+      console.warn("Fullscreen API not supported on this browser.");
+      hideModal(fullscreenPrompt);
+    }
+  });
 
   enableFullscreenBtn.addEventListener("click", () => {
     requestFullscreen();
-    hideFullscreenPrompt();
-  });
-
-  if (
-    document.documentElement.requestFullscreen ||
-    document.documentElement.webkitRequestFullscreen ||
-    document.documentElement.msRequestFullscreen
-  ) {
-    fullscreenPrompt.classList.remove("hidden");
-  } else {
-    hideFullscreenPrompt();
-    console.warn("Fullscreen API not supported on this browser.");
-  }
-
-  scanButton.addEventListener("click", () => {
-    if (scannedPortal.classList.contains("playing")) {
-      return;
-    }
-
-    scannedPortal.currentTime = 0;
-    scannedPortal.style.opacity = 1;
-    scannedPortal.classList.add("playing");
-
-    scannedPortal.play();
-
-    scannedPortal.onended = () => {
-      scannedPortal.style.opacity = 0;
-      scannedPortal.classList.remove("playing");
-      idlePortal.play();
-    };
+    hideModal(fullscreenPrompt);
   });
 
   document.addEventListener("fullscreenchange", exitHandler);
@@ -68,6 +64,29 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("Exited fullscreen.");
     }
   }
+
+  scanButton.addEventListener("click", () => {
+    if (scannedPortal.classList.contains("playing")) {
+      return;
+    }
+
+    scannedPortal.currentTime = 0;
+    scannedPortal.style.opacity = 1;
+    scannedPortal.classList.add("playing");
+
+    scannedPortal.play().catch((error) => {
+      console.error("Scanned video playback failed:", error);
+    });
+
+    scannedPortal.onended = () => {
+      scannedPortal.style.opacity = 0;
+      scannedPortal.classList.remove("playing");
+
+      idlePortal
+        .play()
+        .catch((error) => console.error("Idle video resume failed:", error));
+    };
+  });
 
   idlePortal.onerror = () => console.error("Error loading idlePortal video.");
   scannedPortal.onerror = () =>

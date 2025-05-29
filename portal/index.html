@@ -11,25 +11,41 @@
       <video
         id="idlePortal"
         class="portal-video"
-        src="idle.mp4"
         loop
         muted
         playsinline
         preload="auto"
-      ></video>
+      >
+        <source src="idle.mp4" type="video/mp4" />
+        <img src="idle_fallback.png" alt="Idle Portal" />
+      </video>
       <video
         id="scannedPortal"
         class="portal-video"
-        src="scanned_glow_dive.webm"
         muted
         playsinline
         preload="auto"
-      ></video>
+      >
+        <source src="scanned_glow_dive.webm" type="video/webm" />
+        <source
+          src="scanned_glow_dive_hevc_alpha.mp4"
+          type="video/mp4; codecs=hvc1"
+        />
+
+        <img src="scanned_glow_dive_fallback.png" alt="Scanning Portal" />
+      </video>
     </div>
 
     <button id="scanButton">Scan Portal</button>
 
-    <div id="fullscreenPrompt" class="modal-overlay">
+    <div id="splashScreen" class="modal-overlay">
+      <div class="modal-content">
+        <p>Welcome to the Portal.</p>
+        <button id="startButton">Enter Experience</button>
+      </div>
+    </div>
+
+    <div id="fullscreenPrompt" class="modal-overlay hidden">
       <div class="modal-content">
         <p>Best experience in fullscreen.</p>
         <button id="enableFullscreenBtn">Go Fullscreen</button>
