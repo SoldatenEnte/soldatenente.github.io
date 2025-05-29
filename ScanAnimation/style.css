@@ -1,0 +1,101 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #000;
+  flex-direction: column;
+}
+
+.portal-container {
+  position: relative;
+  width: 80vw;
+  height: 80vh;
+  max-width: 800px;
+  max-height: 800px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.portal-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+#scannedPortal {
+  opacity: 0;
+  z-index: 10;
+  transition: opacity 0.3s ease-out;
+}
+
+#idlePortal {
+  z-index: 5;
+  opacity: 1;
+}
+
+#scanButton {
+  margin-top: 20px;
+  padding: 15px 30px;
+  font-size: 1.2em;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  z-index: 20;
+}
+
+#scanButton:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 768px) {
+  body {
+    display: block;
+    min-height: auto;
+  }
+
+  .portal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    max-height: none;
+    z-index: -1;
+  }
+
+  #scanButton {
+    position: fixed;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 0;
+  }
+}
+
+@supports (height: 100dvh) {
+  @media (max-width: 768px) {
+    .portal-container {
+      height: 100dvh;
+    }
+  }
+}
+@supports (height: 100svh) {
+  @media (max-width: 768px) {
+    .portal-container {
+      height: 100svh;
+    }
+  }
+}

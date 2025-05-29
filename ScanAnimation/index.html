@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portal UI</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="portal-container">
+      <video
+        id="idlePortal"
+        class="portal-video"
+        src="idle.mp4"
+        loop
+        muted
+        playsinline
+        preload="auto"
+      ></video>
+
+      <video
+        id="scannedPortal"
+        class="portal-video"
+        src="scanned_glow_dive.webm"
+        muted
+        playsinline
+        preload="auto"
+      ></video>
+    </div>
+
+    <button id="scanButton">Scan Portal</button>
+
+    <script src="script.js"></script>
+  </body>
+</html>
