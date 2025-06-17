@@ -247,8 +247,10 @@ body {
   justify-content: center;
   align-items: center;
   -webkit-tap-highlight-color: transparent;
+  outline: none; /* FIXED: Prevents potential browser outline on click */
   animation: fade-scale-in 0.3s ease-out;
-  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+  /* FIXED: Faster transition for disappearance */
+  transition: opacity 0.1s ease-out, transform 0.1s ease-out;
 }
 .fury-circle.disappearing {
   opacity: 0;

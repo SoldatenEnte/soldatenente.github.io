@@ -107,6 +107,8 @@
   const showChargeMinigame = () => {
     gameState = "MINIGAME_CHARGE_PENDING";
     chargeMeterDamageValue.style.opacity = "0";
+    // FIXED: Remove glow class *before* showing the overlay to prevent seeing the transition.
+    chargeMeterContainer.classList.remove("glow");
     chargeOverlay.classList.remove("hidden");
     attackBtn.disabled = true;
     messageDisplay.textContent = "";
@@ -114,7 +116,6 @@
     chargeBar.style.height = "0%";
     chargeIndicator.style.bottom = "0%";
     chargeBar.style.backgroundColor = "rgb(76, 175, 80)";
-    chargeMeterContainer.classList.remove("glow");
     chargeOverlay.addEventListener("pointerdown", startChargeLoop, {
       once: true,
     });
@@ -275,7 +276,8 @@
         liveMultiplierDisplay.classList.add("pulse");
 
         circleContainer.classList.add("disappearing");
-        setTimeout(() => circleContainer.remove(), 200);
+        // FIXED: Remove circle faster after it has been clicked.
+        setTimeout(() => circleContainer.remove(), 100);
 
         activeCircles = activeCircles.filter((c) => c !== circleObject);
       });
@@ -310,7 +312,7 @@
     activeCircles.forEach((c) => {
       clearTimeout(c.lifespanTimeoutId);
       c.element.classList.add("disappearing");
-      setTimeout(() => c.element.remove(), 200);
+      setTimeout(() => c.element.remove(), 100);
     });
     activeCircles = [];
 
@@ -345,9 +347,9 @@
     `;
     combatContentWrapper.appendChild(animContainer);
 
-    // REVERTED: Slower, more deliberate animation timing for player attack
+    // FIXED: Faster animation timing to reduce awkward overlap.
     setTimeout(() => animContainer.classList.add("is-merging"), 100);
-    setTimeout(() => animContainer.classList.add("is-combining"), 800);
+    setTimeout(() => animContainer.classList.add("is-combining"), 500);
     setTimeout(() => {
       animContainer.classList.add("is-throwing");
       animContainer.addEventListener(
@@ -361,7 +363,7 @@
         },
         { once: true }
       );
-    }, 1200);
+    }, 900);
   };
 
   const applyDamageToEnemy = (damage) => {
