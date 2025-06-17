@@ -204,7 +204,8 @@
         enemyRect.left - gameContainerRect.left + enemyRect.width / 2;
       const centerY =
         enemyRect.top - gameContainerRect.top + enemyRect.height / 2;
-      const maxRadius = Math.min(enemyRect.width, enemyRect.height) * 0.8;
+
+      const maxRadius = Math.min(enemyRect.width, enemyRect.height) * 0.75;
       const circleHitboxSize = 140;
 
       const getSpawnPoint = () => ({
@@ -351,11 +352,10 @@
     `;
     combatContentWrapper.appendChild(animContainer);
 
-    // Reverted to previous timing with adjusted 'is-combining' CSS
-    setTimeout(() => animContainer.classList.add("is-merging"), 100); // Numbers appear and move to center
-    setTimeout(() => animContainer.classList.add("is-combining"), 800); // Numbers start shrinking/fading, final number appears
+    setTimeout(() => animContainer.classList.add("is-merging"), 100);
+    setTimeout(() => animContainer.classList.add("is-combining"), 800);
     setTimeout(() => {
-      animContainer.classList.add("is-throwing"); // Final number flies to enemy
+      animContainer.classList.add("is-throwing");
       animContainer.addEventListener(
         "animationend",
         (e) => {
@@ -367,7 +367,7 @@
         },
         { once: true }
       );
-    }, 1200); // Start throwing after the merge-fade finishes and final is visible
+    }, 1200);
   };
 
   const applyDamageToEnemy = (damage) => {

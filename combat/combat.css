@@ -62,13 +62,13 @@ body {
   justify-content: center;
   align-items: center;
   padding: 20px;
-  padding-top: 40%;
+  padding-top: 45%;
 }
 
 .enemy-info {
   position: absolute;
-  /* Made health bar a tiny bit higher */
-  top: 30%;
+  /* Made health bar a tiny bit higher relative to new enemy position */
+  top: 25%;
   left: 20px;
   right: 20px;
   display: flex;
@@ -135,7 +135,8 @@ body {
 }
 .combat-ui {
   background: var(--bg-medium);
-  padding: 15px 15px 40px;
+  /* Adjusted padding to lower the buttons even more */
+  padding: 15px 15px 45px;
   text-align: center;
   border-top: 1px solid var(--border-color);
   box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3);
@@ -365,7 +366,7 @@ body {
 }
 .damage-flow-container {
   position: absolute;
-  top: 60%;
+  top: 63%;
   left: 0;
   width: 100%;
   transform: translateY(-50%);
@@ -403,12 +404,11 @@ body {
   transform: translateX(0);
 }
 
-/* REVERTED and IMPROVED: This makes them shrink and fade while they move (duration increased) */
 .damage-flow-container.is-combining .base,
 .damage-flow-container.is-combining .mult {
-  transition: transform 0.4s ease-in, opacity 0.3s ease-out; /* Adjusted durations for smoother fade */
+  transition: transform 0.4s ease-in, opacity 0.3s ease-out;
   opacity: 0;
-  transform: scale(0); /* They scale down to nothing */
+  transform: scale(0);
 }
 
 .damage-flow-container.is-combining .final {
@@ -422,12 +422,12 @@ body {
 }
 @keyframes throw-to-enemy {
   from {
-    top: 60%; /* Start from here (current damage container position) */
+    top: 63%;
     opacity: 1;
     transform: translateY(-50%) scale(1);
   }
   to {
-    top: 55%;
+    top: 35%;
     opacity: 0;
     transform: translateY(-50%) scale(0.4);
   }
