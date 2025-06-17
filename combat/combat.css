@@ -67,7 +67,6 @@ body {
 
 .enemy-info {
   position: absolute;
-  /* Made health bar a tiny bit higher relative to new enemy position */
   top: 25%;
   left: 20px;
   right: 20px;
@@ -135,7 +134,6 @@ body {
 }
 .combat-ui {
   background: var(--bg-medium);
-  /* Adjusted padding to lower the buttons even more */
   padding: 15px 15px 45px;
   text-align: center;
   border-top: 1px solid var(--border-color);
@@ -496,7 +494,6 @@ body {
   animation: screen-shake 0.25s ease-in-out;
 }
 
-/* Fullscreen & Start Prompt Styles */
 .fullscreen-prompt-box {
   background: var(--bg-medium);
   padding: 30px;

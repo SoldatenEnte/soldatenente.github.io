@@ -166,7 +166,6 @@
     let baseDamage = Math.round(1 + 9 * effectiveCharge);
     baseDamage = Math.max(1, Math.min(10, baseDamage));
     const isCrit = chargeValue >= 0.98;
-    if (isCrit) shakeScreen();
 
     chargeMeterDamageValue.textContent = isCrit
       ? `${baseDamage} 🔥`
@@ -361,7 +360,6 @@
         (e) => {
           if (e.animationName === "throw-to-enemy") {
             animContainer.remove();
-            shakeScreen();
             applyDamageToEnemy(finalDamage);
           }
         },
@@ -372,6 +370,7 @@
 
   const applyDamageToEnemy = (damage) => {
     enemyHP = Math.max(0, enemyHP - damage);
+    shakeScreen();
     updateUI(true, "enemy");
     if (enemyHP <= 0) endGame(true);
     else setTimeout(enemyTurn, 500);
