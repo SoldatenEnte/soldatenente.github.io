@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Combat Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="combat.css" />
+  </head>
+  <body>
+    <div class="combat-container" id="combat-game-root">
+      <div id="combat-content-wrapper">
+        <div class="combat-arena">
+          <div class="combatant-display enemy-display">
+            <div class="hp-bar-container">
+              <div id="enemy-hp-flash" class="hp-bar-flash"></div>
+              <div id="enemy-hp-bar" class="hp-bar"></div>
+            </div>
+            <div id="enemy-sprite" class="sprite">👹</div>
+            <div id="enemy-hp-text" class="hp-text">100 / 100</div>
+          </div>
+          <div class="combatant-display player-display">
+            <div id="player-sprite" class="sprite">⚔️</div>
+            <div id="player-hp-text" class="hp-text">100 / 100</div>
+            <div class="hp-bar-container">
+              <div id="player-hp-flash" class="hp-bar-flash"></div>
+              <div id="player-hp-bar" class="hp-bar"></div>
+            </div>
+          </div>
+        </div>
+        <div class="combat-ui">
+          <div id="game-message" class="message-display">
+            Choose Your Opponent
+          </div>
+          <div id="action-buttons" class="button-grid hidden">
+            <button class="action-btn" id="attack-btn">Attack</button>
+          </div>
+          <button id="restart-btn" class="action-btn hidden">Restart</button>
+        </div>
+      </div>
+      <div id="charge-overlay" class="minigame-overlay hidden">
+        <div class="charge-minigame-content">
+          <div class="charge-instructions">
+            HOLD to Charge<br />RELEASE to Strike!
+          </div>
+          <div id="charge-meter-container">
+            <div id="charge-meter-bar"></div>
+            <div id="charge-meter-indicator"></div>
+            <!-- NEW: Dedicated element for damage feedback inside the bar -->
+            <div id="charge-meter-damage-value"></div>
+          </div>
+        </div>
+      </div>
+      <div id="fury-overlay" class="minigame-overlay hidden">
+        <div id="live-multiplier"></div>
+      </div>
+      <div id="enemy-selection-overlay" class="minigame-overlay hidden">
+        <div id="enemy-selection-title">Choose Your Opponent</div>
+        <div id="enemy-selection-grid"></div>
+      </div>
+      <div id="fullscreen-prompt-overlay" class="minigame-overlay hidden">
+        <div class="fullscreen-prompt-box">
+          <h2>Go Fullscreen?</h2>
+          <p>For the best experience, we recommend playing in fullscreen.</p>
+          <div class="fullscreen-prompt-buttons">
+            <button id="fullscreen-yes-btn" class="action-btn">
+              Enter Fullscreen
+            </button>
+            <button id="fullscreen-no-btn" class="action-btn">No Thanks</button>
+          </div>
+        </div>
+      </div>
+      <div id="start-game-overlay" class="minigame-overlay">
+        <div class="fullscreen-prompt-box">
+          <h2 class="start-title">Ready for Battle?</h2>
+          <button id="start-game-btn" class="action-btn">Begin</button>
+        </div>
+      </div>
+    </div>
+    <script src="combat.js"></script>
+  </body>
+</html>

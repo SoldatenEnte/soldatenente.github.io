@@ -1,0 +1,494 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap");
+
+:root {
+  --font-primary: "Cinzel", serif;
+  --bg-dark: #0d1117;
+  --bg-medium: #161b22;
+  --border-color: #30363d;
+  --text-primary: #c9d1d9;
+  --text-secondary: #8b949e;
+  --accent-glow: #1f6feb;
+  --hp-red: #da3633;
+  --hp-red-dark: #a62622;
+}
+
+body {
+  background: var(--bg-dark);
+  font-family: var(--font-primary);
+  margin: 0;
+}
+
+.combat-container {
+  width: 100%;
+  max-width: 500px;
+  height: 100dvh;
+  min-height: 650px;
+  margin: 0 auto;
+  background: linear-gradient(145deg, #1e2a3b, #101620);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#combat-content-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.combat-arena {
+  flex-grow: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.combatant-display {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.enemy-display {
+  flex-direction: row-reverse;
+}
+.sprite {
+  font-size: clamp(3rem, 20vw, 5rem);
+  text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+.hp-bar-container {
+  flex-grow: 1;
+  height: 30px;
+  background: var(--bg-dark);
+  border-radius: 15px;
+  border: 1px solid var(--border-color);
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+.hp-bar-flash {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: #fff;
+  border-radius: 15px;
+  transition: width 0.8s ease-out;
+  z-index: 1;
+}
+.hp-bar {
+  height: 100%;
+  background: linear-gradient(to right, var(--hp-red-dark), var(--hp-red));
+  border-radius: 15px;
+  width: 100%;
+  transition: width 0.3s ease-out;
+  position: relative;
+  z-index: 2;
+}
+.hp-text {
+  font-size: clamp(1rem, 4vw, 1.2rem);
+  color: var(--text-primary);
+  font-weight: 700;
+}
+.combat-ui {
+  background: var(--bg-medium);
+  padding: 20px 15px;
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+  box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3);
+}
+.message-display {
+  color: var(--text-secondary);
+  font-size: clamp(1rem, 4vw, 1.1rem);
+  min-height: 24px;
+  margin-bottom: 20px;
+}
+.button-grid,
+#restart-btn {
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-content: center;
+  gap: 10px;
+  max-width: 250px;
+  margin: 0 auto;
+}
+.action-btn {
+  padding: 15px;
+  font-family: var(--font-primary);
+  font-weight: 700;
+  font-size: clamp(1.2rem, 5vw, 1.5rem);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--text-primary);
+  background-color: var(--bg-dark);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+}
+.action-btn:disabled {
+  background-color: #21262d;
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.action-btn:not(:disabled):hover {
+  background-color: #21262d;
+  border-color: var(--accent-glow);
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+.action-btn:not(:disabled):active {
+  transform: scale(0.98);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+.minigame-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  touch-action: none;
+  z-index: 100;
+}
+.hidden {
+  display: none !important;
+}
+
+.charge-minigame-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  width: 100%;
+}
+
+.charge-instructions {
+  color: white;
+  font-size: 1.8rem;
+  line-height: 1.4;
+  text-shadow: 0 0 10px black;
+  text-align: center;
+  max-width: 80%;
+}
+#charge-meter-container {
+  width: 80px;
+  height: 70vh;
+  background: rgba(0, 0, 0, 0.4);
+  border: 4px solid #30363d;
+  border-radius: 30px;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+#charge-meter-container.glow {
+  box-shadow: 0 0 20px 5px var(--accent-glow);
+  border-color: var(--accent-glow);
+}
+#charge-meter-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background-color: rgb(76, 175, 80);
+  border-radius: 25px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+#charge-meter-indicator {
+  position: absolute;
+  left: -10px;
+  right: -10px;
+  height: 6px;
+  background: white;
+  border-radius: 3px;
+  box-shadow: 0 0 10px white;
+  bottom: 0%;
+}
+/* CHANGED: Damage value is now fixed at the top of the container */
+#charge-meter-damage-value {
+  position: absolute;
+  top: 10px; /* Fixed position from the top */
+  left: 0;
+  right: 0;
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 5px black;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  pointer-events: none;
+}
+
+#live-multiplier {
+  position: absolute;
+  top: 5%;
+  font-weight: 700;
+  text-shadow: 2px 2px 5px black;
+  transition: color 0.2s ease-out, font-size 0.2s ease-out;
+}
+.fury-circle {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  -webkit-tap-highlight-color: transparent;
+  animation: fade-scale-in 0.3s ease-out;
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+}
+.fury-circle.disappearing {
+  opacity: 0;
+  transform: scale(0.5);
+  pointer-events: none;
+}
+
+@keyframes fade-scale-in {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.fury-circle-visual {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  animation-name: shrink-and-color-change;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  pointer-events: none;
+}
+@keyframes shrink-and-color-change {
+  0% {
+    transform: scale(1);
+    background-color: rgba(76, 175, 80, 0.9);
+    border: 5px solid #a5d6a7;
+  }
+  50% {
+    background-color: rgba(255, 235, 59, 0.9);
+    border-color: #fff59d;
+  }
+  99% {
+    transform: scale(0.2);
+    background-color: rgba(239, 83, 80, 0.9);
+    border-color: #ef9a9a;
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+.miss-feedback {
+  position: fixed;
+  color: #ef9a9a;
+  font-size: 2rem;
+  pointer-events: none;
+  animation: fade-out 0.5s forwards;
+}
+@keyframes fade-out {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+}
+@keyframes pulse-anim {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+#live-multiplier.pulse {
+  animation: pulse-anim 0.2s ease-out;
+}
+.damage-flow-container {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
+  z-index: 1001;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+.damage-flow-part {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px #000;
+  opacity: 0;
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1),
+    opacity 0.5s ease-out;
+  position: absolute;
+}
+.damage-flow-part.base {
+  color: white;
+  transform: translateX(-150%);
+}
+.damage-flow-part.mult {
+  color: gold;
+  transform: translateX(150%);
+}
+.damage-flow-part.final {
+  color: #ff4d4d;
+  font-size: 4rem;
+  transform: scale(0);
+}
+.damage-flow-container.is-merging .base,
+.damage-flow-container.is-merging .mult {
+  opacity: 1;
+  transform: translateX(0);
+}
+.damage-flow-container.is-combining .base,
+.damage-flow-container.is-combining .mult {
+  transition: transform 0.2s ease-in, opacity 0.15s ease-out;
+  opacity: 0;
+  transform: scale(0);
+}
+.damage-flow-container.is-combining .final {
+  transition: transform 0.4s cubic-bezier(0.5, 1.5, 0.5, 1),
+    opacity 0.3s ease-out;
+  opacity: 1;
+  transform: scale(1);
+}
+/* CHANGED: Faster throw animation */
+.damage-flow-container.is-throwing {
+  animation: throw-to-enemy 0.5s ease-in forwards;
+}
+@keyframes throw-to-enemy {
+  from {
+    top: 50%;
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+  to {
+    top: 20%;
+    opacity: 0;
+    transform: translateY(-50%) scale(0.4);
+  }
+}
+#restart-btn {
+  grid-column: 1 / -1;
+}
+#enemy-selection-overlay {
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+#enemy-selection-title {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 5px black;
+  text-align: center;
+}
+#enemy-selection-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+.enemy-card {
+  background: linear-gradient(145deg, #212d40, #161c28);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.enemy-card:hover {
+  transform: scale(1.05);
+  border-color: var(--accent-glow);
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+.enemy-card-sprite {
+  font-size: 3.5rem;
+  margin-bottom: 10px;
+}
+.enemy-card-name {
+  font-size: 1.5rem;
+  color: white;
+  font-weight: 700;
+}
+.enemy-card-hp {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+@keyframes screen-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-12px);
+  }
+  75% {
+    transform: translateX(12px);
+  }
+}
+#combat-content-wrapper.shake {
+  animation: screen-shake 0.25s ease-in-out;
+}
+
+/* Fullscreen & Start Prompt Styles */
+.fullscreen-prompt-box {
+  background: var(--bg-medium);
+  padding: 30px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  text-align: center;
+  max-width: 90%;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+}
+.fullscreen-prompt-box h2 {
+  color: var(--text-primary);
+  margin-top: 0;
+  font-size: 1.8rem;
+}
+.start-title {
+  margin-bottom: 25px;
+}
+.fullscreen-prompt-box p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 25px;
+}
+.fullscreen-prompt-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+#fullscreen-no-btn {
+  background-color: var(--bg-dark);
+}
+#fullscreen-no-btn:hover {
+  border-color: var(--text-secondary);
+  box-shadow: none;
+}
