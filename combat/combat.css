@@ -44,23 +44,61 @@ body {
 
 .combat-arena {
   flex-grow: 1;
-  padding: 20px;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 }
+
 .combatant-display {
   display: flex;
   align-items: center;
   gap: 15px;
 }
+
 .enemy-display {
-  flex-direction: row-reverse;
+  flex-grow: 1;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  padding-top: 40%;
 }
+
+.enemy-info {
+  position: absolute;
+  /* Made health bar a tiny bit higher */
+  top: 30%;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.enemy-display .hp-text {
+  text-align: center;
+  order: 1;
+}
+
+.enemy-display .hp-bar-container {
+  order: 2;
+}
+
+.player-display {
+  padding: 20px;
+}
+
 .sprite {
   font-size: clamp(3rem, 20vw, 5rem);
   text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
+
+#enemy-sprite {
+  font-size: clamp(8rem, 40vw, 12rem);
+  text-shadow: 0 5px 30px rgba(0, 0, 0, 0.6);
+}
+
 .hp-bar-container {
   flex-grow: 1;
   height: 30px;
@@ -97,7 +135,7 @@ body {
 }
 .combat-ui {
   background: var(--bg-medium);
-  padding: 20px 15px;
+  padding: 15px 15px 40px;
   text-align: center;
   border-top: 1px solid var(--border-color);
   box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3);
@@ -106,7 +144,7 @@ body {
   color: var(--text-secondary);
   font-size: clamp(1rem, 4vw, 1.1rem);
   min-height: 24px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 .button-grid,
 #restart-btn {
@@ -214,10 +252,9 @@ body {
   box-shadow: 0 0 10px white;
   bottom: 0%;
 }
-/* CHANGED: Damage value is now fixed at the top of the container */
 #charge-meter-damage-value {
   position: absolute;
-  top: 10px; /* Fixed position from the top */
+  top: 10px;
   left: 0;
   right: 0;
   color: white;
@@ -247,9 +284,8 @@ body {
   justify-content: center;
   align-items: center;
   -webkit-tap-highlight-color: transparent;
-  outline: none; /* FIXED: Prevents potential browser outline on click */
+  outline: none;
   animation: fade-scale-in 0.3s ease-out;
-  /* FIXED: Faster transition for disappearance */
   transition: opacity 0.1s ease-out, transform 0.1s ease-out;
 }
 .fury-circle.disappearing {
@@ -329,7 +365,7 @@ body {
 }
 .damage-flow-container {
   position: absolute;
-  top: 50%;
+  top: 60%;
   left: 0;
   width: 100%;
   transform: translateY(-50%);
@@ -366,30 +402,32 @@ body {
   opacity: 1;
   transform: translateX(0);
 }
+
+/* REVERTED and IMPROVED: This makes them shrink and fade while they move (duration increased) */
 .damage-flow-container.is-combining .base,
 .damage-flow-container.is-combining .mult {
-  transition: transform 0.2s ease-in, opacity 0.15s ease-out;
+  transition: transform 0.4s ease-in, opacity 0.3s ease-out; /* Adjusted durations for smoother fade */
   opacity: 0;
-  transform: scale(0);
+  transform: scale(0); /* They scale down to nothing */
 }
+
 .damage-flow-container.is-combining .final {
   transition: transform 0.4s cubic-bezier(0.5, 1.5, 0.5, 1),
     opacity 0.3s ease-out;
   opacity: 1;
   transform: scale(1);
 }
-/* CHANGED: Faster throw animation */
 .damage-flow-container.is-throwing {
   animation: throw-to-enemy 0.5s ease-in forwards;
 }
 @keyframes throw-to-enemy {
   from {
-    top: 50%;
+    top: 60%; /* Start from here (current damage container position) */
     opacity: 1;
     transform: translateY(-50%) scale(1);
   }
   to {
-    top: 20%;
+    top: 55%;
     opacity: 0;
     transform: translateY(-50%) scale(0.4);
   }
@@ -445,13 +483,13 @@ body {
 @keyframes screen-shake {
   0%,
   100% {
-    transform: translateX(0);
+    transform: translate(0, 0);
   }
   25% {
-    transform: translateX(-12px);
+    transform: translate(-12px, -8px);
   }
   75% {
-    transform: translateX(12px);
+    transform: translate(12px, 8px);
   }
 }
 #combat-content-wrapper.shake {

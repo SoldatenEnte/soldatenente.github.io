@@ -17,12 +17,16 @@
       <div id="combat-content-wrapper">
         <div class="combat-arena">
           <div class="combatant-display enemy-display">
-            <div class="hp-bar-container">
-              <div id="enemy-hp-flash" class="hp-bar-flash"></div>
-              <div id="enemy-hp-bar" class="hp-bar"></div>
+            <!-- NEW: Wrapper for HP elements -->
+            <div class="enemy-info">
+              <div id="enemy-hp-text" class="hp-text">100 / 100</div>
+              <div class="hp-bar-container">
+                <div id="enemy-hp-flash" class="hp-bar-flash"></div>
+                <div id="enemy-hp-bar" class="hp-bar"></div>
+              </div>
             </div>
+            <!-- UPDATED: Sprite is now outside the info wrapper for independent positioning -->
             <div id="enemy-sprite" class="sprite">👹</div>
-            <div id="enemy-hp-text" class="hp-text">100 / 100</div>
           </div>
           <div class="combatant-display player-display">
             <div id="player-sprite" class="sprite">⚔️</div>
@@ -51,7 +55,6 @@
           <div id="charge-meter-container">
             <div id="charge-meter-bar"></div>
             <div id="charge-meter-indicator"></div>
-            <!-- NEW: Dedicated element for damage feedback inside the bar -->
             <div id="charge-meter-damage-value"></div>
           </div>
         </div>

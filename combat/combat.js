@@ -107,7 +107,6 @@
   const showChargeMinigame = () => {
     gameState = "MINIGAME_CHARGE_PENDING";
     chargeMeterDamageValue.style.opacity = "0";
-    // FIXED: Remove glow class *before* showing the overlay to prevent seeing the transition.
     chargeMeterContainer.classList.remove("glow");
     chargeOverlay.classList.remove("hidden");
     attackBtn.disabled = true;
@@ -193,13 +192,19 @@
     liveMultiplierDisplay.style.color = getMultiplierColor(1.0);
     liveMultiplierDisplay.style.fontSize = "4rem";
 
+    const enemyRect = enemySprite.getBoundingClientRect();
+    const gameContainerRect = furyOverlay.parentElement.getBoundingClientRect();
+
     const spawnCircle = () => {
       if (gameState !== "MINIGAME_FURY") return;
       const circleContainer = document.createElement("div");
       circleContainer.className = "fury-circle";
-      const centerX = furyOverlay.offsetWidth / 2;
-      const centerY = furyOverlay.offsetHeight / 2;
-      const maxRadius = Math.min(centerX, centerY) * 0.8;
+
+      const centerX =
+        enemyRect.left - gameContainerRect.left + enemyRect.width / 2;
+      const centerY =
+        enemyRect.top - gameContainerRect.top + enemyRect.height / 2;
+      const maxRadius = Math.min(enemyRect.width, enemyRect.height) * 0.8;
       const circleHitboxSize = 140;
 
       const getSpawnPoint = () => ({
@@ -276,7 +281,6 @@
         liveMultiplierDisplay.classList.add("pulse");
 
         circleContainer.classList.add("disappearing");
-        // FIXED: Remove circle faster after it has been clicked.
         setTimeout(() => circleContainer.remove(), 100);
 
         activeCircles = activeCircles.filter((c) => c !== circleObject);
@@ -347,11 +351,11 @@
     `;
     combatContentWrapper.appendChild(animContainer);
 
-    // FIXED: Faster animation timing to reduce awkward overlap.
-    setTimeout(() => animContainer.classList.add("is-merging"), 100);
-    setTimeout(() => animContainer.classList.add("is-combining"), 500);
+    // Reverted to previous timing with adjusted 'is-combining' CSS
+    setTimeout(() => animContainer.classList.add("is-merging"), 100); // Numbers appear and move to center
+    setTimeout(() => animContainer.classList.add("is-combining"), 800); // Numbers start shrinking/fading, final number appears
     setTimeout(() => {
-      animContainer.classList.add("is-throwing");
+      animContainer.classList.add("is-throwing"); // Final number flies to enemy
       animContainer.addEventListener(
         "animationend",
         (e) => {
@@ -363,14 +367,13 @@
         },
         { once: true }
       );
-    }, 900);
+    }, 1200); // Start throwing after the merge-fade finishes and final is visible
   };
 
   const applyDamageToEnemy = (damage) => {
     enemyHP = Math.max(0, enemyHP - damage);
     updateUI(true, "enemy");
     if (enemyHP <= 0) endGame(true);
-    // This delay can remain fast to keep the transition snappy
     else setTimeout(enemyTurn, 500);
   };
 
@@ -382,7 +385,6 @@
       Math.random() * damageRange + currentEnemy.minDamage
     );
 
-    // CHANGED: Faster enemy attack "wind-up"
     setTimeout(() => {
       shakeScreen();
       playerHP = Math.max(0, playerHP - enemyDamage);
@@ -393,7 +395,7 @@
         messageDisplay.textContent = "Your turn!";
         attackBtn.disabled = false;
       }
-    }, 1000); // Was 1500ms
+    }, 1000);
   };
 
   const endGame = (isVictory) => {
