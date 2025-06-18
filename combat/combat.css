@@ -294,8 +294,6 @@ body {
 }
 .fury-circle {
   position: absolute;
-  width: 140px;
-  height: 140px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
@@ -324,19 +322,21 @@ body {
   }
 }
 .fury-circle-visual {
-  width: 110px;
-  height: 110px;
+  width: 78.5%;
+  height: 78.5%;
   border-radius: 50%;
   animation-name: shrink-and-color-change;
   animation-timing-function: linear;
   animation-fill-mode: forwards;
   pointer-events: none;
+  border-style: solid;
+  border-color: #a5d6a7;
 }
 @keyframes shrink-and-color-change {
   0% {
     transform: scale(1);
     background-color: rgba(76, 175, 80, 0.9);
-    border: 5px solid #a5d6a7;
+    border-color: #a5d6a7;
     box-shadow: none;
   }
   50% {

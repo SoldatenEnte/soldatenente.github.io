@@ -66,6 +66,7 @@
   let enemyHP;
   let playerHP;
   let chargeAnimation;
+  let lastChargeTime;
   let furySpawnInterval;
   let chargeValue = 0;
   let chargeDirection = 1;
@@ -103,7 +104,8 @@
 
   const shakeScreen = () => {
     UI.combatContentWrapper.classList.remove("shake");
-    setTimeout(() => UI.combatContentWrapper.classList.add("shake"), 10);
+    void UI.combatContentWrapper.offsetWidth;
+    UI.combatContentWrapper.classList.add("shake");
   };
 
   const showFinalDamageAnimation = (baseDamage, multiplier, finalDamage) => {
@@ -156,12 +158,23 @@
 
   const startChargeLoop = () => {
     gameState = "MINIGAME_CHARGE_ACTIVE";
+    lastChargeTime = performance.now();
     UI.chargeOverlay.addEventListener("pointerup", endChargeMinigame, {
       once: true,
     });
-    const chargeLoop = () => {
-      const speed = 0.01 + Math.pow(chargeValue, 4) * 0.06;
-      chargeValue += speed * chargeDirection;
+
+    const chargeLoop = (currentTime) => {
+      if (gameState !== "MINIGAME_CHARGE_ACTIVE") return;
+
+      const deltaTime = currentTime - lastChargeTime;
+      lastChargeTime = currentTime;
+
+      const baseSpeedPerSecond = 0.6;
+      const accelerationFactor = 3.6;
+      const speed =
+        baseSpeedPerSecond + Math.pow(chargeValue, 4) * accelerationFactor;
+
+      chargeValue += speed * (deltaTime / 1000) * chargeDirection;
       chargeValue = Math.max(0, Math.min(1, chargeValue));
       chargeDirection =
         chargeValue >= 1 ? -1 : chargeValue <= 0 ? 1 : chargeDirection;
@@ -183,8 +196,7 @@
       UI.chargeBar.style.backgroundColor = `rgb(${r},${g},${b})`;
       UI.chargeBar.style.height = `${chargeValue * 100}%`;
       UI.chargeIndicator.style.bottom = `${chargeValue * 100}%`;
-      if (gameState === "MINIGAME_CHARGE_ACTIVE")
-        chargeAnimation = requestAnimationFrame(chargeLoop);
+      chargeAnimation = requestAnimationFrame(chargeLoop);
     };
     chargeAnimation = requestAnimationFrame(chargeLoop);
   };
@@ -193,6 +205,7 @@
     if (gameState !== "MINIGAME_CHARGE_ACTIVE") return;
     gameState = "PROCESSING_CHARGE";
     cancelAnimationFrame(chargeAnimation);
+    lastChargeTime = null;
     const effectiveCharge = Math.pow(chargeValue, 2.5);
     const baseDamage = Math.max(
       1,
@@ -230,6 +243,14 @@
       if (gameState !== "MINIGAME_FURY") return;
       const circleContainer = document.createElement("div");
       circleContainer.className = "fury-circle";
+
+      const circleSize = Math.max(
+        80,
+        Math.min(enemyRect.width, enemyRect.height) * 0.6
+      );
+      circleContainer.style.width = `${circleSize}px`;
+      circleContainer.style.height = `${circleSize}px`;
+
       const centerX =
         enemyRect.left - gameContainerRect.left + enemyRect.width / 2;
       const centerY =
@@ -260,8 +281,11 @@
         }
       }
       circleContainer.innerHTML = `<div class="fury-circle-visual"></div>`;
-      circleContainer.style.left = `${bestCandidate.x - 70}px`;
-      circleContainer.style.top = `${bestCandidate.y - 70}px`;
+      const visual = circleContainer.querySelector(".fury-circle-visual");
+      visual.style.borderWidth = `${Math.max(2, circleSize * 0.035)}px`;
+
+      circleContainer.style.left = `${bestCandidate.x - circleSize / 2}px`;
+      circleContainer.style.top = `${bestCandidate.y - circleSize / 2}px`;
       circleContainer.firstChild.style.animationDuration = `${
         lifespan / 1000
       }s`;
