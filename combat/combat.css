@@ -17,6 +17,7 @@ body {
   background: var(--bg-dark);
   font-family: var(--font-primary);
   margin: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .combat-container {
@@ -216,7 +217,7 @@ body {
   text-shadow: 0 0 10px black;
   text-align: center;
   max-width: 80%;
-  transition: opacity 0.4s ease-out; /* Added transition for fade out */
+  transition: opacity 0.4s ease-out;
 }
 #charge-meter-container {
   width: 80px;
@@ -286,7 +287,7 @@ body {
 
 #live-multiplier {
   position: absolute;
-  top: 15%; /* Adjusted for instructions */
+  top: 15%;
   font-weight: 700;
   text-shadow: 2px 2px 5px black;
   transition: color 0.2s ease-out, font-size 0.2s ease-out;
@@ -300,7 +301,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  -webkit-tap-highlight-color: transparent;
   outline: none;
   animation: fade-scale-in 0.3s ease-out;
   transition: opacity 0.1s ease-out, transform 0.1s ease-out;
@@ -310,11 +310,9 @@ body {
   transform: scale(0.5);
   pointer-events: none;
 }
-
 .fury-circle.exploding .fury-circle-visual {
   animation: explode 0.3s ease-out forwards !important;
 }
-
 @keyframes fade-scale-in {
   from {
     transform: scale(0.5);
@@ -334,7 +332,6 @@ body {
   animation-fill-mode: forwards;
   pointer-events: none;
 }
-
 @keyframes shrink-and-color-change {
   0% {
     transform: scale(1);
@@ -347,7 +344,6 @@ body {
     border-color: #fff59d;
   }
   75% {
-    /* Start warning earlier */
     transform: scale(0.45);
     background-color: var(--danger-red);
     border-color: #ef9a9a;
@@ -375,7 +371,6 @@ body {
     transform: scale(0);
   }
 }
-
 @keyframes explode {
   from {
     transform: scale(0.4);
@@ -388,9 +383,8 @@ body {
     opacity: 0;
   }
 }
-
 .miss-feedback {
-  position: absolute; /* Changed from fixed */
+  position: absolute;
   color: #ef9a9a;
   font-size: 2rem;
   font-weight: 700;
@@ -462,14 +456,12 @@ body {
   opacity: 1;
   transform: translateX(0);
 }
-
 .damage-flow-container.is-combining .base,
 .damage-flow-container.is-combining .mult {
   transition: transform 0.4s ease-in, opacity 0.3s ease-out;
   opacity: 0;
   transform: scale(0);
 }
-
 .damage-flow-container.is-combining .final {
   transition: transform 0.4s cubic-bezier(0.5, 1.5, 0.5, 1),
     opacity 0.3s ease-out;
@@ -554,7 +546,6 @@ body {
 #combat-content-wrapper.shake {
   animation: screen-shake 0.25s ease-in-out;
 }
-
 .fullscreen-prompt-box {
   background: var(--bg-medium);
   padding: 30px;

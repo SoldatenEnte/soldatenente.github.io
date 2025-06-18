@@ -1,74 +1,99 @@
 (() => {
-  const attackBtn = document.getElementById("attack-btn");
-  const actionButtons = document.getElementById("action-buttons");
-  const restartBtn = document.getElementById("restart-btn");
-  const enemySelectionOverlay = document.getElementById(
-    "enemy-selection-overlay"
-  );
-  const enemySelectionGrid = document.getElementById("enemy-selection-grid");
-  const chargeOverlay = document.getElementById("charge-overlay");
-  const chargeBar = document.getElementById("charge-meter-bar");
-  const chargeIndicator = document.getElementById("charge-meter-indicator");
-  const chargeMeterContainer = document.getElementById(
-    "charge-meter-container"
-  );
-  const chargeMeterDamageValue = document.getElementById(
-    "charge-meter-damage-value"
-  );
-  const furyOverlay = document.getElementById("fury-overlay");
-  const furyInstructions = document.getElementById("fury-instructions");
-  const enemyHpBar = document.getElementById("enemy-hp-bar");
-  const enemyHpFlash = document.getElementById("enemy-hp-flash");
-  const enemyHpText = document.getElementById("enemy-hp-text");
-  const playerHpBar = document.getElementById("player-hp-bar");
-  const playerHpFlash = document.getElementById("player-hp-flash");
-  const playerHpText = document.getElementById("player-hp-text");
-  const messageDisplay = document.getElementById("game-message");
-  const liveMultiplierDisplay = document.getElementById("live-multiplier");
-  const enemySprite = document.getElementById("enemy-sprite");
-  const combatContentWrapper = document.getElementById(
-    "combat-content-wrapper"
-  );
-  const startGameOverlay = document.getElementById("start-game-overlay");
-  const startGameBtn = document.getElementById("start-game-btn");
-  const fullscreenPromptOverlay = document.getElementById(
-    "fullscreen-prompt-overlay"
-  );
-  const fullscreenYesBtn = document.getElementById("fullscreen-yes-btn");
-  const fullscreenNoBtn = document.getElementById("fullscreen-no-btn");
+  const CONFIG = {
+    PLAYER_MAX_HP: 100,
+    CHARGE_MINIGAME_END_DELAY: 800,
+    FURY_MINIGAME_END_DELAY: 400,
+    FURY_SPAWN_RATE_START: 320,
+    FURY_SPAWN_RATE_MULTIPLIER: 0.9,
+    FURY_SPAWN_RATE_MIN: 100,
+    FURY_LIFESPAN_START: 2200,
+    FURY_LIFESPAN_MULTIPLIER: 0.96,
+    FURY_LIFESPAN_MIN: 1000,
+    DAMAGE_ANIM_MERGE_DELAY: 100,
+    DAMAGE_ANIM_COMBINE_DELAY: 800,
+    DAMAGE_ANIM_THROW_DELAY: 1200,
+    DAMAGE_ANIM_THROW_DURATION: 500,
+    ENEMY_TURN_DELAY: 500,
+    ENEMY_ATTACK_ANIMATION_DURATION: 1000,
+    INITIAL_MESSAGE_DURATION: 2000,
+    ENEMIES: [
+      { name: "Slime", sprite: "🟢", maxHP: 50, minDamage: 3, maxDamage: 8 },
+      { name: "Goblin", sprite: "👹", maxHP: 100, minDamage: 5, maxDamage: 10 },
+      { name: "Orc", sprite: "😈", maxHP: 150, minDamage: 12, maxDamage: 20 },
+      {
+        name: "Armored Knight",
+        sprite: "🤖",
+        maxHP: 200,
+        minDamage: 15,
+        maxDamage: 25,
+      },
+    ],
+  };
 
-  const enemies = [
-    { name: "Slime", sprite: "🟢", maxHP: 50, minDamage: 3, maxDamage: 8 },
-    { name: "Goblin", sprite: "👹", maxHP: 100, minDamage: 5, maxDamage: 10 },
-    { name: "Orc", sprite: "😈", maxHP: 150, minDamage: 12, maxDamage: 20 },
-    {
-      name: "Armored Knight",
-      sprite: "🤖",
-      maxHP: 200,
-      minDamage: 15,
-      maxDamage: 25,
-    },
-  ];
+  const a = (id) => document.getElementById(id);
+  const UI = {
+    attackBtn: a("attack-btn"),
+    actionButtons: a("action-buttons"),
+    restartBtn: a("restart-btn"),
+    enemySelectionOverlay: a("enemy-selection-overlay"),
+    enemySelectionGrid: a("enemy-selection-grid"),
+    chargeOverlay: a("charge-overlay"),
+    chargeBar: a("charge-meter-bar"),
+    chargeIndicator: a("charge-meter-indicator"),
+    chargeMeterContainer: a("charge-meter-container"),
+    chargeMeterDamageValue: a("charge-meter-damage-value"),
+    furyOverlay: a("fury-overlay"),
+    furyInstructions: a("fury-instructions"),
+    enemyHpBar: a("enemy-hp-bar"),
+    enemyHpFlash: a("enemy-hp-flash"),
+    enemyHpText: a("enemy-hp-text"),
+    playerHpBar: a("player-hp-bar"),
+    playerHpFlash: a("player-hp-flash"),
+    playerHpText: a("player-hp-text"),
+    messageDisplay: a("game-message"),
+    liveMultiplierDisplay: a("live-multiplier"),
+    enemySprite: a("enemy-sprite"),
+    combatContentWrapper: a("combat-content-wrapper"),
+    startGameOverlay: a("start-game-overlay"),
+    startGameBtn: a("start-game-btn"),
+    fullscreenPromptOverlay: a("fullscreen-prompt-overlay"),
+    fullscreenYesBtn: a("fullscreen-yes-btn"),
+    fullscreenNoBtn: a("fullscreen-no-btn"),
+  };
 
-  let currentEnemy;
   let gameState = "START_SCREEN";
-  const maxPlayerHP = 100;
-  let enemyHP, playerHP;
-  let chargeAnimation, furySpawnInterval;
-  let chargeValue = 0,
-    chargeDirection = 1;
+  let currentEnemy;
+  let enemyHP;
+  let playerHP;
+  let chargeAnimation;
+  let furySpawnInterval;
+  let chargeValue = 0;
+  let chargeDirection = 1;
   let activeCircles = [];
   let furyMissHandler = null;
 
-  const openFullscreen = () => {
-    const elem = document.documentElement;
-    if (elem.requestFullscreen) {
-      elem.requestFullscreen().catch(console.error);
-    } else if (elem.webkitRequestFullscreen) {
-      elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) {
-      elem.msRequestFullscreen();
+  const updateHealthUI = (isDamage = false, target = null) => {
+    if (!currentEnemy) return;
+    const newEnemyWidth = (enemyHP / currentEnemy.maxHP) * 100;
+    const newPlayerWidth = (playerHP / CONFIG.PLAYER_MAX_HP) * 100;
+
+    if (isDamage) {
+      const flashElement =
+        target === "enemy" ? UI.enemyHpFlash : UI.playerHpFlash;
+      const barElement = target === "enemy" ? UI.enemyHpBar : UI.playerHpBar;
+      const newWidth = target === "enemy" ? newEnemyWidth : newPlayerWidth;
+      flashElement.style.width = barElement.style.width;
+      setTimeout(() => (flashElement.style.width = `${newWidth}%`), 50);
     }
+
+    UI.enemyHpBar.style.width = `${newEnemyWidth}%`;
+    UI.enemyHpText.textContent = `${Math.ceil(enemyHP)} / ${
+      currentEnemy.maxHP
+    }`;
+    UI.playerHpBar.style.width = `${newPlayerWidth}%`;
+    UI.playerHpText.textContent = `${Math.ceil(playerHP)} / ${
+      CONFIG.PLAYER_MAX_HP
+    }`;
   };
 
   const getMultiplierColor = (multiplier) => {
@@ -77,68 +102,70 @@
   };
 
   const shakeScreen = () => {
-    combatContentWrapper.classList.remove("shake");
-    // We use a timeout to ensure the class is removed before being re-added, allowing the animation to replay.
-    setTimeout(() => {
-      combatContentWrapper.classList.add("shake");
-      combatContentWrapper.addEventListener(
-        "animationend",
-        () => combatContentWrapper.classList.remove("shake"),
-        { once: true }
-      );
-    }, 10);
+    UI.combatContentWrapper.classList.remove("shake");
+    setTimeout(() => UI.combatContentWrapper.classList.add("shake"), 10);
   };
 
-  const updateUI = (isDamage = false, target = null) => {
-    if (!currentEnemy) return;
-    const newEnemyWidth = (enemyHP / currentEnemy.maxHP) * 100;
-    const newPlayerWidth = (playerHP / maxPlayerHP) * 100;
+  const showFinalDamageAnimation = (baseDamage, multiplier, finalDamage) => {
+    const animContainer = document.createElement("div");
+    animContainer.className = "damage-flow-container";
+    const finalDamageText =
+      finalDamage >= 25 ? `${finalDamage} 🔥` : finalDamage;
+    animContainer.innerHTML = `
+      <span class="damage-flow-part base">${baseDamage}</span>
+      <span class="damage-flow-part mult" style="color: ${getMultiplierColor(
+        multiplier
+      )};">x${multiplier.toFixed(2)}</span>
+      <span class="damage-flow-part final">${finalDamageText}</span>
+    `;
+    UI.combatContentWrapper.appendChild(animContainer);
 
-    if (isDamage && target === "enemy") {
-      enemyHpFlash.style.width = enemyHpBar.style.width;
-      setTimeout(() => (enemyHpFlash.style.width = `${newEnemyWidth}%`), 50);
-    }
-    if (isDamage && target === "player") {
-      playerHpFlash.style.width = playerHpBar.style.width;
-      setTimeout(() => (playerHpFlash.style.width = `${newPlayerWidth}%`), 50);
-    }
-
-    enemyHpBar.style.width = `${newEnemyWidth}%`;
-    enemyHpText.textContent = `${Math.ceil(enemyHP)} / ${currentEnemy.maxHP}`;
-    playerHpBar.style.width = `${newPlayerWidth}%`;
-    playerHpText.textContent = `${Math.ceil(playerHP)} / ${maxPlayerHP}`;
+    setTimeout(
+      () => animContainer.classList.add("is-merging"),
+      CONFIG.DAMAGE_ANIM_MERGE_DELAY
+    );
+    setTimeout(
+      () => animContainer.classList.add("is-combining"),
+      CONFIG.DAMAGE_ANIM_COMBINE_DELAY
+    );
+    setTimeout(() => {
+      animContainer.classList.add("is-throwing");
+      setTimeout(() => {
+        applyDamageToEnemy(finalDamage);
+        animContainer.remove();
+      }, CONFIG.DAMAGE_ANIM_THROW_DURATION);
+    }, CONFIG.DAMAGE_ANIM_THROW_DELAY);
   };
 
   const showChargeMinigame = () => {
     gameState = "MINIGAME_CHARGE_PENDING";
-    chargeMeterDamageValue.style.opacity = "0";
-    chargeMeterContainer.classList.remove("glow");
-    chargeOverlay.classList.remove("hidden");
-    attackBtn.disabled = true;
-    messageDisplay.textContent = "";
+    UI.chargeMeterDamageValue.style.opacity = "0";
+    UI.chargeMeterContainer.classList.remove("glow");
+    UI.chargeOverlay.classList.remove("hidden");
+    UI.attackBtn.disabled = true;
+    UI.messageDisplay.textContent = "";
     chargeValue = 0;
-    chargeBar.style.height = "0%";
-    chargeIndicator.style.bottom = "0%";
-    chargeBar.style.backgroundColor = "rgb(76, 175, 80)";
-    chargeOverlay.addEventListener("pointerdown", startChargeLoop, {
+    chargeDirection = 1;
+    UI.chargeBar.style.height = "0%";
+    UI.chargeIndicator.style.bottom = "0%";
+    UI.chargeBar.style.backgroundColor = "rgb(76, 175, 80)";
+    UI.chargeOverlay.addEventListener("pointerdown", startChargeLoop, {
       once: true,
     });
   };
 
   const startChargeLoop = () => {
     gameState = "MINIGAME_CHARGE_ACTIVE";
-    chargeDirection = 1;
-    chargeOverlay.addEventListener("pointerup", endChargeMinigame, {
+    UI.chargeOverlay.addEventListener("pointerup", endChargeMinigame, {
       once: true,
     });
     const chargeLoop = () => {
-      const currentSpeed = 0.01 + Math.pow(chargeValue, 4) * 0.06;
-      chargeValue += currentSpeed * chargeDirection;
+      const speed = 0.01 + Math.pow(chargeValue, 4) * 0.06;
+      chargeValue += speed * chargeDirection;
       chargeValue = Math.max(0, Math.min(1, chargeValue));
       chargeDirection =
         chargeValue >= 1 ? -1 : chargeValue <= 0 ? 1 : chargeDirection;
-      chargeMeterContainer.classList.toggle("glow", chargeValue >= 1);
-
+      UI.chargeMeterContainer.classList.toggle("glow", chargeValue >= 1);
       const ratio =
         chargeValue < 0.5 ? chargeValue / 0.5 : (chargeValue - 0.5) / 0.5;
       const r =
@@ -153,10 +180,9 @@
         chargeValue < 0.5
           ? Math.round(80 - 21 * ratio)
           : Math.round(59 + 21 * ratio);
-      chargeBar.style.backgroundColor = `rgb(${r},${g},${b})`;
-      chargeBar.style.height = `${chargeValue * 100}%`;
-      chargeIndicator.style.bottom = `${chargeValue * 100}%`;
-
+      UI.chargeBar.style.backgroundColor = `rgb(${r},${g},${b})`;
+      UI.chargeBar.style.height = `${chargeValue * 100}%`;
+      UI.chargeIndicator.style.bottom = `${chargeValue * 100}%`;
       if (gameState === "MINIGAME_CHARGE_ACTIVE")
         chargeAnimation = requestAnimationFrame(chargeLoop);
     };
@@ -168,71 +194,59 @@
     gameState = "PROCESSING_CHARGE";
     cancelAnimationFrame(chargeAnimation);
     const effectiveCharge = Math.pow(chargeValue, 2.5);
-    let baseDamage = Math.round(1 + 9 * effectiveCharge);
-    baseDamage = Math.max(1, Math.min(10, baseDamage));
+    const baseDamage = Math.max(
+      1,
+      Math.min(10, Math.round(1 + 9 * effectiveCharge))
+    );
     const isCrit = chargeValue >= 0.98;
-
-    chargeMeterDamageValue.textContent = isCrit
+    UI.chargeMeterDamageValue.textContent = isCrit
       ? `${baseDamage} 🔥`
       : baseDamage;
-    chargeMeterDamageValue.style.opacity = "1";
-
+    UI.chargeMeterDamageValue.style.opacity = "1";
     setTimeout(() => {
-      chargeOverlay.classList.add("hidden");
+      UI.chargeOverlay.classList.add("hidden");
       startFuryMinigame(baseDamage);
-    }, 800);
+    }, CONFIG.CHARGE_MINIGAME_END_DELAY);
   };
 
   const startFuryMinigame = (baseDamage) => {
-    if (furySpawnInterval) clearTimeout(furySpawnInterval);
     gameState = "MINIGAME_FURY";
-    furyInstructions.classList.remove("hidden");
-    furyInstructions.style.opacity = "1"; // Ensure it's visible at the start
-    furyOverlay.classList.remove("hidden");
+    UI.furyInstructions.classList.remove("hidden");
+    UI.furyInstructions.style.opacity = "1";
+    UI.furyOverlay.classList.remove("hidden");
     let multiplier = 1.0;
-    let spawnRate = 320;
-    let lifespan = 2200; // Total duration of circle animation
-    let zIndexCounter = 100;
+    let spawnRate = CONFIG.FURY_SPAWN_RATE_START;
+    let lifespan = CONFIG.FURY_LIFESPAN_START;
     activeCircles = [];
-    liveMultiplierDisplay.classList.remove("pulse");
-    liveMultiplierDisplay.textContent = `x1.00`;
-    liveMultiplierDisplay.style.color = getMultiplierColor(1.0);
-    liveMultiplierDisplay.style.fontSize = "4rem";
+    UI.liveMultiplierDisplay.textContent = `x1.00`;
+    UI.liveMultiplierDisplay.style.color = getMultiplierColor(1.0);
+    UI.liveMultiplierDisplay.style.fontSize = "4rem";
 
-    const enemyRect = enemySprite.getBoundingClientRect();
-    const gameContainerRect = furyOverlay.parentElement.getBoundingClientRect();
+    const enemyRect = UI.enemySprite.getBoundingClientRect();
+    const gameContainerRect =
+      UI.furyOverlay.parentElement.getBoundingClientRect();
 
     const spawnCircle = () => {
       if (gameState !== "MINIGAME_FURY") return;
       const circleContainer = document.createElement("div");
       circleContainer.className = "fury-circle";
-
       const centerX =
         enemyRect.left - gameContainerRect.left + enemyRect.width / 2;
       const centerY =
         enemyRect.top - gameContainerRect.top + enemyRect.height / 2;
-
       const maxRadius = Math.min(enemyRect.width, enemyRect.height) * 0.75;
-      const circleHitboxSize = 140;
-
-      const getSpawnPoint = () => ({
-        x:
-          centerX +
-          maxRadius *
-            Math.sqrt(Math.random()) *
-            Math.cos(Math.random() * 2 * Math.PI),
-        y:
-          centerY +
-          maxRadius *
-            Math.sqrt(Math.random()) *
-            Math.sin(Math.random() * 2 * Math.PI),
-      });
-
-      let bestCandidate = activeCircles.length === 0 ? getSpawnPoint() : null;
-      if (!bestCandidate) {
+      let bestCandidate;
+      if (activeCircles.length === 0) {
+        bestCandidate = { x: centerX, y: centerY };
+      } else {
         let bestMinDistance = -1;
         for (let i = 0; i < 15; i++) {
-          const candidate = getSpawnPoint();
+          const angle = Math.random() * 2 * Math.PI;
+          const radius = maxRadius * Math.sqrt(Math.random());
+          const candidate = {
+            x: centerX + radius * Math.cos(angle),
+            y: centerY + radius * Math.sin(angle),
+          };
           let minDistance = Infinity;
           activeCircles.forEach((c) => {
             const dx = candidate.x - c.x;
@@ -245,13 +259,9 @@
           }
         }
       }
-
       circleContainer.innerHTML = `<div class="fury-circle-visual"></div>`;
-      circleContainer.style.left = `${
-        bestCandidate.x - circleHitboxSize / 2
-      }px`;
-      circleContainer.style.top = `${bestCandidate.y - circleHitboxSize / 2}px`;
-      circleContainer.style.zIndex = zIndexCounter--;
+      circleContainer.style.left = `${bestCandidate.x - 70}px`;
+      circleContainer.style.top = `${bestCandidate.y - 70}px`;
       circleContainer.firstChild.style.animationDuration = `${
         lifespan / 1000
       }s`;
@@ -260,16 +270,11 @@
         element: circleContainer,
         x: bestCandidate.x,
         y: bestCandidate.y,
-        lifespanTimeoutId: null,
       };
-
-      const lifespanTimeoutId = setTimeout(() => {
-        if (gameState === "MINIGAME_FURY") {
+      circleObject.lifespanTimeoutId = setTimeout(() => {
+        if (gameState === "MINIGAME_FURY")
           endFuryMinigame(baseDamage, multiplier, "timeout", circleObject);
-        }
       }, lifespan);
-      circleObject.lifespanTimeoutId = lifespanTimeoutId;
-
       activeCircles.push(circleObject);
 
       circleContainer.addEventListener("pointerdown", (e) => {
@@ -279,72 +284,65 @@
           circleContainer.classList.contains("disappearing")
         )
           return;
-
-        // Fade out instructions after first successful tap
-        if (furyInstructions.style.opacity === "1") {
-          furyInstructions.style.opacity = "0";
-          setTimeout(() => furyInstructions.classList.add("hidden"), 400); // Match CSS transition duration
+        if (UI.furyInstructions.style.opacity === "1") {
+          UI.furyInstructions.style.opacity = "0";
+          setTimeout(() => UI.furyInstructions.classList.add("hidden"), 400);
         }
-
         clearTimeout(circleObject.lifespanTimeoutId);
-
         multiplier += 0.1;
-        liveMultiplierDisplay.textContent = `x${multiplier.toFixed(2)}`;
-        liveMultiplierDisplay.style.color = getMultiplierColor(multiplier);
-        liveMultiplierDisplay.style.fontSize = `${
+        UI.liveMultiplierDisplay.textContent = `x${multiplier.toFixed(2)}`;
+        UI.liveMultiplierDisplay.style.color = getMultiplierColor(multiplier);
+        UI.liveMultiplierDisplay.style.fontSize = `${
           4 + (multiplier - 1) * 1.5
         }rem`;
-        liveMultiplierDisplay.classList.remove("pulse");
-        void liveMultiplierDisplay.offsetWidth;
-        liveMultiplierDisplay.classList.add("pulse");
-
+        UI.liveMultiplierDisplay.classList.remove("pulse");
+        void UI.liveMultiplierDisplay.offsetWidth;
+        UI.liveMultiplierDisplay.classList.add("pulse");
         circleContainer.classList.add("disappearing");
         setTimeout(() => circleContainer.remove(), 100);
-
         activeCircles = activeCircles.filter((c) => c !== circleObject);
       });
-
-      furyOverlay.appendChild(circleContainer);
+      UI.furyOverlay.appendChild(circleContainer);
     };
 
     const furyLoop = () => {
       if (gameState !== "MINIGAME_FURY") return;
       spawnCircle();
-      spawnRate = Math.max(100, spawnRate * 0.9);
-      lifespan = Math.max(1000, lifespan * 0.96); // Keep lifespan at least 1s
+      spawnRate = Math.max(
+        CONFIG.FURY_SPAWN_RATE_MIN,
+        spawnRate * CONFIG.FURY_SPAWN_RATE_MULTIPLIER
+      );
+      lifespan = Math.max(
+        CONFIG.FURY_LIFESPAN_MIN,
+        lifespan * CONFIG.FURY_LIFESPAN_MULTIPLIER
+      );
       furySpawnInterval = setTimeout(furyLoop, spawnRate);
     };
     furyLoop();
 
     furyMissHandler = (e) => {
-      if (e.target === furyOverlay && gameState === "MINIGAME_FURY") {
+      if (e.target === UI.furyOverlay && gameState === "MINIGAME_FURY") {
         endFuryMinigame(baseDamage, multiplier, "missclick", {
           x: e.clientX,
           y: e.clientY,
         });
       }
     };
-    furyOverlay.addEventListener("pointerdown", furyMissHandler);
+    UI.furyOverlay.addEventListener("pointerdown", furyMissHandler);
   };
 
-  const endFuryMinigame = (
-    baseDamage,
-    currentMultiplier,
-    reason = null,
-    data = null
-  ) => {
+  const endFuryMinigame = (baseDamage, currentMultiplier, reason, details) => {
     if (gameState !== "MINIGAME_FURY") return;
     gameState = "PROCESSING_ATTACK";
-    furyInstructions.style.opacity = "0"; // Ensure instructions fade out
-    setTimeout(() => furyInstructions.classList.add("hidden"), 400);
-
+    UI.furyInstructions.style.opacity = "0";
+    setTimeout(() => UI.furyInstructions.classList.add("hidden"), 400);
     if (furyMissHandler)
-      furyOverlay.removeEventListener("pointerdown", furyMissHandler);
+      UI.furyOverlay.removeEventListener("pointerdown", furyMissHandler);
     clearTimeout(furySpawnInterval);
 
     activeCircles.forEach((c) => {
       clearTimeout(c.lifespanTimeoutId);
-      if (reason === "timeout" && data && c.element === data.element) {
+      if (reason === "timeout" && details && c.element === details.element) {
         c.element.classList.add("exploding");
         setTimeout(() => c.element.remove(), 300);
       } else {
@@ -355,63 +353,36 @@
     activeCircles = [];
 
     if (reason) {
-      currentMultiplier = 1.0; // Reset multiplier on miss
       const missText = document.createElement("div");
       missText.className = "miss-feedback";
       missText.textContent = reason === "timeout" ? "Too Slow!" : "Missed!";
-      if (data) {
-        const overlayRect = furyOverlay.getBoundingClientRect();
-        missText.style.left = `${data.x - overlayRect.left}px`;
-        missText.style.top = `${data.y - overlayRect.top}px`;
-      }
-      furyOverlay.appendChild(missText);
+      const overlayRect = UI.furyOverlay.getBoundingClientRect();
+      missText.style.left = `${details.x - overlayRect.left}px`;
+      missText.style.top = `${details.y - overlayRect.top}px`;
+      UI.furyOverlay.appendChild(missText);
       setTimeout(() => missText.remove(), 600);
     }
-
     setTimeout(() => {
-      furyOverlay.classList.add("hidden");
+      UI.furyOverlay.classList.add("hidden");
       const finalDamage = Math.round(baseDamage * currentMultiplier);
       showFinalDamageAnimation(baseDamage, currentMultiplier, finalDamage);
-    }, 400);
-  };
-
-  const showFinalDamageAnimation = (baseDamage, multiplier, finalDamage) => {
-    const animContainer = document.createElement("div");
-    animContainer.className = "damage-flow-container";
-    animContainer.innerHTML = `
-      <span class="damage-flow-part base">${baseDamage}</span>
-      <span class="damage-flow-part mult" style="color: ${getMultiplierColor(
-        multiplier
-      )};">x${multiplier.toFixed(2)}</span>
-      <span class="damage-flow-part final">${
-        finalDamage >= 25 ? `${finalDamage} 🔥` : finalDamage
-      }</span>
-    `;
-    combatContentWrapper.appendChild(animContainer);
-
-    setTimeout(() => animContainer.classList.add("is-merging"), 100);
-    setTimeout(() => animContainer.classList.add("is-combining"), 800);
-    setTimeout(() => {
-      animContainer.classList.add("is-throwing");
-      // Decouple game logic from animationend event for reliability
-      setTimeout(() => {
-        applyDamageToEnemy(finalDamage);
-        animContainer.remove();
-      }, 500); // 500ms is the duration of throw-to-enemy
-    }, 1200);
+    }, CONFIG.FURY_MINIGAME_END_DELAY);
   };
 
   const applyDamageToEnemy = (damage) => {
     enemyHP = Math.max(0, enemyHP - damage);
     shakeScreen();
-    updateUI(true, "enemy");
-    if (enemyHP <= 0) endGame(true);
-    else setTimeout(enemyTurn, 500);
+    updateHealthUI(true, "enemy");
+    if (enemyHP <= 0) {
+      endGame(true);
+    } else {
+      setTimeout(enemyTurn, CONFIG.ENEMY_TURN_DELAY);
+    }
   };
 
   const enemyTurn = () => {
     gameState = "ENEMY_TURN";
-    messageDisplay.textContent = `${currentEnemy.name} is attacking!`;
+    UI.messageDisplay.textContent = `${currentEnemy.name} is attacking!`;
     const damageRange = currentEnemy.maxDamage - currentEnemy.minDamage;
     const enemyDamage = Math.floor(
       Math.random() * damageRange + currentEnemy.minDamage
@@ -420,49 +391,49 @@
     setTimeout(() => {
       shakeScreen();
       playerHP = Math.max(0, playerHP - enemyDamage);
-      updateUI(true, "player");
-      if (playerHP <= 0) endGame(false);
-      else {
+      updateHealthUI(true, "player");
+      if (playerHP <= 0) {
+        endGame(false);
+      } else {
         gameState = "PLAYER_TURN";
-        messageDisplay.textContent = "Your turn!";
-        attackBtn.disabled = false;
+        UI.messageDisplay.textContent = "Your turn!";
+        UI.attackBtn.disabled = false;
       }
-    }, 1000);
+    }, CONFIG.ENEMY_ATTACK_ANIMATION_DURATION);
   };
 
   const endGame = (isVictory) => {
     gameState = "GAME_OVER";
-    attackBtn.disabled = true;
-    messageDisplay.textContent = isVictory ? "Victory!" : "Defeat!";
-    actionButtons.classList.add("hidden");
-    restartBtn.classList.remove("hidden");
+    UI.attackBtn.disabled = true;
+    UI.messageDisplay.textContent = isVictory ? "Victory!" : "Defeat!";
+    UI.actionButtons.classList.add("hidden");
+    UI.restartBtn.classList.remove("hidden");
   };
 
   const initializeCombat = (enemy) => {
     currentEnemy = enemy;
     enemyHP = currentEnemy.maxHP;
-    playerHP = maxPlayerHP;
+    playerHP = CONFIG.PLAYER_MAX_HP;
     gameState = "PLAYER_TURN";
-    messageDisplay.textContent = `A wild ${currentEnemy.name} appears!`;
-    enemySprite.textContent = currentEnemy.sprite;
-    playerHpFlash.style.width = "100%";
-    enemyHpFlash.style.width = "100%";
-    actionButtons.classList.remove("hidden");
-    attackBtn.disabled = false;
-    restartBtn.classList.add("hidden");
-    enemySelectionOverlay.classList.add("hidden");
-    updateUI();
+    UI.messageDisplay.textContent = `A wild ${currentEnemy.name} appears!`;
+    UI.enemySprite.textContent = currentEnemy.sprite;
+    UI.playerHpFlash.style.width = "100%";
+    UI.enemyHpFlash.style.width = "100%";
+    UI.actionButtons.classList.remove("hidden");
+    UI.attackBtn.disabled = false;
+    UI.restartBtn.classList.add("hidden");
+    UI.enemySelectionOverlay.classList.add("hidden");
+    updateHealthUI();
     setTimeout(() => {
-      if (gameState === "PLAYER_TURN") {
-        messageDisplay.textContent = "Your turn!";
-      }
-    }, 2000);
+      if (gameState === "PLAYER_TURN")
+        UI.messageDisplay.textContent = "Your turn!";
+    }, CONFIG.INITIAL_MESSAGE_DURATION);
   };
 
   const showEnemySelection = () => {
     gameState = "SELECTING_ENEMY";
-    enemySelectionGrid.innerHTML = "";
-    enemies.forEach((enemy) => {
+    UI.enemySelectionGrid.innerHTML = "";
+    CONFIG.ENEMIES.forEach((enemy) => {
       const card = document.createElement("div");
       card.className = "enemy-card";
       card.innerHTML = `
@@ -471,30 +442,41 @@
         <div class="enemy-card-hp">HP: ${enemy.maxHP}</div>
       `;
       card.addEventListener("click", () => initializeCombat(enemy));
-      enemySelectionGrid.appendChild(card);
+      UI.enemySelectionGrid.appendChild(card);
     });
-    actionButtons.classList.add("hidden");
-    restartBtn.classList.add("hidden");
-    enemySelectionOverlay.classList.remove("hidden");
+    UI.actionButtons.classList.add("hidden");
+    UI.restartBtn.classList.add("hidden");
+    UI.enemySelectionOverlay.classList.remove("hidden");
+  };
+
+  const openFullscreen = () => {
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) elem.requestFullscreen().catch(console.error);
+    else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+    else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
   };
 
   const promptForFullscreen = () => {
-    fullscreenPromptOverlay.classList.remove("hidden");
-    fullscreenYesBtn.onclick = () => {
+    UI.fullscreenPromptOverlay.classList.remove("hidden");
+    UI.fullscreenYesBtn.onclick = () => {
       openFullscreen();
-      fullscreenPromptOverlay.classList.add("hidden");
+      UI.fullscreenPromptOverlay.classList.add("hidden");
       showEnemySelection();
     };
-    fullscreenNoBtn.onclick = () => {
-      fullscreenPromptOverlay.classList.add("hidden");
+    UI.fullscreenNoBtn.onclick = () => {
+      UI.fullscreenPromptOverlay.classList.add("hidden");
       showEnemySelection();
     };
+  };
+
+  const beginGame = () => {
+    UI.startGameOverlay.classList.add("hidden");
+    promptForFullscreen();
   };
 
   const generateChargeMarkers = () => {
     const markerContainer = document.querySelector(".charge-meter-markers");
     for (let damage = 2; damage <= 10; damage++) {
-      // Calculate the charge value needed for the midpoint between damage-1 and damage
       const chargeThreshold = Math.pow((damage - 1.5) / 9, 1 / 2.5);
       const marker = document.createElement("div");
       marker.className = "charge-meter-marker";
@@ -503,16 +485,11 @@
     }
   };
 
-  const beginGame = () => {
-    startGameOverlay.classList.add("hidden");
-    promptForFullscreen();
-  };
-
-  startGameBtn.addEventListener("click", beginGame);
-  attackBtn.addEventListener("click", () => {
+  UI.startGameBtn.addEventListener("click", beginGame);
+  UI.attackBtn.addEventListener("click", () => {
     if (gameState === "PLAYER_TURN") showChargeMinigame();
   });
-  restartBtn.addEventListener("click", showEnemySelection);
+  UI.restartBtn.addEventListener("click", showEnemySelection);
 
   generateChargeMarkers();
 })();
