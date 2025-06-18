@@ -16,6 +16,7 @@
     "charge-meter-damage-value"
   );
   const furyOverlay = document.getElementById("fury-overlay");
+  const furyInstructions = document.getElementById("fury-instructions");
   const enemyHpBar = document.getElementById("enemy-hp-bar");
   const enemyHpFlash = document.getElementById("enemy-hp-flash");
   const enemyHpText = document.getElementById("enemy-hp-text");
@@ -76,12 +77,16 @@
   };
 
   const shakeScreen = () => {
-    combatContentWrapper.classList.add("shake");
-    combatContentWrapper.addEventListener(
-      "animationend",
-      () => combatContentWrapper.classList.remove("shake"),
-      { once: true }
-    );
+    combatContentWrapper.classList.remove("shake");
+    // We use a timeout to ensure the class is removed before being re-added, allowing the animation to replay.
+    setTimeout(() => {
+      combatContentWrapper.classList.add("shake");
+      combatContentWrapper.addEventListener(
+        "animationend",
+        () => combatContentWrapper.classList.remove("shake"),
+        { once: true }
+      );
+    }, 10);
   };
 
   const updateUI = (isDamage = false, target = null) => {
@@ -181,9 +186,12 @@
   const startFuryMinigame = (baseDamage) => {
     if (furySpawnInterval) clearTimeout(furySpawnInterval);
     gameState = "MINIGAME_FURY";
+    furyInstructions.classList.remove("hidden");
+    furyInstructions.style.opacity = "1"; // Ensure it's visible at the start
     furyOverlay.classList.remove("hidden");
     let multiplier = 1.0;
-    let spawnRate = 280;
+    let spawnRate = 320;
+    let lifespan = 2200; // Total duration of circle animation
     let zIndexCounter = 100;
     activeCircles = [];
     liveMultiplierDisplay.classList.remove("pulse");
@@ -244,20 +252,24 @@
       }px`;
       circleContainer.style.top = `${bestCandidate.y - circleHitboxSize / 2}px`;
       circleContainer.style.zIndex = zIndexCounter--;
-      circleContainer.firstChild.style.animationDuration = `2s`;
-
-      const lifespanTimeoutId = setTimeout(() => {
-        if (gameState === "MINIGAME_FURY") {
-          endFuryMinigame(baseDamage, multiplier, true);
-        }
-      }, 2000);
+      circleContainer.firstChild.style.animationDuration = `${
+        lifespan / 1000
+      }s`;
 
       const circleObject = {
         element: circleContainer,
         x: bestCandidate.x,
         y: bestCandidate.y,
-        lifespanTimeoutId,
+        lifespanTimeoutId: null,
       };
+
+      const lifespanTimeoutId = setTimeout(() => {
+        if (gameState === "MINIGAME_FURY") {
+          endFuryMinigame(baseDamage, multiplier, "timeout", circleObject);
+        }
+      }, lifespan);
+      circleObject.lifespanTimeoutId = lifespanTimeoutId;
+
       activeCircles.push(circleObject);
 
       circleContainer.addEventListener("pointerdown", (e) => {
@@ -267,6 +279,12 @@
           circleContainer.classList.contains("disappearing")
         )
           return;
+
+        // Fade out instructions after first successful tap
+        if (furyInstructions.style.opacity === "1") {
+          furyInstructions.style.opacity = "0";
+          setTimeout(() => furyInstructions.classList.add("hidden"), 400); // Match CSS transition duration
+        }
 
         clearTimeout(circleObject.lifespanTimeoutId);
 
@@ -292,22 +310,33 @@
     const furyLoop = () => {
       if (gameState !== "MINIGAME_FURY") return;
       spawnCircle();
-      spawnRate = Math.max(100, spawnRate * 0.88);
+      spawnRate = Math.max(100, spawnRate * 0.9);
+      lifespan = Math.max(1000, lifespan * 0.96); // Keep lifespan at least 1s
       furySpawnInterval = setTimeout(furyLoop, spawnRate);
     };
     furyLoop();
 
     furyMissHandler = (e) => {
       if (e.target === furyOverlay && gameState === "MINIGAME_FURY") {
-        endFuryMinigame(baseDamage, multiplier, true);
+        endFuryMinigame(baseDamage, multiplier, "missclick", {
+          x: e.clientX,
+          y: e.clientY,
+        });
       }
     };
     furyOverlay.addEventListener("pointerdown", furyMissHandler);
   };
 
-  const endFuryMinigame = (baseDamage, currentMultiplier, missed = false) => {
+  const endFuryMinigame = (
+    baseDamage,
+    currentMultiplier,
+    reason = null,
+    data = null
+  ) => {
     if (gameState !== "MINIGAME_FURY") return;
     gameState = "PROCESSING_ATTACK";
+    furyInstructions.style.opacity = "0"; // Ensure instructions fade out
+    setTimeout(() => furyInstructions.classList.add("hidden"), 400);
 
     if (furyMissHandler)
       furyOverlay.removeEventListener("pointerdown", furyMissHandler);
@@ -315,26 +344,35 @@
 
     activeCircles.forEach((c) => {
       clearTimeout(c.lifespanTimeoutId);
-      c.element.classList.add("disappearing");
-      setTimeout(() => c.element.remove(), 100);
+      if (reason === "timeout" && data && c.element === data.element) {
+        c.element.classList.add("exploding");
+        setTimeout(() => c.element.remove(), 300);
+      } else {
+        c.element.classList.add("disappearing");
+        setTimeout(() => c.element.remove(), 100);
+      }
     });
     activeCircles = [];
 
-    if (missed) {
+    if (reason) {
+      currentMultiplier = 1.0; // Reset multiplier on miss
       const missText = document.createElement("div");
       missText.className = "miss-feedback";
-      missText.textContent = "Missed!";
-      missText.style.left = `50%`;
-      missText.style.top = `50%`;
+      missText.textContent = reason === "timeout" ? "Too Slow!" : "Missed!";
+      if (data) {
+        const overlayRect = furyOverlay.getBoundingClientRect();
+        missText.style.left = `${data.x - overlayRect.left}px`;
+        missText.style.top = `${data.y - overlayRect.top}px`;
+      }
       furyOverlay.appendChild(missText);
-      setTimeout(() => missText.remove(), 450);
+      setTimeout(() => missText.remove(), 600);
     }
 
     setTimeout(() => {
       furyOverlay.classList.add("hidden");
       const finalDamage = Math.round(baseDamage * currentMultiplier);
       showFinalDamageAnimation(baseDamage, currentMultiplier, finalDamage);
-    }, 300);
+    }, 400);
   };
 
   const showFinalDamageAnimation = (baseDamage, multiplier, finalDamage) => {
@@ -355,16 +393,11 @@
     setTimeout(() => animContainer.classList.add("is-combining"), 800);
     setTimeout(() => {
       animContainer.classList.add("is-throwing");
-      animContainer.addEventListener(
-        "animationend",
-        (e) => {
-          if (e.animationName === "throw-to-enemy") {
-            animContainer.remove();
-            applyDamageToEnemy(finalDamage);
-          }
-        },
-        { once: true }
-      );
+      // Decouple game logic from animationend event for reliability
+      setTimeout(() => {
+        applyDamageToEnemy(finalDamage);
+        animContainer.remove();
+      }, 500); // 500ms is the duration of throw-to-enemy
     }, 1200);
   };
 
@@ -399,6 +432,7 @@
 
   const endGame = (isVictory) => {
     gameState = "GAME_OVER";
+    attackBtn.disabled = true;
     messageDisplay.textContent = isVictory ? "Victory!" : "Defeat!";
     actionButtons.classList.add("hidden");
     restartBtn.classList.remove("hidden");
@@ -457,6 +491,18 @@
     };
   };
 
+  const generateChargeMarkers = () => {
+    const markerContainer = document.querySelector(".charge-meter-markers");
+    for (let damage = 2; damage <= 10; damage++) {
+      // Calculate the charge value needed for the midpoint between damage-1 and damage
+      const chargeThreshold = Math.pow((damage - 1.5) / 9, 1 / 2.5);
+      const marker = document.createElement("div");
+      marker.className = "charge-meter-marker";
+      marker.style.bottom = `${chargeThreshold * 100}%`;
+      markerContainer.appendChild(marker);
+    }
+  };
+
   const beginGame = () => {
     startGameOverlay.classList.add("hidden");
     promptForFullscreen();
@@ -467,4 +513,6 @@
     if (gameState === "PLAYER_TURN") showChargeMinigame();
   });
   restartBtn.addEventListener("click", showEnemySelection);
+
+  generateChargeMarkers();
 })();

@@ -51,6 +51,7 @@
             HOLD to Charge<br />RELEASE to Strike!
           </div>
           <div id="charge-meter-container">
+            <div class="charge-meter-markers"></div>
             <div id="charge-meter-bar"></div>
             <div id="charge-meter-indicator"></div>
             <div id="charge-meter-damage-value"></div>
@@ -58,6 +59,13 @@
         </div>
       </div>
       <div id="fury-overlay" class="minigame-overlay hidden">
+        <div
+          id="fury-instructions"
+          class="charge-instructions hidden"
+          style="margin-bottom: 20px"
+        >
+          Tap the circles!
+        </div>
         <div id="live-multiplier"></div>
       </div>
       <div id="enemy-selection-overlay" class="minigame-overlay hidden">

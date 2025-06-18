@@ -10,6 +10,7 @@
   --accent-glow: #1f6feb;
   --hp-red: #da3633;
   --hp-red-dark: #a62622;
+  --danger-red: #d32f2f;
 }
 
 body {
@@ -215,6 +216,7 @@ body {
   text-shadow: 0 0 10px black;
   text-align: center;
   max-width: 80%;
+  transition: opacity 0.4s ease-out; /* Added transition for fade out */
 }
 #charge-meter-container {
   width: 80px;
@@ -229,6 +231,21 @@ body {
 #charge-meter-container.glow {
   box-shadow: 0 0 20px 5px var(--accent-glow);
   border-color: var(--accent-glow);
+}
+.charge-meter-markers {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  right: 10px;
+  bottom: 0;
+  pointer-events: none;
+}
+.charge-meter-marker {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.15);
 }
 #charge-meter-bar {
   position: absolute;
@@ -250,6 +267,7 @@ body {
   border-radius: 3px;
   box-shadow: 0 0 10px white;
   bottom: 0%;
+  z-index: 5;
 }
 #charge-meter-damage-value {
   position: absolute;
@@ -268,7 +286,7 @@ body {
 
 #live-multiplier {
   position: absolute;
-  top: 5%;
+  top: 15%; /* Adjusted for instructions */
   font-weight: 700;
   text-shadow: 2px 2px 5px black;
   transition: color 0.2s ease-out, font-size 0.2s ease-out;
@@ -293,6 +311,10 @@ body {
   pointer-events: none;
 }
 
+.fury-circle.exploding .fury-circle-visual {
+  animation: explode 0.3s ease-out forwards !important;
+}
+
 @keyframes fade-scale-in {
   from {
     transform: scale(0.5);
@@ -312,31 +334,70 @@ body {
   animation-fill-mode: forwards;
   pointer-events: none;
 }
+
 @keyframes shrink-and-color-change {
   0% {
     transform: scale(1);
     background-color: rgba(76, 175, 80, 0.9);
     border: 5px solid #a5d6a7;
+    box-shadow: none;
   }
   50% {
     background-color: rgba(255, 235, 59, 0.9);
     border-color: #fff59d;
   }
-  99% {
-    transform: scale(0.2);
-    background-color: rgba(239, 83, 80, 0.9);
+  75% {
+    /* Start warning earlier */
+    transform: scale(0.45);
+    background-color: var(--danger-red);
     border-color: #ef9a9a;
+    box-shadow: 0 0 15px 5px var(--danger-red);
+  }
+  82% {
+    transform: scale(0.4);
+    background-color: rgba(255, 235, 59, 0.9);
+    border-color: #fff59d;
+    box-shadow: none;
+  }
+  89% {
+    transform: scale(0.45);
+    background-color: var(--danger-red);
+    border-color: #ef9a9a;
+    box-shadow: 0 0 20px 8px var(--danger-red);
+  }
+  96% {
+    transform: scale(0.4);
+    background-color: rgba(255, 235, 59, 0.9);
+    border-color: #fff59d;
+    box-shadow: none;
   }
   100% {
     transform: scale(0);
   }
 }
+
+@keyframes explode {
+  from {
+    transform: scale(0.4);
+    background-color: var(--danger-red);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.5);
+    background-color: var(--danger-red);
+    opacity: 0;
+  }
+}
+
 .miss-feedback {
-  position: fixed;
+  position: absolute; /* Changed from fixed */
   color: #ef9a9a;
   font-size: 2rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px #000;
   pointer-events: none;
-  animation: fade-out 0.5s forwards;
+  animation: fade-out 0.6s forwards;
+  white-space: nowrap;
 }
 @keyframes fade-out {
   from {
@@ -345,7 +406,7 @@ body {
   }
   to {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.8);
+    transform: translate(-50%, -100%) scale(0.8);
   }
 }
 @keyframes pulse-anim {
@@ -484,10 +545,10 @@ body {
     transform: translate(0, 0);
   }
   25% {
-    transform: translate(-12px, -8px);
+    transform: translate(-15px, -10px);
   }
   75% {
-    transform: translate(12px, 8px);
+    transform: translate(15px, 10px);
   }
 }
 #combat-content-wrapper.shake {
