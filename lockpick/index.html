@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lockpicking Minigame</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="lockpicking.css" />
+  </head>
+  <body>
+    <div id="orientation-lock">
+      <div class="overlay-box">
+        <h1>Please Rotate Your Device</h1>
+        <p>This experience is designed for portrait mode.</p>
+      </div>
+    </div>
+
+    <div class="game-container" id="game-container">
+      <div id="lock-wrapper">
+        <div class="lock">
+          <div class="ring" id="ring-outer"></div>
+          <div class="ring" id="ring-middle"></div>
+          <div class="ring" id="ring-inner"></div>
+
+          <div class="target-zone" id="target-outer"></div>
+          <div class="target-zone" id="target-middle"></div>
+          <div class="target-zone" id="target-inner"></div>
+
+          <div id="needle-container">
+            <div id="needle"></div>
+          </div>
+
+          <div id="lock-center"></div>
+          <div id="lock-unlocked-glow"></div>
+        </div>
+      </div>
+
+      <div class="ui-container">
+        <div id="message-display" class="message"></div>
+
+        <div id="fullscreen-prompt-overlay" class="overlay">
+          <div class="overlay-box">
+            <h2>Go Fullscreen?</h2>
+            <p>For the best experience, we recommend playing in fullscreen.</p>
+            <div class="fullscreen-prompt-buttons">
+              <button id="fullscreen-yes-btn" class="action-btn">
+                Enter Fullscreen
+              </button>
+              <button id="fullscreen-no-btn" class="action-btn">
+                No Thanks
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="start-screen" class="overlay hidden">
+          <div class="overlay-box">
+            <h1>Lockpicking</h1>
+            <div class="difficulty-control">
+              <label for="difficulty-slider">Difficulty</label>
+              <input
+                type="range"
+                id="difficulty-slider"
+                min="0"
+                max="1"
+                value="0.3"
+                step="0.01"
+              />
+              <span id="difficulty-value">Normal</span>
+            </div>
+            <button id="start-btn" class="action-btn">Begin</button>
+          </div>
+        </div>
+
+        <div id="win-screen" class="overlay hidden">
+          <div class="overlay-box">
+            <h1 class="win-text">Success!</h1>
+            <p>The lock clicks open.</p>
+            <button id="play-again-btn-win" class="action-btn">
+              Pick Another Lock
+            </button>
+          </div>
+        </div>
+
+        <div id="fail-screen" class="overlay hidden">
+          <div class="overlay-box">
+            <h1 class="fail-text">Failed</h1>
+            <p>The pick breaks. Try again?</p>
+            <button id="play-again-btn-fail" class="action-btn">
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="lockpicking.js"></script>
+  </body>
+</html>
