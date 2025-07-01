@@ -1,9 +1,27 @@
 (() => {
   const CONFIG = {
     rings: [
-      { id: "outer", needleTop: "0%", needleHeight: "12%" },
-      { id: "middle", needleTop: "12%", needleHeight: "12%" },
-      { id: "inner", needleTop: "24%", needleHeight: "12%" },
+      // needleLineHeight is for the ::before element's height.
+      // highlight values are for the ::after element.
+      // All % are relative to the main #needle element's height.
+      {
+        id: "outer",
+        needleLineHeight: "100%",
+        highlightTop: "0%",
+        highlightHeight: "24%",
+      },
+      {
+        id: "middle",
+        needleLineHeight: "76%",
+        highlightTop: "24%",
+        highlightHeight: "24%",
+      },
+      {
+        id: "inner",
+        needleLineHeight: "52%",
+        highlightTop: "48%",
+        highlightHeight: "24%",
+      },
     ],
     difficultySettings: {
       speed: { min: 60, max: 250 },
@@ -48,8 +66,19 @@
   function updateNeedleForRing(index) {
     const ringConfig = CONFIG.rings[index];
     if (ringConfig) {
-      UI.needleEl.style.top = ringConfig.needleTop;
-      UI.needleEl.style.height = ringConfig.needleHeight;
+      // Use CSS variables to control the ::before and ::after pseudo-elements
+      UI.needleEl.style.setProperty(
+        "--needle-line-height",
+        ringConfig.needleLineHeight
+      );
+      UI.needleEl.style.setProperty(
+        "--needle-highlight-top",
+        ringConfig.highlightTop
+      );
+      UI.needleEl.style.setProperty(
+        "--needle-highlight-height",
+        ringConfig.highlightHeight
+      );
     }
   }
 
@@ -72,16 +101,18 @@
       const speedMultiplier = 1 + i * (0.2 + difficulty * 0.4);
       const targetSizeMultiplier = 1 - i * (0.1 + difficulty * 0.2);
 
+      const calculatedSize = baseTargetSize * targetSizeMultiplier;
+      const finalTargetSize = Math.max(
+        CONFIG.difficultySettings.targetSize.min / 2,
+        calculatedSize
+      );
+
       ringData.push({
         ...ringConfig,
         speed: baseSpeed * speedMultiplier,
-        targetSize: Math.max(
-          CONFIG.difficultySettings.targetSize.min / 2,
-          baseTargetSize * targetSizeMultiplier
-        ),
+        targetSize: finalTargetSize,
         targetStartAngle: targetStartAngle,
-        targetEndAngle:
-          targetStartAngle + baseTargetSize * targetSizeMultiplier,
+        targetEndAngle: targetStartAngle + finalTargetSize,
         element: getEl(`ring-${ringConfig.id}`),
         targetElement: getEl(`target-${ringConfig.id}`),
       });
@@ -95,12 +126,32 @@
       ring.targetElement.classList.remove("active");
 
       const { targetStartAngle, targetEndAngle } = ring;
-      ring.targetElement.style.background = `conic-gradient(
-        transparent ${targetStartAngle}deg,
-        var(--accent-green) ${targetStartAngle}deg,
-        var(--accent-green) ${targetEndAngle}deg,
-        transparent ${targetEndAngle}deg
-      )`;
+      let backgroundValue;
+
+      // *** BUG FIX STARTS HERE ***
+      // Check if the target zone wraps around the 360-degree mark
+      if (targetEndAngle > 360) {
+        const wrappedAngle = targetEndAngle % 360;
+        // Create a gradient with two green sections
+        backgroundValue = `conic-gradient(
+          var(--accent-green) 0deg, 
+          var(--accent-green) ${wrappedAngle}deg,
+          transparent ${wrappedAngle}deg,
+          transparent ${targetStartAngle}deg,
+          var(--accent-green) ${targetStartAngle}deg,
+          var(--accent-green) 360deg
+        )`;
+      } else {
+        // Normal, non-wrapped case
+        backgroundValue = `conic-gradient(
+          transparent ${targetStartAngle}deg,
+          var(--accent-green) ${targetStartAngle}deg,
+          var(--accent-green) ${targetEndAngle}deg,
+          transparent ${targetEndAngle}deg
+        )`;
+      }
+      ring.targetElement.style.background = backgroundValue;
+      // *** BUG FIX ENDS HERE ***
 
       if (index === currentRingIndex && gameState === "PLAYING") {
         ring.targetElement.classList.add("active");
@@ -185,6 +236,9 @@
     } else {
       UI.message.textContent = "Unlocked!";
       UI.lockWrapper.classList.add("unlocked");
+      // Retract the needle on win
+      UI.needleEl.style.setProperty("--needle-line-height", "0%");
+      UI.needleEl.style.setProperty("--needle-highlight-height", "0%");
       setTimeout(() => {
         UI.winScreen.classList.remove("hidden");
       }, CONFIG.unlockAnimationDuration);
@@ -198,6 +252,9 @@
     UI.lockWrapper.classList.add("shake");
     ringData.forEach((r) => r.targetElement.classList.remove("active"));
     UI.message.textContent = "Pick Broken!";
+    // Retract the needle on fail
+    UI.needleEl.style.setProperty("--needle-line-height", "0%");
+    UI.needleEl.style.setProperty("--needle-highlight-height", "0%");
 
     setTimeout(() => {
       UI.failScreen.classList.remove("hidden");
@@ -217,6 +274,9 @@
     UI.winScreen.classList.add("hidden");
     UI.failScreen.classList.add("hidden");
     UI.startScreen.classList.remove("hidden");
+    // Ensure needle is hidden on the start screen
+    UI.needleEl.style.setProperty("--needle-line-height", "0%");
+    UI.needleEl.style.setProperty("--needle-highlight-height", "0%");
   }
 
   function updateDifficultyDisplay() {
@@ -258,4 +318,5 @@
   });
 
   updateDifficultyDisplay();
+  showStartScreen(); // Show start screen initially and hide needle
 })();
