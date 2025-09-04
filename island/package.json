@@ -1,0 +1,41 @@
+{
+  "name": "ducklin",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.4",
+    "@react-three/fiber": "^9.3.0",
+    "@react-three/postprocessing": "^3.0.4",
+    "gl-noise": "^1.6.1",
+    "howler": "^2.2.4",
+    "leva": "^0.10.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "simplex-noise": "^4.0.3",
+    "three": "^0.179.1",
+    "three-custom-shader-material": "^6.3.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.33.0",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@types/three": "^0.164.1",
+    "@types/howler": "^2.2.11",
+    "@typescript-eslint/eslint-plugin": "^8.0.0-alpha.34",
+    "@typescript-eslint/parser": "^8.0.0-alpha.34",
+    "@vitejs/plugin-react": "^5.0.0",
+    "eslint": "^9.34.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0",
+    "typescript": "^5.4.5",
+    "vite": "^7.1.2"
+  }
+}
