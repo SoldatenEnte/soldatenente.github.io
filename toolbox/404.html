@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Redirecting...</title>
+    <script>
+      // Store the full path that the user tried to access.
+      sessionStorage.setItem('_gh_pages_redirect', location.pathname);
+      // Redirect to the base of the application. The basename is '/toolbox/'.
+      location.replace(location.origin + '/toolbox/');
+    </script>
+  </head>
+  <body>
+  </body>
+</html>

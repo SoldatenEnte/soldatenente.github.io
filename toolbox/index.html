@@ -8,7 +8,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="/toolbox/assets/index-B-Ffm131.js"></script>
+    <script>
+      (function() {
+        const redirect = sessionStorage.getItem('_gh_pages_redirect');
+        if (redirect) {
+          sessionStorage.removeItem('_gh_pages_redirect');
+          history.replaceState(null, '', redirect);
+        }
+      })();
+    </script>
+    <script type="module" crossorigin src="/toolbox/assets/index-D9O3TUKL.js"></script>
     <link rel="stylesheet" crossorigin href="/toolbox/assets/index-CED8zT1U.css">
   </head>
   <body>
