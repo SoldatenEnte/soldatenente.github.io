@@ -1,0 +1,199 @@
+@font-face {
+  font-family: 'Mango';
+  src: url('assets/fonts/mango_font.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+body {
+  background-color: #000000;
+  width: 100vw;
+  margin: 0 auto;
+  padding: 0;
+  font-family: 'Mango';
+  font-size: 1em;
+  line-height: 1.5;
+  box-sizing: border-box;
+  overflow-x: hidden;  
+}
+
+h1{
+  margin: 0;
+  font-weight: 800;
+}
+
+h2{
+  margin: 0;
+  font-weight: 800;
+  font-size: 5em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+h3{
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+p{    
+  margin: 0;
+  font-weight: 500;
+  font-size: 1.7em;
+  line-height: 1.3;
+}
+
+button{
+  background-color: transparent;
+  border: 0.1em solid black;
+  color: black;
+  font-size: 1em;
+  padding: 0em 2em;
+  padding-top: 1em;
+  padding-bottom: 0.65em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.background_gradient{
+  position: fixed;
+  left: 50%;
+  height: 200vw;
+  width: 200vw;
+  background: radial-gradient(#ee00ff, #db48d900 70%);
+  transform: translateX(-50%) translateY(30vh);
+  opacity: 0.5;
+  z-index: 10;
+}
+
+.background_dots{
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  opacity: 0.04;
+}
+
+.navbar {  
+  position: fixed;
+  font-size: 2rem;
+  letter-spacing: 0.1em;
+  mix-blend-mode: exclusion;
+  text-transform: uppercase;
+  padding: 1.5em 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  z-index: 1;
+}
+
+.navbar__container {
+  display: flex;
+  justify-content: center;
+  width: 960px;
+}
+
+.navbar__nav {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0 1em;
+  padding-top: 7px;
+  background: linear-gradient(to right, rgba(173,0,255,0.16), rgba(255,114,0,0.16));
+  border: 0.09em solid rgba(127, 60, 117, 0.363);
+  border-radius: 100px;
+}
+
+.navbar__item {
+  margin: 0 2rem;
+}
+
+.navbar__link {
+  text-decoration: none;
+  color: #ffffffe3;
+}
+
+.navbar__link:hover {
+  color: #f143ee;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+#threejs-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.landing_hero{
+  margin: 0 auto;
+  position: relative;
+  width: 100%;
+  height: 95vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  align-items: center;
+}
+
+.landing_hero__subheading{
+  display: flex;
+  width: 37em;
+  justify-content: space-between;
+  font-size: 1.5em;
+  line-height: 0.9em;
+  color: white;
+  mix-blend-mode: exclusion;
+}
+
+.landing_hero__heading{
+  font-size: 15em;
+  background: -webkit-linear-gradient(#ffffff, #8e0098);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 0.9em;
+  mix-blend-mode: exclusion;
+  text-transform: uppercase;
+  text-align: center;
+  text-shadow: 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+.about_me{
+  margin: 19em auto;
+  position: relative;
+  width: 960px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.about_me__heading_container{
+  margin: 0 auto;
+  padding: 0 3em;
+}
+
+.about_me__heading{
+  font-size: 15em;
+  background: -webkit-linear-gradient(#ffffff, #8e0098);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 0.9em;
+  mix-blend-mode: exclusion;
+  text-transform: uppercase;
+  text-align: center;
+  text-shadow: 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+.about_me__text{
+  font-family: "Poppins";
+  font-weight: 400;
+  font-size: 2em;
+  color: white;
+  mix-blend-mode: exclusion;
+  text-transform: none;
+  text-align: center;
+}

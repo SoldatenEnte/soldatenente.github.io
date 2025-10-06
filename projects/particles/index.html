@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>THREEJS</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js",
+          "jsm/": "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"
+        }
+      }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.1.2/dist/lenis.min.js"></script>
+  </head>
+  <body>
+    <div class="background_gradient"></div>
+    <img src="assets/images/dots_offset.png" class="background_dots" alt="dots" />
+
+    <div class="navbar">
+      <div class="navbar__container">
+        <ul class="navbar__nav">
+          <li class="navbar__item">
+            <a href="#" class="navbar__link">Home</a>
+          </li>
+          <li class="navbar__item">
+            <a href="#" class="navbar__link">About me</a>
+          </li>
+          <li class="navbar__item">
+            <a href="#" class="navbar__link">Projects</a>
+          </li>
+          <li class="navbar__item">
+            <a href="#" class="navbar__link">Skills</a>
+          </li>
+          <li class="navbar__item">
+            <a href="#" class="navbar__link">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="landing_hero">
+      <div class="landing_hero__subheading">
+        <h3>University Bremen</h3>
+        <h3>(©2024)</h3>
+        <h3>Scroll Down ↘</h3>
+      </div>
+      <h1 class="landing_hero__heading">Aaron Postels</h1>
+    </div>
+
+    <div class="about_me">
+      <div class="about_me__heading_container">
+        <h2 class="about_me__heading" style="font-size: 220px">About</h2>
+        <h1 class="about_me__heading" style="font-size: 532px">Me</h1>
+      </div>
+      <div class="about_me">
+      </div>
+    </div>
+
+    <div class="about_me">
+      <div class="about_me__heading_container" style="align-items: center">
+        <h2 class="about_me__heading" style="font-size: 300px">Projects</h2>
+      </div>
+    </div>
+
+    <canvas id="threejs-canvas"></canvas>
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>
