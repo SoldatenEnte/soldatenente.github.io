@@ -1,176 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Lost at Sea!</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --sea-blue-dark: #1a2a6c;
-            --sea-blue-light: #b21f1f;
-            --sea-blue-accent: #fdbb2d;
-            --duck-yellow: #FFD700;
-            --duck-orange: #FFA500;
-            --text-color: #ffffff;
-            --wave-color: rgba(255, 255, 255, 0.2);
-        }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - Page Not Found</title>
+  <style>
+    :root {
+      --background-color: #1a1a1a;
+      --text-color: #f0f0f0;
+      --primary-color: #8a63d2;
+      --card-background: #2c2c2c;
+      --card-hover-background: #4a2b8e;
+      --card-border-color: #3a3a3a;
+    }
 
-        html, body {
-            height: 100%;
-            margin: 0;
-            font-family: 'Nunito', sans-serif;
-            overflow: hidden;
-        }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            background: linear-gradient(160deg, var(--sea-blue-dark), var(--sea-blue-light), var(--sea-blue-accent));
-            color: var(--text-color);
-        }
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 1rem;
+    }
 
-        .container {
-            position: relative;
-            z-index: 2;
-        }
+    main {
+      width: 100%;
+      max-width: 800px;
+    }
 
-        .duck-container {
-            position: relative;
-            width: 150px;
-            height: 150px;
-            margin: 0 auto 20px auto;
-            animation: bobbing 4s ease-in-out infinite;
-        }
+    h1 {
+      font-size: clamp(3rem, 10vw, 6rem);
+      font-weight: 300;
+      margin: 0;
+      letter-spacing: 0.05em;
+      color: var(--primary-color);
+    }
 
-        .duck-svg {
-            width: 100%;
-            height: 100%;
-        }
+    p {
+      font-size: clamp(1rem, 3vw, 1.25rem);
+      color: #b0b0b0;
+      margin: 1rem 0 2rem;
+    }
 
-        .question-mark {
-            position: absolute;
-            top: -20px;
-            right: 0;
-            font-size: 3em;
-            font-weight: 700;
-            opacity: 0;
-            transform: scale(0.5);
-            animation: pop-in 2s ease-in-out 1s infinite;
-        }
+    .home-link {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background-color: var(--card-background);
+      color: var(--primary-color);
+      text-decoration: none;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      border: 1px solid var(--card-border-color);
+      transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+      will-change: transform;
+    }
 
-        h1 {
-            font-size: 3rem;
-            margin: 0;
-            font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-
-        p {
-            font-size: 1.25rem;
-            margin: 10px 0 30px 0;
-            max-width: 400px;
-        }
-
-        .cta-button {
-            display: inline-block;
-            padding: 15px 30px;
-            background-color: var(--duck-yellow);
-            color: var(--sea-blue-dark);
-            text-decoration: none;
-            font-weight: 700;
-            border-radius: 50px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-        }
-
-        .cta-button:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-        }
-
-        .waves-container {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 25%;
-            z-index: 1;
-        }
-        
-        .wave {
-            position: absolute;
-            bottom: 0;
-            left: -100%; /* Start off-screen */
-            width: 200%; /* Double width to allow smooth sliding */
-            height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath fill='%23ffffff' fill-opacity='0.2' d='M0,64 C150,120 350,-20 600,64 C850,140 1050,-20 1200,64 L1200,120 L0,120 Z'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: repeat-x;
-            background-size: 50% 100px;
-        }
-
-        .wave.wave1 {
-            animation: wave-slide 10s linear infinite;
-            opacity: 0.8;
-        }
-        
-        .wave.wave2 {
-            animation: wave-slide 15s linear infinite reverse;
-            opacity: 0.5;
-            bottom: 10px;
-        }
-
-        @keyframes bobbing {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-
-        @keyframes wave-slide {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(50%); } /* Slide one full wave pattern */
-        }
-        
-        @keyframes pop-in {
-            0%, 100% { opacity: 0; transform: scale(0.5) rotate(0deg); }
-            20% { opacity: 1; transform: scale(1.1) rotate(-10deg); }
-            40% { transform: scale(0.9) rotate(10deg); }
-            60% { transform: scale(1) rotate(0deg); }
-            80% { opacity: 1; }
-        }
-
-    </style>
+    .home-link:hover,
+    .home-link:focus {
+      background-color: var(--card-hover-background);
+      color: var(--text-color);
+      transform: translateY(-5px);
+      outline: 2px solid var(--primary-color);
+      outline-offset: 2px;
+    }
+  </style>
 </head>
 <body>
-
-    <div class="container">
-        <div class="duck-container">
-            <!-- Cute Confused Duck SVG -->
-            <svg class="duck-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <!-- Body -->
-                <path d="M 20 60 Q 15 40, 35 30 Q 55 20, 75 40 Q 95 60, 80 80 Q 50 100, 20 80 Z" fill="#FFD700"/>
-                <!-- Head -->
-                <circle cx="70" cy="35" r="15" fill="#FFD700"/>
-                <!-- Eye -->
-                <circle cx="75" cy="32" r="2" fill="#000000"/>
-                <!-- Beak -->
-                <path d="M 83 38 Q 95 42, 85 45 Z" fill="#FFA500"/>
-            </svg>
-            <div class="question-mark">?</div>
-        </div>
-
-        <h1>Oh, quack!</h1>
-        <p>This page seems to have swum away. You've discovered uncharted waters.</p>
-        <a href="/projects/island/" class="cta-button">Sail Back to the Main Island</a>
-    </div>
-
-    <div class="waves-container">
-        <div class="wave wave1"></div>
-        <div class="wave wave2"></div>
-    </div>
-
+  <main>
+    <h1>404</h1>
+    <p>The page you are looking for does not exist.</p>
+    <a href="/" class="home-link">Return to Project Selector</a>
+  </main>
 </body>
 </html>
