@@ -1,0 +1,123 @@
+:root {
+    --bg-color: #0a041a;
+    --primary-green: #afff8c;
+    --title-green: #36b136;
+    --border-color: rgba(175, 255, 140, 0.2);
+    --font-family: "Courier New", Courier, monospace;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--primary-green);
+    font-family: var(--font-family);
+    overflow: hidden;
+    user-select: none;
+}
+
+#loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg-color);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    transition: opacity 0.5s ease-out;
+}
+.spinner {
+    border: 4px solid var(--border-color);
+    border-top: 4px solid var(--primary-green);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+#asciiCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: 0;
+    animation: canvasFadeIn 2.5s ease 1s forwards;
+}
+
+@keyframes canvasFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+
+#sourceVideo { display: none; }
+
+#os-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Pushes content to the bottom */
+    align-items: center;
+    z-index: 10;
+    pointer-events: none;
+    padding: 20px;
+    padding-bottom: 5vh; /* Lifts it off the absolute bottom edge */
+}
+
+#title-container {
+    color: var(--title-green);
+    text-align: center;
+    animation: fadeIn 1.5s 0.5s both, flicker 5s linear infinite;
+    text-shadow: 0 0 3px rgba(128, 205, 100, 0.4);
+}
+#title-container pre {
+    font-family: var(--font-family);
+    /* This single vw value ensures the art scales with screen width and fits */
+    font-size: 1.1vw;
+    line-height: 0.9;
+    max-width: 95vw;
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50.0% { opacity: 0.95; }
+  50.5% { opacity: 1; }
+  60.0% { opacity: 0.98; }
+  60.2% { opacity: 1; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.noscript-warning {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    z-index: 300;
+    background: var(--bg-color);
+}
+}
