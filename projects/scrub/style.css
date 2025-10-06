@@ -1,0 +1,265 @@
+:root {
+  /* Font sizes */
+  --font-size-xxs: 1rem; /* Extra small */
+  --font-size-xs: 1.3rem; /* Extra small */
+  --font-size-sm: 2.5rem; /* Small */
+  --font-size-md: 3rem; /* Medium */
+  --font-size-lg: 5rem; /* Large */
+  --font-size-xl: 10rem; /* Extra large */
+  --font-size-xxl: 15rem; /* Extra extra large */
+
+  /* Line heights */
+  --line-height-xs: 0.85;
+  --line-height-sm: 1.05;
+  --line-height-md: 1.2;
+  --line-height-lg: 1.35;
+  --line-height-xl: 1.5;
+  --line-height-xxl: 1.65;
+
+  --color-1: #f1f1f1;
+  --color-2: #0E0E0E;
+  --color-3: #FFF300;
+  --color-4: #D0552E;
+  --color-5: #8C49CF;
+  --color-6: rgba(241,241,241,0.08);
+}
+
+@font-face {
+  font-family: "Schabo";
+  src: url("files/fonts/SCHABO-Condensed.otf") format("opentype");
+}
+
+.schabo {
+  font-family: "Schabo";
+}
+.inter {
+  font-family: "Inter";
+}
+
+
+@font-face {
+  font-family: "Inter";
+  src: url("files/fonts/Inter.ttf") format("truetype");
+}
+
+
+body {
+  background-color: var(--color-2);
+  margin: 0;
+  padding: 0;
+  margin: 0 auto;
+  font-family: "Inter";
+  font-optical-sizing: auto;
+  font-weight: 500; /* adjust the weight to your liking */
+  font-style: normal;
+  font-variation-settings:
+    "slnt" 0;
+  overflow-x: hidden;
+}
+
+h1 {
+  font-size: var(--font-size-xxl);
+  font-weight: normal;
+  scale: 1;
+  font-family: "Schabo";
+  margin: 0;
+  text-transform: uppercase;
+}
+
+h2 {
+  font-size: var(--font-size-xl);
+  font-weight: normal;
+  scale: 1;
+  font-family: "Schabo";
+  margin: 0;
+  text-transform: uppercase;
+}
+
+h3 {
+  font-size: var(--font-size-md);
+  font-weight: normal;
+  scale: 1;
+  font-family: "Schabo";
+  margin: 0;
+  text-transform: uppercase;
+}
+
+h4 {
+  font-size: var(--font-size-sm);
+  font-weight: normal;
+  scale: 1;
+  font-family: "Schabo";
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.container {
+  margin: 0 auto;
+  width: 100vw;
+  background-color: none;
+}
+
+.background-elements {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.svg-icon {
+  position: absolute;
+  opacity: 0.0625;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.icon1 {
+  width: 200px;
+  height: 200px;
+  top: 800px;
+  left: 50%;
+  transform: translate(-50%, -480px) translate(-350px, -350px) rotate(-20deg);
+}
+
+.icon2 {
+  width: 340px;
+  height: 340px;
+  top: 800px;
+  left: 50%;
+  transform: translate(-50%, -480px) translate(-350px, 60px) rotate(10deg);
+}
+
+.icon3 {
+  width: 310px;
+  height: 310px;
+  top: 800px;
+  left: 50%;
+  transform: translate(-50%, -480px) translate(420px, -350px) rotate(70deg);
+}
+
+.icon4 {
+  width: 240px;
+  height: 240px;
+  top: 800px;
+  left: 50%;
+  transform: translate(-50%, -480px) translate(350px, 100px) rotate(30deg);
+}
+
+.icon5 {
+  width: 200px;
+  height: 200px;
+  top: 800px;
+  left: 50%;
+  transform: translate(-50%, -480px) translate(0px, -100px) rotate(25deg);
+}
+
+.icon6 {
+  width: 300px;
+  height: 300px;
+  top: 800px;
+  left: 50%;
+  transform: translate(-50%, -480px) translate(-650px, -150px) rotate(0deg);
+}
+
+.icon7 {
+  width: 450px;
+  height: 450px;
+  top: 800px;
+  left: 50%;
+  transform: translate(-50%, -480px) translate(700px, -100px) rotate(0deg);
+}
+
+
+#scroll-down-button {
+  background-color: transparent;
+  color: var(--color-3);
+  border: 3px solid var(--color-3);
+  padding: 12px 30px 5px 30px;
+  font-family: "Schabo";
+  font-size: 2em;
+  cursor: pointer;
+  border-radius: 100vh;
+}
+
+.rounded {
+  background-color: transparent;
+  color: var(--color-1);
+  border: 3px solid var(--color-1);
+  padding: 10px 50px 3px 50px;
+  font-family: "Schabo";
+  cursor: pointer;
+  border-radius: 100vh;
+  text-transform: uppercase;
+}
+
+.rounded h4 {
+  transform: skewY(10deg);
+}
+
+.skew-wrapper {
+  transform: rotate(-10deg);
+}
+
+.skills-container {
+  position: relative;
+  height: 16em; /* Set the height of the container */
+  overflow: hidden;
+}
+
+.topic-title {
+  color: var(--color-1);
+  line-height: 0.9em;
+}
+
+.topic-text {
+  color: var(--color-1);
+  opacity: 0.9;
+  font-size: 1.8rem;
+  line-height: 1.3em;
+  font-weight: 300;
+}
+
+.skills-topic-heading {
+  font-family: "Schabo";
+  color: var(--color-3);
+  font-size: 2.3em;
+  line-height: 1em;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+#text-a {
+  letter-spacing: 300;
+}
+
+#zooming-heading {
+  color: white; 
+  visibility: hidden; 
+  scale: 0; 
+  opacity: 0;
+  padding-top: 0.2em;
+}
+
+.three-topics-icon{
+  height: 11em;
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+.film-back {
+  width: 100vw;
+  height: 50vh;
+  background-color: var(--color-3);
+  transform: rotate(5deg);
+}
+
+.vignette {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0px 0 300px black inset;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.5;
+}

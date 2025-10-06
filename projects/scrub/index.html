@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>My First Webpage</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="framework.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+</head>
+  <body>
+    <div class="vignette"></div>
+
+    <div class="container justify-center flex align-center">
+      <div class="rounded t-center m-2 flex justify-space-between px-5">
+        <div class="skew-wrapper mr-1">
+          <h4 class="c-3">Home</h4>
+        </div>
+        <div class="skew-wrapper mx-1"  id="scroll-skills">
+          <h4>Skills</h4>
+        </div>
+        <div class="skew-wrapper mx-1"  id="scroll-work">
+          <h4>Work</h4>
+        </div>
+        <div class="skew-wrapper mx-1"  id="scroll-topics">
+          <h4>Topics</h4>
+        </div>
+        <div class="skew-wrapper ml-1"  id="scroll-another">
+          <h4>Another</h4>
+        </div>
+      </div>
+    </div>
+
+    <div class="background-elements">    
+      <img src="files\images\icons\triangle.svg" class="svg-icon icon1" alt="Custom SVG">
+      <img src="files\images\icons\triangle.svg" class="svg-icon icon2" alt="Custom SVG">
+      <img src="files\images\icons\triangle.svg" class="svg-icon icon3" alt="Custom SVG">
+      <img src="files\images\icons\triangle.svg" class="svg-icon icon4" alt="Custom SVG">
+      <img src="files\images\icons\triangle.svg" class="svg-icon icon5" alt="Custom SVG">
+      <img src="files\images\icons\arc.svg" class="svg-icon icon6" alt="Custom SVG">
+      <img src="files\images\icons\donut.svg" class="svg-icon icon7" alt="Custom SVG">
+    </div>
+
+    <div class="container my-5">
+      <div class="flex col align-center justify-center tl-xs">
+        <h1 class="c-3 t-center mb-3 mt-3">AARON<br><span class="c-1">POSTELS</span></h1>
+        <button id="scroll-down-button">
+          <div class="flex align-center justify-center">
+            <img src="files/images/icons/arrow_left.svg" alt="arrow-left" width="20em" style="margin: 0 0.3em 0.2em 0;">
+            <div class="skew-wrapper">
+              <h4 style="transform: skewY(10deg);">SCROLL DOWN</h4>
+            </div>
+            <img src="files/images/icons/arrow_right.svg" alt="arrow-right" width="20em" style="margin: 0 0 0.3em 0.2em;">
+          </div>
+        </button>
+      </div>
+    </div>
+
+
+
+    <div class="container align-center flex w-100"  style="height: 35rem;" id="skills-section">
+      <div class="container align-center justify-end flex w-50" id="heading-a">
+        <div class="v-line m-0 mr-2" style="border-color: var(--color-4);"></div>
+        <div class="skills-container flex align-center m-0 pt-2">
+          <h2 class="topic-title"><span class="c-6">My Skills</span><br>My Skills<br><span class="c-6">My Skills</span></h2>
+        </div>
+      </div>
+
+      <div class="container align-center flex justify-start m-0 w-50">
+        <p class="topic-text pl-2" style="width: 20em;">
+          <span class="c-4 skills-topic-heading">Unity Game Dev</span><br>I specialize in creating engaging 2D games using Unity. My focus is on developing intuitive gameplay mechanics and visually appealing designs to create memorable gaming experiences.
+        </p>
+      </div>
+    </div>
+
+    <div class="container flex w-100 m-0" style="height: 35rem;">
+      <div class="container align-center flex w-50"></div>
+      <div class="container align-center flex justify-start m-0 w-50">
+        <p class="topic-text pl-2" style="width: 20em;">
+          <span class="c-5 skills-topic-heading">Website Development</span><br>I build and design websites with a keen eye for aesthetics and functionality. My work includes everything from front-end design to back-end development, ensuring a seamless user experience across different platforms.
+        </p>
+      </div>
+    </div>
+
+    <div class="container flex w-100 m-0" style="height: 35rem;">
+      <div class="container align-center flex w-50"></div>
+      <div class="container align-center flex justify-start m-0 w-50">
+        <p class="topic-text pl-2" style="width: 20em;">
+          <span class="c-3 skills-topic-heading">Python Automation</span><br>Python is my go-to for automation and creating custom applications. I enjoy developing scripts and tools that streamline tasks, enhance productivity, and solve complex problems efficiently.
+        </p>
+      </div>
+    </div>
+
+    <div class="container flex w-100 m-0" style="height: 35rem;">
+      <div class="container align-center flex w-50"></div>
+      <div class="container align-center flex justify-start m-0 w-50">
+        <p class="topic-text pl-2" style="width: 20em;" id="heading-a-end">
+          <span class="c-4 skills-topic-heading">Electronics</span><br>I delve into electronics, working with microcontrollers like Arduino, ESP, and Raspberry Pi. My projects often involve creating interactive hardware and integrating technology in innovative ways.
+        </p>
+      </div>
+    </div>
+
+    <div id="work-section"></div>
+    <div class="align-center flex" style="width: 2000%" id="target">
+      <div style="margin-right: 100vw" id="target"></div>
+      <div
+        class="m-3"
+        style="height: 500px; width: 500px; background-color: var(--color-3)"
+        id="target"
+      ></div>
+      <div
+        class="m-3"
+        style="height: 500px; width: 500px; background-color: var(--color-4)"
+        id="target"
+      ></div>
+      <div
+        class="m-3"
+        style="height: 500px; width: 500px; background-color: var(--color-5)"
+        id="target"
+      ></div>
+      <div
+        class="m-3"
+        style="height: 500px; width: 500px; background-color: var(--color-3)"
+        id="target"
+      ></div>
+      <div
+        class="m-3"
+        style="height: 500px; width: 500px; background-color: var(--color-4)"
+        id="target"
+      ></div>
+    </div>
+
+    
+    <div id="topics-section"></div>
+    <div class="container flex col align-center justify-center c-1 tl-xs mt-5">
+      <div style="width: 100vw; border-top: 0.1em solid rgb(255, 255, 255);"></div>
+        <div class="flex row align-center three-heading-animated">
+          <img class="three-topics-icon" src="files\images\icons\three-topics-icon1.svg" alt="Custom SVG">
+          <h1 class="inter">Unity</h1>
+        </div>
+        <div style="width: 100vw; border-top: 0.1em solid rgb(255, 255, 255);"></div>
+        <div class="flex row align-center three-heading-animated">
+          <h1 class="inter">Design</h1>
+          <img class="three-topics-icon" src="files\images\icons\three-topics-icon2.svg" alt="Custom SVG">
+        </div>
+        <div style="width: 100vw; border-top: 0.1em solid rgb(255, 255, 255);"></div>
+        <div class="flex row align-center three-heading-animated">
+          <img class="three-topics-icon" src="files\images\icons\three-topics-icon3.svg" alt="Custom SVG">
+          <h1 class="inter">Python</h1>
+        </div>
+        <div style="width: 100vw; border-top: 0.1em solid rgb(255, 255, 255);"></div>
+    </div>
+
+    
+    <div class="container flex align-center justify-center" id="heading-b" style="width: 100vw; overflow: hidden;">
+      <div class="container flex justify-center align-center" style="background-color: white; width: 0vw; height: 100vh;" id="container-to-animate">
+          <h1 id="zooming-heading">HEADING</h1>
+      </div>
+    </div>
+
+    
+    <div id="another-section"></div>
+    <div class="container flex align-left justify-center col text-start" id="heading-c" style="background-color: white; width: 100em;">
+      <h1 class="m-0 t-xxl tl-xs fw-600 inter" id="text-a">ANOTHER</h1>
+      <h1 class="m-0 t-xxl tl-xs fw-600 inter" id="text-b">SECTION</h1>
+    </div>
+    
+    <div class="container" style="background-color: white; height: 100em;"></div>
+
+
+
+  </body>
+  <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.27/bundled/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+  <script type="module" src="lenis.js"></script>
+  <script type="module" src="main.js"></script>
+</html>
