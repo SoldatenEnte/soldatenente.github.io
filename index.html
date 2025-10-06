@@ -1,17 +1,101 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Redirecting...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Selector</title>
+  <style>
+    :root {
+      --background-color: #1a1a1a;
+      --text-color: #f0f0f0;
+      --primary-color: #8a63d2;
+      --card-background: #2c2c2c;
+      --card-hover-background: #4a2b8e;
+      --card-border-color: #3a3a3a;
+    }
 
-  <meta http-equiv="refresh" content="0; url=./projects/island/">
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  <link rel="canonical" href="https://ducklin.de/projects/island/">
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    main {
+      width: 100%;
+      max-width: 800px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 300;
+      margin-bottom: 2rem;
+      letter-spacing: 0.05em;
+    }
+
+    .project-grid {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+
+    .project-grid a {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 80px;
+      padding: 1rem;
+      background-color: var(--card-background);
+      color: var(--primary-color);
+      text-decoration: none;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      border: 1px solid var(--card-border-color);
+      transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+      will-change: transform;
+    }
+
+    .project-grid a:hover,
+    .project-grid a:focus {
+      background-color: var(--card-hover-background);
+      color: var(--text-color);
+      transform: translateY(-5px);
+      outline: 2px solid var(--primary-color);
+      outline-offset: 2px;
+    }
+  </style>
 </head>
 <body>
-  <p>
-    Redirecting you to the main experience.
-    If you are not redirected automatically, <a href="./projects/island/">click here</a>.
-  </p>
+  <main>
+    <h1>Select a Project</h1>
+    <nav>
+      <ul class="project-grid">
+        <li><a href="./projects/combat/">Combat</a></li>
+        <li><a href="./projects/eneida/">Eneida</a></li>
+        <li><a href="./projects/island/">Island</a></li>
+        <li><a href="./projects/lockpick/">Lockpick</a></li>
+        <li><a href="./projects/loveletter/">Love Letter</a></li>
+        <li><a href="./projects/portal/">Portal</a></li>
+        <li><a href="./projects/textfall/">Textfall</a></li>
+        <li><a href="./projects/timer/">Timer</a></li>
+        <li><a href="./projects/toolbox/">Toolbox</a></li>
+        <li><a href="./projects/uSeek/">uSeek</a></li>
+      </ul>
+    </nav>
+  </main>
 </body>
 </html>
