@@ -4,99 +4,42 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Project Selector</title>
-  <style>
-    :root {
-      --background-color: #1a1a1a;
-      --text-color: #f0f0f0;
-      --primary-color: #8a63d2;
-      --card-background: #2c2c2c;
-      --card-hover-background: #4a2b8e;
-      --card-border-color: #3a3a3a;
-    }
-
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background-color: var(--background-color);
-      color: var(--text-color);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 1rem;
-    }
-
-    main {
-      width: 100%;
-      max-width: 800px;
-    }
-
-    h1 {
-      font-size: clamp(2rem, 5vw, 3rem);
-      font-weight: 300;
-      margin-bottom: 2rem;
-      letter-spacing: 0.05em;
-    }
-
-    .project-grid {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-    }
-
-    .project-grid a {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 80px;
-      padding: 1rem;
-      background-color: var(--card-background);
-      color: var(--primary-color);
-      text-decoration: none;
-      font-size: 1.1rem;
-      border-radius: 8px;
-      border: 1px solid var(--card-border-color);
-      transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
-      will-change: transform;
-    }
-
-    .project-grid a:hover,
-    .project-grid a:focus {
-      background-color: var(--card-hover-background);
-      color: var(--text-color);
-      transform: translateY(-5px);
-      outline: 2px solid var(--primary-color);
-      outline-offset: 2px;
-    }
-  </style>
+  <link rel="stylesheet" href="./css/style.css">
+  <script type="module" src="./js/main.js"></script>
 </head>
 <body>
   <main>
-    <h1>Select a Project</h1>
-    <nav>
-      <ul class="project-grid">
-        <li><a href="./projects/ASCII/">ASCII</a></li>
-        <li><a href="./projects/combat/">Combat</a></li>
-        <li><a href="./projects/eneida/">Eneida</a></li>
-        <li><a href="./projects/island/">Island</a></li>
-        <li><a href="./projects/lockpick/">Lockpick</a></li>
-        <li><a href="./projects/particles/">Particles</a></li>
-        <li><a href="./projects/portal/">Portal</a></li>
-        <li><a href="./projects/scrub/">Scrub GSAP</a></li>
-        <li><a href="./projects/textfall/">Textfall</a></li>
-        <li><a href="./projects/toolbox/">Toolbox</a></li>
-        <li><a href="./projects/uSeek/">uSeek</a></li>
+    <h1>Project Showcase</h1>
+    
+    <section id="featured-section">
+      <h2>Featured</h2>
+      <ul id="featured-projects" class="project-grid">
+        <!-- Featured projects will be injected here by JavaScript -->
       </ul>
-    </nav>
+    </section>
+
+    <section id="all-projects-section">
+      <h2>All Projects</h2>
+      <ul id="regular-projects" class="project-grid">
+        <!-- Regular projects will be injected here by JavaScript -->
+      </ul>
+    </section>
   </main>
+
+  <footer>
+    &copy; 2025 Aaron Postels @ Ducklin &mdash; <a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </footer>
+
+  <div id="warning-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h3>Device Warning</h3>
+      <p id="modal-message">This project is not optimized for your current device and may not work as intended.</p>
+      <div class="modal-actions">
+        <button class="btn btn-secondary js-modal-close">Cancel</button>
+        <a href="#" id="modal-continue-btn" class="btn btn-primary">Continue Anyway</a>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
