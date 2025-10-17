@@ -54,7 +54,7 @@ const projects = [
     name: "ASCII",
     description: "A simple video-to-ASCII art converter and player.",
     href: "./projects/ASCII/",
-    image: "./images/ascii_thumbnail.png",
+    image: "./images/ASCII_thumbnail.png",
     status: "Completed",
     docHref: null,
     featured: false,
