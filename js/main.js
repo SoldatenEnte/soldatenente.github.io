@@ -15,8 +15,24 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- ICONS ---
   const iconDesktop = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>`;
   const iconMobile = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>`;
+  const iconPlay = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`;
 
   const createProjectCard = (project) => {
+    const thumbnail = project.image
+      ? `<img src="${project.image}" alt="${project.name} thumbnail" loading="lazy">`
+      : `<div class="card-thumbnail-placeholder"></div>`;
+
+    const projectTags =
+      project.tags && project.tags.length
+        ? `<div class="card-tags">${project.tags
+            .map((tag) => `<span class="card-tag">${tag}</span>`)
+            .join("")}</div>`
+        : "";
+
+    const demoButton = project.href
+      ? `<a href="${project.href}" class="btn btn-primary">${iconPlay} <span>View Demo</span></a>`
+      : `<button class="btn btn-primary" disabled>Demo Unavailable</button>`;
+
     const docLink = project.docHref
       ? `<a href="${project.docHref}" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">Docs</a>`
       : "";
@@ -34,27 +50,67 @@ document.addEventListener("DOMContentLoaded", () => {
       timeZone: "UTC",
     });
 
+    const liClass = project.featured ? "project-card featured" : "project-card";
+
     return `
-      <li class="project-card" data-status="${project.status
-        .replace(/\s+/g, "-")
-        .toLowerCase()}" data-project-name="${project.name}">
-        <div class="card-content">
-          <div class="card-header">
-            <h3 class="project-title">${project.name}</h3>
-            <span class="project-status">${project.status}</span>
+      <li class="${liClass}" data-status="${project.status
+      .replace(/\s+/g, "-")
+      .toLowerCase()}" data-project-name="${project.name}">
+        <div class="card-inner">
+          <div class="card-thumbnail">
+            ${thumbnail}
+            ${projectTags}
           </div>
-          <p class="project-description">${project.description}</p>
-          <div class="card-meta">
-            ${deviceIcons}
-            <span class="project-date">${formattedDate}</span>
+          <div class="card-content">
+            <div class="card-header">
+              <h3 class="project-title">${project.name}</h3>
+              <span class="project-status">${project.status}</span>
+            </div>
+            <p class="project-description">${project.description}</p>
+            <div class="card-meta">
+              ${deviceIcons}
+              <span class="project-date">${formattedDate}</span>
+            </div>
           </div>
-        </div>
-        <div class="card-footer">
-          <a href="${project.href}" class="btn btn-primary">View Demo</a>
-          ${docLink}
+          <div class="card-footer">
+            ${docLink}
+            ${demoButton}
+          </div>
         </div>
       </li>
     `;
+  };
+
+  const setupCardHoverEffects = () => {
+    const cards = document.querySelectorAll(".project-card");
+    cards.forEach((card) => {
+      const cardInner = card.querySelector(".card-inner");
+
+      card.addEventListener("mousemove", (e) => {
+        const rect = card.getBoundingClientRect();
+
+        // 3D tilt effect for featured cards only
+        if (card.classList.contains("featured")) {
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const maxRotation = 8;
+
+          const rotateX = (-maxRotation * (y / rect.height - 0.5)).toFixed(2);
+          const rotateY = (maxRotation * (x / rect.width - 0.5)).toFixed(2);
+
+          card.style.setProperty("--rotate-x", `${rotateX}deg`);
+          card.style.setProperty("--rotate-y", `${rotateY}deg`);
+        }
+      });
+
+      card.addEventListener("mouseleave", () => {
+        // Reset 3D tilt on mouse leave for featured cards
+        if (card.classList.contains("featured")) {
+          card.style.setProperty("--rotate-x", `0deg`);
+          card.style.setProperty("--rotate-y", `0deg`);
+        }
+      });
+    });
   };
 
   const renderProjects = () => {
@@ -69,12 +125,14 @@ document.addEventListener("DOMContentLoaded", () => {
     regularContainer.innerHTML = regularProjects
       .map(createProjectCard)
       .join("");
+
+    setupCardHoverEffects();
   };
 
-  const showWarningModal = (href, isMobile) => {
-    const requiredDevice = isMobile ? "desktop" : "mobile";
+  const showWarningModal = (href) => {
+    const isMobileDevice = window.innerWidth < 768;
     modalMessage.textContent = `This project is not optimized for a ${
-      isMobile ? "mobile" : "desktop"
+      isMobileDevice ? "mobile" : "desktop"
     } device. It may not display or function correctly.`;
     modalContinueBtn.href = href;
     warningModal.classList.remove("hidden");
@@ -86,19 +144,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- EVENT LISTENERS ---
 
-  // Main listener for "View Demo" clicks
   document.body.addEventListener("click", (e) => {
     const viewDemoButton = e.target.closest(".btn-primary");
-    if (!viewDemoButton) return;
+    if (!viewDemoButton || viewDemoButton.hasAttribute("disabled")) return;
 
-    e.preventDefault();
+    if (viewDemoButton.tagName === "A") {
+      e.preventDefault();
+    }
 
     const card = viewDemoButton.closest(".project-card");
     const projectName = card.dataset.projectName;
     const project = projects.find((p) => p.name === projectName);
     const href = viewDemoButton.href;
 
-    if (!project) return;
+    if (!project || !href) return;
 
     const isMobileDevice = window.innerWidth < 768;
     const isDesktopOptimized = project.deviceSupport.includes("desktop");
@@ -112,13 +171,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (shouldWarn) {
-      showWarningModal(href, isMobileDevice);
+      showWarningModal(href);
     } else {
       window.location.href = href;
     }
   });
 
-  // Listeners for closing the modal
   modalCloseBtns.forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
