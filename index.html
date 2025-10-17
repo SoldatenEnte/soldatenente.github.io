@@ -1,48 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Selector</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./css/style.css">
-  <script type="module" src="./js/main.js"></script>
-</head>
-<body>
-  <main>
-    <h1>Project Showcase</h1>
-    
-    <section id="featured-section">
-      <h2>Featured</h2>
-      <ul id="featured-projects" class="project-grid">
-        <!-- Featured projects will be injected here by JavaScript -->
-      </ul>
-    </section>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project Selector</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/style.css" />
+    <script type="module" src="./js/main.js"></script>
+  </head>
+  <body>
+    <main>
+      <h1>Project Showcase</h1>
 
-    <section id="all-projects-section">
-      <h2>All Projects</h2>
-      <ul id="regular-projects" class="project-grid">
-        <!-- Regular projects will be injected here by JavaScript -->
-      </ul>
-    </section>
-  </main>
+      <section id="featured-section">
+        <h2>Featured</h2>
+        <ul id="featured-projects" class="project-grid"></ul>
+      </section>
 
-  <footer>
-    &copy; 2025 Aaron Postels @ Ducklin &mdash; <a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a>
-  </footer>
+      <section id="all-projects-section">
+        <h2>All Projects</h2>
+        <ul id="regular-projects" class="project-grid"></ul>
+      </section>
+    </main>
 
-  <div id="warning-modal" class="modal-overlay hidden">
-    <div class="modal-content">
-      <h3>Device Warning</h3>
-      <p id="modal-message">This project is not optimized for your current device and may not work as intended.</p>
-      <div class="modal-actions">
-        <button class="btn btn-secondary js-modal-close">Cancel</button>
-        <a href="#" id="modal-continue-btn" class="btn btn-primary">Continue Anyway</a>
+    <footer>
+      &copy; 2025 Aaron Postels @ Ducklin &mdash;
+      <a
+        href="https://github.com/SoldatenEnte"
+        target="_blank"
+        rel="noopener noreferrer"
+        >GitHub</a
+      >
+    </footer>
+
+    <div id="warning-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <h3>Device Warning</h3>
+        <p id="modal-message">
+          This project is not optimized for your current device and may not work
+          as intended.
+        </p>
+        <div class="modal-actions">
+          <button class="btn btn-secondary js-modal-close">Cancel</button>
+          <a href="#" id="modal-continue-btn" class="btn btn-primary"
+            >Continue Anyway</a
+          >
+        </div>
       </div>
     </div>
-  </div>
-
-</body>
+  </body>
 </html>
