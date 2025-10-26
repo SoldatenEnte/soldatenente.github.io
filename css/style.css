@@ -29,18 +29,6 @@
   }
 }
 
-@keyframes background-pan {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
 *,
 *::before,
 *::after {
@@ -56,29 +44,6 @@ body {
 
 body {
   background-color: var(--background-color);
-  background-image: radial-gradient(
-      circle at 20% 20%,
-      hsla(210, 50%, 40%, 0.15),
-      transparent 35%
-    ),
-    radial-gradient(
-      circle at 80% 10%,
-      hsla(260, 40%, 40%, 0.15),
-      transparent 35%
-    ),
-    radial-gradient(
-      circle at 70% 90%,
-      hsla(180, 40%, 30%, 0.15),
-      transparent 35%
-    ),
-    radial-gradient(
-      ellipse at top,
-      var(--background-light),
-      var(--background-color)
-    );
-  background-size: 300% 300%;
-  background-attachment: fixed;
-  animation: background-pan 45s linear infinite;
   color: var(--text-color);
   font-family: var(--font-family-sans);
   font-synthesis: none;
