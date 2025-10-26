@@ -52,7 +52,7 @@ const projects = [
   },
   {
     name: "ASCII",
-    description: "A simple video-to-ASCII art converter and player.",
+    description: "A simple video-to-ASCII art player.",
     href: "./projects/ASCII/",
     image: "./images/ASCII_thumbnail.png",
     status: "Completed",

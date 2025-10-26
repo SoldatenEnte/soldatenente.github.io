@@ -173,11 +173,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const viewDemoButton = e.target.closest(".btn-primary");
     if (!viewDemoButton || viewDemoButton.hasAttribute("disabled")) return;
 
+    // Check if the button belongs to a project card.
+    // If not, it's the modal button, so we let its default link behavior proceed.
+    const card = viewDemoButton.closest(".project-card");
+    if (!card) {
+      return;
+    }
+
+    // This logic now only applies to a project card's "View Demo" button.
     if (viewDemoButton.tagName === "A") {
       e.preventDefault();
     }
 
-    const card = viewDemoButton.closest(".project-card");
     const projectName = card.dataset.projectName;
     const project = projects.find((p) => p.name === projectName);
     const href = viewDemoButton.href;
