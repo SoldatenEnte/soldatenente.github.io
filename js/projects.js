@@ -19,7 +19,7 @@ const projects = [
     image: "./images/island_thumbnail.png",
     status: "On Hold",
     docHref: null,
-    featured: true,
+    featured: false,
     date: "2025-09",
     deviceSupport: ["desktop", "mobile"],
     tags: ["Web", "Three.js"],
@@ -126,6 +126,18 @@ const projects = [
     date: "2024-08",
     deviceSupport: ["desktop"],
     tags: ["Web", "Three.js"],
+  },
+  {
+    name: "Platform Kinematics",
+    description:
+      "A real-time 3D simulator for a 3-axis Stewart platform, demonstrating inverse kinematics with React and Three.js.",
+    href: "./projects/platform/",
+    image: "./images/platform_thumbnail.png",
+    status: "In Development",
+    featured: true,
+    date: "2025-10",
+    deviceSupport: ["desktop", "mobile"],
+    tags: ["React", "Three.js", "3D"],
   },
   {
     name: "uSeek",

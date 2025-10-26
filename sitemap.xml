@@ -56,6 +56,11 @@
     <priority>0.50</priority>
   </url>
   <url>
+    <loc>https://ducklin.de/projects/platform/</loc>
+    <lastmod>2025-10-26</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
     <loc>https://ducklin.de/projects/uSeek/</loc>
     <lastmod>2025-10-26</lastmod>
     <priority>0.60</priority>
