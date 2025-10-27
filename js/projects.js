@@ -3,7 +3,7 @@ const projects = [
     name: "Toolbox",
     description: "A collection of small, useful web-based utilities and tools.",
     href: "./projects/toolbox/",
-    image: "./images/toolbox_thumbnail.png",
+    image: "./images/toolbox_thumbnail.webp",
     status: "In Development",
     docHref: "./case-studies/toolbox.html",
     featured: true,
@@ -16,7 +16,7 @@ const projects = [
     description:
       "A Three.js scene where you drive a ship between islands, each representing a project.",
     href: "./projects/island/",
-    image: "./images/island_thumbnail.png",
+    image: "./images/island_thumbnail.webp",
     status: "On Hold",
     docHref: "./case-studies/island.html",
     featured: false,
@@ -29,7 +29,7 @@ const projects = [
     description:
       "An interactive portfolio terminal with commands, mini-games, and a windowing system.",
     href: "./projects/eneida/",
-    image: "./images/eneida_thumbnail.png",
+    image: "./images/eneida_thumbnail.webp",
     status: "Completed",
     docHref: "./case-studies/eneida.html",
     featured: true,
@@ -42,7 +42,7 @@ const projects = [
     description:
       "A visualization test featuring a video of a portal scanning animation.",
     href: "./projects/portal/",
-    image: "./images/portal_thumbnail.png",
+    image: "./images/portal_thumbnail.webp",
     status: "Completed",
     docHref: "./case-studies/portal.html",
     featured: false,
@@ -54,7 +54,7 @@ const projects = [
     name: "ASCII",
     description: "A simple video-to-ASCII art player.",
     href: "./projects/ASCII/",
-    image: "./images/ASCII_thumbnail.png",
+    image: "./images/ASCII_thumbnail.webp",
     status: "Completed",
     docHref: "./case-studies/ascii.html",
     featured: false,
@@ -67,7 +67,7 @@ const projects = [
     description:
       "A tech demo for a turn-based combat system intended for a larger project.",
     href: "./projects/combat/",
-    image: "./images/combat_thumbnail.png",
+    image: "./images/combat_thumbnail.webp",
     status: "Completed",
     docHref: "./case-studies/combat.html",
     featured: false,
@@ -80,7 +80,7 @@ const projects = [
     description:
       "A tech demo for a lockpicking mini-game intended for a larger project.",
     href: "./projects/lockpick/",
-    image: "./images/lockpick_thumbnail.png",
+    image: "./images/lockpick_thumbnail.webp",
     status: "Completed",
     docHref: "./case-studies/lockpick.html",
     featured: false,
@@ -93,7 +93,7 @@ const projects = [
     description:
       "A small project featuring falling text that aligns into sentences.",
     href: "./projects/textfall/",
-    image: "./images/textfall_thumbnail.png",
+    image: "./images/textfall_thumbnail.webp",
     status: "Completed",
     docHref: "./case-studies/textfall.html",
     featured: false,
@@ -106,7 +106,7 @@ const projects = [
     description:
       "A portfolio concept using GSAP for scroll-based animations and effects.",
     href: "./projects/scrub/",
-    image: "./images/scrub_thumbnail.png",
+    image: "./images/scrub_thumbnail.webp",
     status: "Archived",
     docHref: "./case-studies/scrub-gsap.html",
     featured: false,
@@ -119,7 +119,7 @@ const projects = [
     description:
       "A Three.js experiment displaying 3D objects as point clouds that react to mouse and scroll.",
     href: "./projects/particles/",
-    image: "./images/particles_thumbnail.png",
+    image: "./images/particles_thumbnail.webp",
     status: "Archived",
     docHref: "./case-studies/particles.html",
     featured: false,
@@ -132,7 +132,7 @@ const projects = [
     description:
       "A real-time 3D simulator for a 3-axis Stewart platform, demonstrating inverse kinematics with React and Three.js.",
     href: "./projects/platform/",
-    image: "./images/platform_thumbnail.png",
+    image: "./images/platform_thumbnail.webp",
     status: "In Development",
     docHref: "./case-studies/platform.html",
     featured: true,
@@ -145,7 +145,7 @@ const projects = [
     description:
       "A pirate-styled adventure puzzle game where you solve challenges to find a final code.",
     href: "./projects/uSeek/",
-    image: "./images/useek_thumbnail.png",
+    image: "./images/useek_thumbnail.webp",
     status: "Completed",
     docHref: "./case-studies/useek.html",
     featured: false,
