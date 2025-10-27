@@ -3,8 +3,8 @@ const projects = [
     name: "Toolbox",
     description: "A collection of small, useful web-based utilities and tools.",
     href: "./projects/toolbox/",
-    image: "./images/toolbox_thumbnail.webp",
-    image1x: "./images/toolbox_thumbnail_1x.webp",
+    image: "./images/toolbox_thumbnail.webp", // This is the 2x (600w) version
+    image1x: "./images/toolbox_thumbnail_1x.webp", // This is the 1x (376w) version
     status: "In Development",
     docHref: "./case-studies/toolbox.html",
     featured: true,
