@@ -3,64 +3,33 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <title>uSeek: Interactive Pirate Puzzle Campaign | GSAP, Spline & Full-Stack Web Case Study</title>
     <meta name="description" content="A case study on uSeek, a large-scale interactive pirate-themed web puzzle campaign featuring scroll-based animations (GSAP), 3D graphics (Spline), a custom preloader, and light/dark mode functionality."/>
+    <link rel="canonical" href="https://ducklin.de/case-studies/useek.html" />
+    <meta property="og:title" content="uSeek: Interactive Pirate Puzzle Campaign | GSAP, Spline & Full-Stack Web Case Study" />
+    <meta property="og:description" content="A case study on uSeek, a large-scale interactive pirate-themed web puzzle campaign featuring scroll-based animations (GSAP) and 3D graphics (Spline)." />
+    <meta property="og:type" content="article" /><meta property="og:url" content="https://ducklin.de/case-studies/useek.html" />
+    <meta property="og:image" content="https://ducklin.de/images/useek_thumbnail.png" />
+    <meta property="og:site_name" content="Ducklin Portfolio" /><meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="uSeek: Interactive Pirate Puzzle Campaign | GSAP, Spline & Full-Stack Web Case Study" />
+    <meta name="twitter:description" content="A case study on uSeek, a large-scale interactive pirate-themed web puzzle campaign featuring scroll-based animations (GSAP) and 3D graphics (Spline)." />
+    <meta name="twitter:image" content="https://ducklin.de/images/useek_thumbnail.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"uSeek: An Interactive Pirate Puzzle Campaign","description":"A case study on uSeek, a large-scale interactive pirate-themed web puzzle campaign featuring scroll-based animations (GSAP), 3D graphics (Spline), a custom preloader, and light/dark mode functionality.","image":"https://ducklin.de/images/useek_thumbnail.png","author":{"@type":"Person","name":"Aaron Postels","url":"https://ducklin.de"}}</script>
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="../css/case-study.css" />
 </head>
 <body>
-
     <header class="case-study-header" style="--bg-image: url('../images/useek_thumbnail.png');">
-        <h1>uSeek</h1>
-        <p>An Interactive Pirate Puzzle Campaign</p>
-        <div class="case-study-links">
-            <a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a>
-            <a href="/projects/uSeek/" target="_blank" class="btn btn-primary">View Live Demo</a>
-        </div>
+        <h1>uSeek</h1><p>An Interactive Pirate Puzzle Campaign</p>
+        <div class="case-study-links"><a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a><a href="/projects/uSeek/" target="_blank" class="btn btn-primary">View Live Demo</a></div>
     </header>
-
     <main class="case-study-main">
-        <section>
-            <h2>Project Overview</h2>
-            <p>uSeek is a comprehensive, narrative-driven web campaign designed as a multi-hour interactive pirate puzzle. The website guides users through a story, presenting challenges that require code-breaking, visual analysis, and interactive manipulation of page elements. Built for a university course, the project integrates advanced front-end technologies like GSAP for scroll-triggered parallax and pinning, and Spline for embedding interactive 3D models (like the lock and treasure chest). It also features a custom preloader, a responsive UI framework, and a persistent light/dark mode system.</p>
-        </section>
-
-        <section>
-            <h2>Tech Stack</h2>
-            <ul class="tech-stack-list">
-                <li>GSAP (ScrollTrigger)</li>
-                <li>Spline (3D Embed)</li>
-                <li>Lenis (Smooth Scrolling)</li>
-                <li>Bootstrap 5</li>
-                <li>Vanilla JavaScript</li>
-                <li>HTML5 / CSS3</li>
-                <li>Responsive Design</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Key Features</h2>
-            <ul>
-                <li>Cinematic Preloader: A custom, GSAP-animated loading screen that creates an engaging transition into the main site content.</li>
-                <li>Interactive 3D Integration: Uses Spline to embed and interact with custom 3D assets (a treasure chest lock, the chest itself) directly within the webpage.</li>
-                <li>Advanced Scroll Animations: Implements multiple GSAP ScrollTrigger timelines for pinning, horizontal navigation parallax, and complex background movements.</li>
-                <li>Custom UI & Branding: Features a unique pirate-themed design with custom cursor, responsive typography, and dynamic CSS styling for light/dark mode switching.</li>
-                <li>Utility Framework: Built upon a custom CSS framework to simplify layout and speed up responsive development.</li>
-                <li>Integrated Puzzles: Contains functional, embedded puzzle mechanics such as drawing on a star map and an X-ray effect for revealing hidden clues.</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Challenges & Solutions</h2>
-            <p>The main technical challenge involved seamlessly integrating and controlling the performance of embedded 3D Spline models alongside GSAP scroll animations. The solution required careful timing and optimization: GSAP was used primarily for layout changes and 2D element movement (like the ship icon), while the Spline elements were managed by their own runtime API. To ensure smooth scrolling, the entire site was wrapped with the Lenis smooth scrolling library, which decouples scroll events from the main thread, allowing the continuous animations and 3D embeds to render without causing scroll jank, thus maintaining a high frame rate throughout the experience.</p>
-        </section>
+        <section><h2>Project Overview</h2><p>uSeek is a comprehensive, narrative-driven web campaign designed as a multi-hour interactive pirate puzzle. The website guides users through a story, presenting challenges that require code-breaking, visual analysis, and interactive manipulation of page elements. Built for a university course, the project integrates advanced front-end technologies like GSAP for scroll-triggered parallax and pinning, and Spline for embedding interactive 3D models (like the lock and treasure chest). It also features a custom preloader, a responsive UI framework, and a persistent light/dark mode system.</p></section>
+        <section><h2>Tech Stack</h2><ul class="tech-stack-list"><li>GSAP (ScrollTrigger)</li><li>Spline (3D Embed)</li><li>Lenis (Smooth Scrolling)</li><li>Bootstrap 5</li><li>Vanilla JavaScript</li><li>HTML5 / CSS3</li><li>Responsive Design</li></ul></section>
+        <section><h2>Key Features</h2><ul><li>Cinematic Preloader: A custom, GSAP-animated loading screen that creates an engaging transition into the main site content.</li><li>Interactive 3D Integration: Uses Spline to embed and interact with custom 3D assets (a treasure chest lock, the chest itself) directly within the webpage.</li><li>Advanced Scroll Animations: Implements multiple GSAP ScrollTrigger timelines for pinning, horizontal navigation parallax, and complex background movements.</li><li>Custom UI & Branding: Features a unique pirate-themed design with custom cursor, responsive typography, and dynamic CSS styling for light/dark mode switching.</li><li>Utility Framework: Built upon a custom CSS framework to simplify layout and speed up responsive development.</li><li>Integrated Puzzles: Contains functional, embedded puzzle mechanics such as drawing on a star map and an X-ray effect for revealing hidden clues.</li></ul></section>
+        <section><h2>Challenges & Solutions</h2><p>The main technical challenge involved seamlessly integrating and controlling the performance of embedded 3D Spline models alongside GSAP scroll animations. The solution required careful timing and optimization: GSAP was used primarily for layout changes and 2D element movement (like the ship icon), while the Spline elements were managed by their own runtime API. To ensure smooth scrolling, the entire site was wrapped with the Lenis smooth scrolling library, which decouples scroll events from the main thread, allowing the continuous animations and 3D embeds to render without causing scroll jank, thus maintaining a high frame rate throughout the experience.</p></section>
     </main>
-
-    <footer>
-      &copy; 2025 Aaron Postels @ Ducklin &mdash;
-      <a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a> &mdash;
-      <a href="/imprint.html">Legal Notice</a>
-    </footer>
-
+    <footer>&copy; 2025 Aaron Postels @ Ducklin &mdash;<a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a> &mdash;<a href="/imprint.html">Legal Notice</a></footer>
 </body>
 </html>

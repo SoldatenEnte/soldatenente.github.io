@@ -3,62 +3,33 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <title>3D Scroll-Driven Particle Portfolio | Three.js & GSAP Case Study</title>
     <meta name="description" content="A case study on a high-performance 3D portfolio implemented with Three.js, using scroll and GSAP ScrollTrigger to manipulate point cloud models and create immersive, dissolving particle effects."/>
+    <link rel="canonical" href="https://ducklin.de/case-studies/particles.html" />
+    <meta property="og:title" content="3D Scroll-Driven Particle Portfolio | Three.js & GSAP Case Study" />
+    <meta property="og:description" content="A case study on a high-performance 3D portfolio implemented with Three.js and GSAP ScrollTrigger to create immersive, dissolving particle effects." />
+    <meta property="og:type" content="article" /><meta property="og:url" content="https://ducklin.de/case-studies/particles.html" />
+    <meta property="og:image" content="https://ducklin.de/images/particles_thumbnail.png" />
+    <meta property="og:site_name" content="Ducklin Portfolio" /><meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="3D Scroll-Driven Particle Portfolio | Three.js & GSAP Case Study" />
+    <meta name="twitter:description" content="A case study on a high-performance 3D portfolio implemented with Three.js and GSAP ScrollTrigger to create immersive, dissolving particle effects." />
+    <meta name="twitter:image" content="https://ducklin.de/images/particles_thumbnail.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Scroll-Driven 3D Particle Portfolio","description":"A case study on a high-performance 3D portfolio implemented with Three.js, using scroll and GSAP ScrollTrigger to manipulate point cloud models and create immersive, dissolving particle effects.","image":"https://ducklin.de/images/particles_thumbnail.png","author":{"@type":"Person","name":"Aaron Postels","url":"https://ducklin.de"}}</script>
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="../css/case-study.css" />
 </head>
 <body>
-
     <header class="case-study-header" style="--bg-image: url('../images/particles_thumbnail.png');">
-        <h1>Scroll-Driven 3D Particle Portfolio</h1>
-        <p>Immersive Three.js Experience</p>
-        <div class="case-study-links">
-            <a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a>
-            <a href="/projects/particles/" target="_blank" class="btn btn-primary">View Live Demo</a>
-        </div>
+        <h1>Scroll-Driven 3D Particle Portfolio</h1><p>Immersive Three.js Experience</p>
+        <div class="case-study-links"><a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a><a href="/projects/particles/" target="_blank" class="btn btn-primary">View Live Demo</a></div>
     </header>
-
     <main class="case-study-main">
-        <section>
-            <h2>Project Overview</h2>
-            <p>This project is a visually stunning interactive portfolio that uses Three.js to render a series of complex 3D models composed entirely of point clouds. The experience is driven by smooth vertical scrolling, utilizing GSAP's ScrollTrigger plugin to link the scroll position directly to dynamic transformations and particle displacement. As the user scrolls past sections, the 3D models dissolve into chaotic particle fields, creating a memorable and high-performance immersive browsing experience that showcases advanced web graphics capabilities.</p>
-        </section>
-
-        <section>
-            <h2>Tech Stack</h2>
-            <ul class="tech-stack-list">
-                <li>Three.js (WebGL)</li>
-                <li>GSAP (ScrollTrigger)</li>
-                <li>Lenis (Smooth Scrolling)</li>
-                <li>GLTFLoader</li>
-                <li>Shader / Material Optimization</li>
-                <li>JavaScript (ES6+)</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Key Features</h2>
-            <ul>
-                <li>Real-time rendering of multiple complex 3D point cloud models simultaneously using custom Buffer Geometries for high performance.</li>
-                <li>Scroll-based particle dissolution effect: GSAP ScrollTrigger directly manipulates particle positions via Buffer Attribute offsets.</li>
-                <li>Custom vertex coloring applied to particles based on their initial Y-position, adding depth and visual variation to the models.</li>
-                <li>Continuous 'idle' animation, applying subtle sinusoidal movement and rotation to the particles and models when not being dissolved by scroll.</li>
-                <li>Implementation of post-processing effects (RenderPass, BokehPass) and additive blending for cinematic depth-of-field and glowing neon aesthetics.</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Challenges & Solutions</h2>
-            <p>The primary performance challenge was efficiently managing the scroll-based movement and dissolution of tens of thousands of individual points without dropping the frame rate. This was solved by utilizing Three.js BufferGeometry and BufferAttributes, storing initial positions, idle offsets, and scroll offsets directly on the GPU. Instead of manipulating geometry in JavaScript every frame, GSAP ScrollTrigger is used to calculate a single scroll progress value, which is then mathematically applied to the pre-calculated offsets array within the animation loop. This minimizes CPU-GPU data transfer and allows for the complex, smooth particle explosion effect to run efficiently.</p>
-        </section>
+        <section><h2>Project Overview</h2><p>This project is a visually stunning interactive portfolio that uses Three.js to render a series of complex 3D models composed entirely of point clouds. The experience is driven by smooth vertical scrolling, utilizing GSAP's ScrollTrigger plugin to link the scroll position directly to dynamic transformations and particle displacement. As the user scrolls past sections, the 3D models dissolve into chaotic particle fields, creating a memorable and high-performance immersive browsing experience that showcases advanced web graphics capabilities.</p></section>
+        <section><h2>Tech Stack</h2><ul class="tech-stack-list"><li>Three.js (WebGL)</li><li>GSAP (ScrollTrigger)</li><li>Lenis (Smooth Scrolling)</li><li>GLTFLoader</li><li>Shader / Material Optimization</li><li>JavaScript (ES6+)</li></ul></section>
+        <section><h2>Key Features</h2><ul><li>Real-time rendering of multiple complex 3D point cloud models simultaneously using custom Buffer Geometries for high performance.</li><li>Scroll-based particle dissolution effect: GSAP ScrollTrigger directly manipulates particle positions via Buffer Attribute offsets.</li><li>Custom vertex coloring applied to particles based on their initial Y-position, adding depth and visual variation to the models.</li><li>Continuous 'idle' animation, applying subtle sinusoidal movement and rotation to the particles and models when not being dissolved by scroll.</li><li>Implementation of post-processing effects (RenderPass, BokehPass) and additive blending for cinematic depth-of-field and glowing neon aesthetics.</li></ul></section>
+        <section><h2>Challenges & Solutions</h2><p>The primary performance challenge was efficiently managing the scroll-based movement and dissolution of tens of thousands of individual points without dropping the frame rate. This was solved by utilizing Three.js BufferGeometry and BufferAttributes, storing initial positions, idle offsets, and scroll offsets directly on the GPU. Instead of manipulating geometry in JavaScript every frame, GSAP ScrollTrigger is used to calculate a single scroll progress value, which is then mathematically applied to the pre-calculated offsets array within the animation loop. This minimizes CPU-GPU data transfer and allows for the complex, smooth particle explosion effect to run efficiently.</p></section>
     </main>
-
-    <footer>
-      &copy; 2025 Aaron Postels @ Ducklin &mdash;
-      <a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a> &mdash;
-      <a href="/imprint.html">Legal Notice</a>
-    </footer>
-
+    <footer>&copy; 2025 Aaron Postels @ Ducklin &mdash;<a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a> &mdash;<a href="/imprint.html">Legal Notice</a></footer>
 </body>
 </html>

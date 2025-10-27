@@ -3,61 +3,33 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <title>Staggered Text Fall Animator | Canvas & Kinematics Case Study</title>
     <meta name="description" content="A case study on a high-performance 2D Canvas animator that simulates text falling in randomized, physics-like chunks with staggered timing, sine-wave motion, and smooth landing interpolation."/>
+    <link rel="canonical" href="https://ducklin.de/case-studies/textfall.html" />
+    <meta property="og:title" content="Staggered Text Fall Animator | Canvas & Kinematics Case Study" />
+    <meta property="og:description" content="A case study on a high-performance 2D Canvas animator that simulates text falling in randomized, physics-like chunks." />
+    <meta property="og:type" content="article" /><meta property="og:url" content="https://ducklin.de/case-studies/textfall.html" />
+    <meta property="og:image" content="https://ducklin.de/images/textfall_thumbnail.png" />
+    <meta property="og:site_name" content="Ducklin Portfolio" /><meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Staggered Text Fall Animator | Canvas & Kinematics Case Study" />
+    <meta name="twitter:description" content="A case study on a high-performance 2D Canvas animator that simulates text falling in randomized, physics-like chunks." />
+    <meta name="twitter:image" content="https://ducklin.de/images/textfall_thumbnail.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Staggered Text Fall Animator (TextFall)","description":"A case study on a high-performance 2D Canvas animator that simulates text falling in randomized, physics-like chunks with staggered timing, sine-wave motion, and smooth landing interpolation.","image":"https://ducklin.de/images/textfall_thumbnail.png","author":{"@type":"Person","name":"Aaron Postels","url":"https://ducklin.de"}}</script>
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="../css/case-study.css" />
 </head>
 <body>
-
     <header class="case-study-header" style="--bg-image: url('../images/textfall_thumbnail.png');">
-        <h1>Staggered Text Fall Animator (TextFall)</h1>
-        <p>A kinetic typography experiment</p>
-        <div class="case-study-links">
-            <a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a>
-            <a href="/projects/textfall/" target="_blank" class="btn btn-primary">View Live Demo</a>
-        </div>
+        <h1>Staggered Text Fall Animator (TextFall)</h1><p>A kinetic typography experiment</p>
+        <div class="case-study-links"><a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a><a href="/projects/textfall/" target="_blank" class="btn btn-primary">View Live Demo</a></div>
     </header>
-
     <main class="case-study-main">
-        <section>
-            <h2>Project Overview</h2>
-            <p>This project is a bespoke animation module built using the HTML5 Canvas API and vanilla JavaScript. It simulates a wall of text dynamically segmenting and falling into place, piece by piece. Unlike simple gravity, the animation employs precise, staggered timing, physics-like sine-wave motion for horizontal drift, and a final smoothing interpolation phase to achieve a chaotic yet controlled landing effect. The entire text block is pre-wrapped and the spawn/settlement timings for every chunk are calculated ahead of the animation loop, ensuring high performance and a complex, synchronized visual sequence.</p>
-        </section>
-
-        <section>
-            <h2>Tech Stack</h2>
-            <ul class="tech-stack-list">
-                <li>HTML5 Canvas API</li>
-                <li>Vanilla JavaScript (ES6+)</li>
-                <li>requestAnimationFrame</li>
-                <li>Kinematic/Timing Algorithms</li>
-                <li>Text Wrapping & Pre-calculation</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Key Features</h2>
-            <ul>
-                <li>Advanced timing control: Chunks are scheduled to land sequentially with fixed frame intervals, creating a rain-like, staggered waterfall effect.</li>
-                <li>Physics Simulation: Uses sine-wave motion with dynamic damping (falloff as the chunk approaches its target Y-position) to create organic, floating horizontal drift.</li>
-                <li>Two-Phase Animation: Features a "Falling" phase driven by speed and sine-wave physics, followed by a "Landing" phase using linear interpolation (LERP) to smoothly snap the chunk to its precise final X/Y coordinates.</li>
-                <li>Pre-calculation Pipeline: Text wrapping, chunk segmentation (2-5 words per chunk), and all animation timing parameters (speed, amplitude, spawn frame) are calculated once during setup.</li>
-                <li>Performance: Achieves high frame rates necessary for smooth animation by offloading rendering to the GPU-accelerated Canvas context and minimizing DOM manipulation.</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Challenges & Solutions</h2>
-            <p>The core challenge was orchestrating the complex staggered timing so that every chunk landed at its exact calculated X/Y position at a predetermined time, regardless of its randomized fall speed, while maintaining smooth, physics-like motion. The solution involved an inverse calculation: instead of calculating the landing time from the spawn time (Fall Distance / Speed = Duration), the required *spawn time* was calculated from the desired *landing time* (Desired Land Time - Duration = Required Spawn Time). This ensured chronological stability. Furthermore, a landing interpolation phase (LERP) was introduced to seamlessly transition the chaotic sine-wave X-position to the precise final X-coordinate, finalizing the placement with visual smoothness.</p>
-        </section>
+        <section><h2>Project Overview</h2><p>This project is a bespoke animation module built using the HTML5 Canvas API and vanilla JavaScript. It simulates a wall of text dynamically segmenting and falling into place, piece by piece. Unlike simple gravity, the animation employs precise, staggered timing, physics-like sine-wave motion for horizontal drift, and a final smoothing interpolation phase to achieve a chaotic yet controlled landing effect. The entire text block is pre-wrapped and the spawn/settlement timings for every chunk are calculated ahead of the animation loop, ensuring high performance and a complex, synchronized visual sequence.</p></section>
+        <section><h2>Tech Stack</h2><ul class="tech-stack-list"><li>HTML5 Canvas API</li><li>Vanilla JavaScript (ES6+)</li><li>requestAnimationFrame</li><li>Kinematic/Timing Algorithms</li><li>Text Wrapping & Pre-calculation</li></ul></section>
+        <section><h2>Key Features</h2><ul><li>Advanced timing control: Chunks are scheduled to land sequentially with fixed frame intervals, creating a rain-like, staggered waterfall effect.</li><li>Physics Simulation: Uses sine-wave motion with dynamic damping (falloff as the chunk approaches its target Y-position) to create organic, floating horizontal drift.</li><li>Two-Phase Animation: Features a "Falling" phase driven by speed and sine-wave physics, followed by a "Landing" phase using linear interpolation (LERP) to smoothly snap the chunk to its precise final X/Y coordinates.</li><li>Pre-calculation Pipeline: Text wrapping, chunk segmentation (2-5 words per chunk), and all animation timing parameters (speed, amplitude, spawn frame) are calculated once during setup.</li><li>Performance: Achieves high frame rates necessary for smooth animation by offloading rendering to the GPU-accelerated Canvas context and minimizing DOM manipulation.</li></ul></section>
+        <section><h2>Challenges & Solutions</h2><p>The core challenge was orchestrating the complex staggered timing so that every chunk landed at its exact calculated X/Y position at a predetermined time, regardless of its randomized fall speed, while maintaining smooth, physics-like motion. The solution involved an inverse calculation: instead of calculating the landing time from the spawn time (Fall Distance / Speed = Duration), the required *spawn time* was calculated from the desired *landing time* (Desired Land Time - Duration = Required Spawn Time). This ensured chronological stability. Furthermore, a landing interpolation phase (LERP) was introduced to seamlessly transition the chaotic sine-wave X-position to the precise final X-coordinate, finalizing the placement with visual smoothness.</p></section>
     </main>
-
-    <footer>
-      &copy; 2025 Aaron Postels @ Ducklin &mdash;
-      <a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a> &mdash;
-      <a href="/imprint.html">Legal Notice</a>
-    </footer>
-
+    <footer>&copy; 2025 Aaron Postels @ Ducklin &mdash;<a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a> &mdash;<a href="/imprint.html">Legal Notice</a></footer>
 </body>
 </html>

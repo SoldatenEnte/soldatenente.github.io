@@ -3,61 +3,33 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <title>Lockpicking Minigame Case Study | JavaScript & CSS Logic</title>
     <meta name="description" content="A case study on a responsive, timing-based lockpicking minigame built entirely with vanilla JavaScript and CSS, focusing on physics simulation, dynamic difficulty, and responsive UI."/>
+    <link rel="canonical" href="https://ducklin.de/case-studies/lockpick.html" />
+    <meta property="og:title" content="Lockpicking Minigame Case Study | JavaScript & CSS Logic" />
+    <meta property="og:description" content="A case study on a responsive, timing-based lockpicking minigame built entirely with vanilla JavaScript and CSS." />
+    <meta property="og:type" content="article" /><meta property="og:url" content="https://ducklin.de/case-studies/lockpick.html" />
+    <meta property="og:image" content="https://ducklin.de/images/lockpick_thumbnail.png" />
+    <meta property="og:site_name" content="Ducklin Portfolio" /><meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Lockpicking Minigame Case Study | JavaScript & CSS Logic" />
+    <meta name="twitter:description" content="A case study on a responsive, timing-based lockpicking minigame built entirely with vanilla JavaScript and CSS." />
+    <meta name="twitter:image" content="https://ducklin.de/images/lockpick_thumbnail.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Lockpicking Minigame","description":"A case study on a responsive, timing-based lockpicking minigame built entirely with vanilla JavaScript and CSS, focusing on physics simulation, dynamic difficulty, and responsive UI.","image":"https://ducklin.de/images/lockpick_thumbnail.png","author":{"@type":"Person","name":"Aaron Postels","url":"https://ducklin.de"}}</script>
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="../css/case-study.css" />
 </head>
 <body>
-
     <header class="case-study-header" style="--bg-image: url('../images/lockpick_thumbnail.png');">
-        <h1>Lockpicking Minigame</h1>
-        <p>Responsive Timing Challenge with Dynamic Difficulty</p>
-        <div class="case-study-links">
-            <a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a>
-            <a href="/projects/lockpick/" target="_blank" class="btn btn-primary">View Live Demo</a>
-        </div>
+        <h1>Lockpicking Minigame</h1><p>Responsive Timing Challenge with Dynamic Difficulty</p>
+        <div class="case-study-links"><a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a><a href="/projects/lockpick/" target="_blank" class="btn btn-primary">View Live Demo</a></div>
     </header>
-
     <main class="case-study-main">
-        <section>
-            <h2>Project Overview</h2>
-            <p>This project is a mobile-first, timing-based lockpicking minigame designed to simulate a classic RPG mechanic using pure front-end technologies. The core mechanic involves a rapidly rotating needle that must be stopped precisely within a dynamically sized target zone across multiple concentric rings. The game features configurable difficulty, dramatic CSS-based success/failure animations, and full responsiveness, ensuring an engaging experience that requires timing and precision on both desktop and mobile devices.</p>
-        </section>
-
-        <section>
-            <h2>Tech Stack</h2>
-            <ul class="tech-stack-list">
-                <li>JavaScript (ES6+)</li>
-                <li>HTML5</li>
-                <li>CSS3 (Transitions & Transforms)</li>
-                <li>requestAnimationFrame API</li>
-                <li>Mobile-First Design</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Key Features</h2>
-            <ul>
-                <li>Responsive, pure CSS rendering of the lock mechanism using pseudo-elements and conic gradients for the target zones.</li>
-                <li>Real-time animation loop managed by JavaScript's <code>requestAnimationFrame</code> for smooth, precision-based needle rotation.</li>
-                <li>Dynamic difficulty scaling controlled by a slider, influencing both the needle rotation speed and the size of the target success zone.</li>
-                <li>Multi-stage challenge system requiring the player to successfully "pick" concentric rings sequentially to unlock the final goal.</li>
-                <li>Advanced CSS animations for visual feedback, including success pulses, screen shakes on failure, and a dramatic 'unlocked' explosion effect.</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Challenges & Solutions</h2>
-            <p>The main technical challenge involved accurately rendering the circular target zones when they cross the 360/0-degree boundary, ensuring the success zone is visually correct and the logic handles the wrap-around check correctly. This was solved in two parts: first, by dynamically generating a multi-part <code>conic-gradient</code> in JavaScript when the target zone was detected to span the zero-degree mark, and second, by implementing boundary logic that checks if the needle angle falls between the start and end angles OR if the end angle has wrapped past 360 degrees and the needle is in either of the two resulting angular segments.</p>
-        </section>
+        <section><h2>Project Overview</h2><p>This project is a mobile-first, timing-based lockpicking minigame designed to simulate a classic RPG mechanic using pure front-end technologies. The core mechanic involves a rapidly rotating needle that must be stopped precisely within a dynamically sized target zone across multiple concentric rings. The game features configurable difficulty, dramatic CSS-based success/failure animations, and full responsiveness, ensuring an engaging experience that requires timing and precision on both desktop and mobile devices.</p></section>
+        <section><h2>Tech Stack</h2><ul class="tech-stack-list"><li>JavaScript (ES6+)</li><li>HTML5</li><li>CSS3 (Transitions & Transforms)</li><li>requestAnimationFrame API</li><li>Mobile-First Design</li></ul></section>
+        <section><h2>Key Features</h2><ul><li>Responsive, pure CSS rendering of the lock mechanism using pseudo-elements and conic gradients for the target zones.</li><li>Real-time animation loop managed by JavaScript's <code>requestAnimationFrame</code> for smooth, precision-based needle rotation.</li><li>Dynamic difficulty scaling controlled by a slider, influencing both the needle rotation speed and the size of the target success zone.</li><li>Multi-stage challenge system requiring the player to successfully "pick" concentric rings sequentially to unlock the final goal.</li><li>Advanced CSS animations for visual feedback, including success pulses, screen shakes on failure, and a dramatic 'unlocked' explosion effect.</li></ul></section>
+        <section><h2>Challenges & Solutions</h2><p>The main technical challenge involved accurately rendering the circular target zones when they cross the 360/0-degree boundary, ensuring the success zone is visually correct and the logic handles the wrap-around check correctly. This was solved in two parts: first, by dynamically generating a multi-part <code>conic-gradient</code> in JavaScript when the target zone was detected to span the zero-degree mark, and second, by implementing boundary logic that checks if the needle angle falls between the start and end angles OR if the end angle has wrapped past 360 degrees and the needle is in either of the two resulting angular segments.</p></section>
     </main>
-
-    <footer>
-      &copy; 2025 Aaron Postels @ Ducklin &mdash;
-      <a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a> &mdash;
-      <a href="/imprint.html">Legal Notice</a>
-    </footer>
-
+    <footer>&copy; 2025 Aaron Postels @ Ducklin &mdash;<a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a> &mdash;<a href="/imprint.html">Legal Notice</a></footer>
 </body>
 </html>

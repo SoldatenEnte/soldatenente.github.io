@@ -3,62 +3,33 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <title>Video Alpha Channel Transition UI | HTML5 Video & HEVC Case Study</title>
     <meta name="description" content="A case study on creating seamless video transitions and UI elements using HTML5 video, focusing on performance optimization with HEVC/H.265 encoding and alpha channels for transparency."/>
+    <link rel="canonical" href="https://ducklin.de/case-studies/portal.html" />
+    <meta property="og:title" content="Video Alpha Channel Transition UI | HTML5 Video & HEVC Case Study" />
+    <meta property="og:description" content="A case study on creating seamless video transitions and UI elements using HTML5 video with alpha channels for transparency." />
+    <meta property="og:type" content="article" /><meta property="og:url" content="https://ducklin.de/case-studies/portal.html" />
+    <meta property="og:image" content="https://ducklin.de/images/portal_thumbnail.png" />
+    <meta property="og:site_name" content="Ducklin Portfolio" /><meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Video Alpha Channel Transition UI | HTML5 Video & HEVC Case Study" />
+    <meta name="twitter:description" content="A case study on creating seamless video transitions and UI elements using HTML5 video with alpha channels for transparency." />
+    <meta name="twitter:image" content="https://ducklin.de/images/portal_thumbnail.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Seamless Video Alpha Channel Transition UI","description":"A case study on creating seamless video transitions and UI elements using HTML5 video, focusing on performance optimization with HEVC/H.265 encoding and alpha channels for transparency.","image":"https://ducklin.de/images/portal_thumbnail.png","author":{"@type":"Person","name":"Aaron Postels","url":"https://ducklin.de"}}</script>
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="../css/case-study.css" />
 </head>
 <body>
-
     <header class="case-study-header" style="--bg-image: url('../images/portal_thumbnail.png');">
-        <h1>Seamless Video Alpha Channel Transition UI</h1>
-        <p>A demonstration of transparent video encoding and synchronization</p>
-        <div class="case-study-links">
-            <a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a>
-            <a href="/projects/portal/" target="_blank" class="btn btn-primary">View Live Demo</a>
-        </div>
+        <h1>Seamless Video Alpha Channel Transition UI</h1><p>A demonstration of transparent video encoding and synchronization</p>
+        <div class="case-study-links"><a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a><a href="/projects/portal/" target="_blank" class="btn btn-primary">View Live Demo</a></div>
     </header>
-
     <main class="case-study-main">
-        <section>
-            <h2>Project Overview</h2>
-            <p>This project demonstrates a seamless, interactive UI transition built entirely with HTML5 Video elements, designed to mimic a character scanning process that initiates a a portal effect. It utilizes two video streams: an "idle" looping background and a crucial "scanned" transition video encoded with an alpha channel for transparent playback. The application manages the transition logic via JavaScript, ensuring the transition video (representing the portal glow and fly-through) plays once over the idle loop before smoothly fading back to the seamless idle state. This showcases advanced video synchronization and transparent video techniques for high-end web interfaces.</p>
-        </section>
-
-        <section>
-            <h2>Tech Stack</h2>
-            <ul class="tech-stack-list">
-                <li>HTML5 Video API</li>
-                <li>JavaScript (ES6+)</li>
-                <li>CSS3</li>
-                <li>HEVC (H.265) Encoding</li>
-                <li>WebM (VP9/VP8) Encoding</li>
-                <li>Browser Compatibility Fallbacks</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Key Features</h2>
-            <ul>
-                <li>Seamless crossfade between a looping "idle" video and a one-shot "scanned" transition video.</li>
-                <li>Utilization of HEVC (H.265) video encoding with alpha channel for transparent video playback where supported, enabling the fly-through effect to sit cleanly over the background.</li>
-                <li>Robust JavaScript logic to manage video synchronization, ensuring the idle loop pauses/resumes correctly during the transition play cycle.</li>
-                <li>Event-driven UI: A user action (simulating an NFC scan) triggers the visually compelling portal glow and fly-through sequence.</li>
-                <li>Mobile-optimized design that positions the video as a fixed, full-screen background element, providing an immersive experience.</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Challenges & Solutions</h2>
-            <p>The core challenge was achieving transparent video playback consistently across different browsers and devices, which is critical for making the transition effect look clean. The solution involved utilizing multiple video formats: the high-efficiency HEVC with alpha for modern Safari/iOS environments, and a fallback to WebM (which supports alpha but has lower compression efficiency) for other modern browsers. JavaScript was used to check playback support and gracefully handle the transition's opacity and visibility, ensuring the effect's video layers are synchronized and positioned correctly to create the illusion of a single, fluid portal interaction.</p>
-        </section>
+        <section><h2>Project Overview</h2><p>This project demonstrates a seamless, interactive UI transition built entirely with HTML5 Video elements, designed to mimic a character scanning process that initiates a a portal effect. It utilizes two video streams: an "idle" looping background and a crucial "scanned" transition video encoded with an alpha channel for transparent playback. The application manages the transition logic via JavaScript, ensuring the transition video (representing the portal glow and fly-through) plays once over the idle loop before smoothly fading back to the seamless idle state. This showcases advanced video synchronization and transparent video techniques for high-end web interfaces.</p></section>
+        <section><h2>Tech Stack</h2><ul class="tech-stack-list"><li>HTML5 Video API</li><li>JavaScript (ES6+)</li><li>CSS3</li><li>HEVC (H.265) Encoding</li><li>WebM (VP9/VP8) Encoding</li><li>Browser Compatibility Fallbacks</li></ul></section>
+        <section><h2>Key Features</h2><ul><li>Seamless crossfade between a looping "idle" video and a one-shot "scanned" transition video.</li><li>Utilization of HEVC (H.265) video encoding with alpha channel for transparent video playback where supported, enabling the fly-through effect to sit cleanly over the background.</li><li>Robust JavaScript logic to manage video synchronization, ensuring the idle loop pauses/resumes correctly during the transition play cycle.</li><li>Event-driven UI: A user action (simulating an NFC scan) triggers the visually compelling portal glow and fly-through sequence.</li><li>Mobile-optimized design that positions the video as a fixed, full-screen background element, providing an immersive experience.</li></ul></section>
+        <section><h2>Challenges & Solutions</h2><p>The core challenge was achieving transparent video playback consistently across different browsers and devices, which is critical for making the transition effect look clean. The solution involved utilizing multiple video formats: the high-efficiency HEVC with alpha for modern Safari/iOS environments, and a fallback to WebM (which supports alpha but has lower compression efficiency) for other modern browsers. JavaScript was used to check playback support and gracefully handle the transition's opacity and visibility, ensuring the effect's video layers are synchronized and positioned correctly to create the illusion of a single, fluid portal interaction.</p></section>
     </main>
-
-    <footer>
-      &copy; 2025 Aaron Postels @ Ducklin &mdash;
-      <a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a> &mdash;
-      <a href="/imprint.html">Legal Notice</a>
-    </footer>
-
+    <footer>&copy; 2025 Aaron Postels @ Ducklin &mdash;<a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a> &mdash;<a href="/imprint.html">Legal Notice</a></footer>
 </body>
 </html>

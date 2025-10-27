@@ -3,60 +3,33 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <title>Interactive RPG Combat Engine | Vanilla JavaScript Game Case Study</title>
     <meta name="description" content="A case study on a turn-based RPG combat engine built with vanilla JavaScript and CSS, featuring dynamic, skill-based attack minigames and advanced DOM animation."/>
+    <link rel="canonical" href="https://ducklin.de/case-studies/combat.html" />
+    <meta property="og:title" content="Interactive RPG Combat Engine | Vanilla JavaScript Game Case Study" />
+    <meta property="og:description" content="A case study on a turn-based RPG combat engine built with vanilla JavaScript and CSS, featuring dynamic, skill-based attack minigames." />
+    <meta property="og:type" content="article" /><meta property="og:url" content="https://ducklin.de/case-studies/combat.html" />
+    <meta property="og:image" content="https://ducklin.de/images/combat_thumbnail.png" />
+    <meta property="og:site_name" content="Ducklin Portfolio" /><meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Interactive RPG Combat Engine | Vanilla JavaScript Game Case Study" />
+    <meta name="twitter:description" content="A case study on a turn-based RPG combat engine built with vanilla JavaScript and CSS, featuring dynamic, skill-based attack minigames." />
+    <meta name="twitter:image" content="https://ducklin.de/images/combat_thumbnail.png" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Interactive RPG Combat Engine","description":"A case study on a turn-based RPG combat engine built with vanilla JavaScript and CSS, featuring dynamic, skill-based attack minigames and advanced DOM animation.","image":"https://ducklin.de/images/combat_thumbnail.png","author":{"@type":"Person","name":"Aaron Postels","url":"https://ducklin.de"}}</script>
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="../css/case-study.css" />
 </head>
 <body>
-
     <header class="case-study-header" style="--bg-image: url('../images/combat_thumbnail.png');">
-        <h1>Interactive RPG Combat Engine</h1>
-        <p>A Skill-Based Battle System</p>
-        <div class="case-study-links">
-            <a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a>
-            <a href="/projects/combat/" target="_blank" class="btn btn-primary">View Live Demo</a>
-        </div>
+        <h1>Interactive RPG Combat Engine</h1><p>A Skill-Based Battle System</p>
+        <div class="case-study-links"><a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a><a href="/projects/combat/" target="_blank" class="btn btn-primary">View Live Demo</a></div>
     </header>
-
     <main class="case-study-main">
-        <section>
-            <h2>Project Overview</h2>
-            <p>This project is a turn-based RPG combat simulator built from the ground up using only vanilla JavaScript, HTML, and CSS. The core of the game is its engaging, two-part attack sequence that requires player skill. First, a timing-based "Charge" minigame, utilizing `requestAnimationFrame` for a smooth, accelerating meter, determines the base damage. This is immediately followed by a fast-paced, reaction-based "Fury" minigame where players tap dynamically spawning targets to build a damage multiplier. This system creates a rewarding and interactive alternative to traditional static menu-based combat.</p>
-        </section>
-
-        <section>
-            <h2>Tech Stack</h2>
-            <ul class="tech-stack-list">
-                <li>JavaScript (ES6+)</li>
-                <li>HTML5</li>
-                <li>CSS3 Animations & Transitions</li>
-                <li>DOM API</li>
-                <li>requestAnimationFrame API</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Key Features</h2>
-            <ul>
-                <li>A unique two-phase attack system combining a timing minigame for base damage and a reaction minigame for a damage multiplier.</li>
-                <li>Sophisticated visual feedback, including a procedural damage number animation that merges, combines, and flies towards the target.</li>
-                <li>Clean game flow managed by a finite state machine logic, ensuring predictable and bug-free transitions between game states (e.g., player turn, enemy turn, minigames).</li>
-                <li>Performance-conscious animation loops using `requestAnimationFrame` for the charge minigame, guaranteeing a smooth experience regardless of device refresh rate.</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Challenges & Solutions</h2>
-            <p>The main challenge was creating a polished, multi-stage damage animation sequence without relying on an external game engine or animation library. The solution involved choreographing a series of CSS transitions and keyframe animations, precisely triggered by JavaScript `setTimeout` functions. A dedicated function dynamically generates the required DOM elements for the base damage and multiplier, then manipulates their CSS classes in a timed sequence to create the illusion of the numbers merging, transforming into a final damage value, and flying towards the enemy before being removed from the DOM.</p>
-        </section>
+        <section><h2>Project Overview</h2><p>This project is a turn-based RPG combat simulator built from the ground up using only vanilla JavaScript, HTML, and CSS. The core of the game is its engaging, two-part attack sequence that requires player skill. First, a timing-based "Charge" minigame, utilizing `requestAnimationFrame` for a smooth, accelerating meter, determines the base damage. This is immediately followed by a fast-paced, reaction-based "Fury" minigame where players tap dynamically spawning targets to build a damage multiplier. This system creates a rewarding and interactive alternative to traditional static menu-based combat.</p></section>
+        <section><h2>Tech Stack</h2><ul class="tech-stack-list"><li>JavaScript (ES6+)</li><li>HTML5</li><li>CSS3 Animations & Transitions</li><li>DOM API</li><li>requestAnimationFrame API</li></ul></section>
+        <section><h2>Key Features</h2><ul><li>A unique two-phase attack system combining a timing minigame for base damage and a reaction minigame for a damage multiplier.</li><li>Sophisticated visual feedback, including a procedural damage number animation that merges, combines, and flies towards the target.</li><li>Clean game flow managed by a finite state machine logic, ensuring predictable and bug-free transitions between game states (e.g., player turn, enemy turn, minigames).</li><li>Performance-conscious animation loops using `requestAnimationFrame` for the charge minigame, guaranteeing a smooth experience regardless of device refresh rate.</li></ul></section>
+        <section><h2>Challenges & Solutions</h2><p>The main challenge was creating a polished, multi-stage damage animation sequence without relying on an external game engine or animation library. The solution involved choreographing a series of CSS transitions and keyframe animations, precisely triggered by JavaScript `setTimeout` functions. A dedicated function dynamically generates the required DOM elements for the base damage and multiplier, then manipulates their CSS classes in a timed sequence to create the illusion of the numbers merging, transforming into a final damage value, and flying towards the enemy before being removed from the DOM.</p></section>
     </main>
-
-    <footer>
-      &copy; 2025 Aaron Postels @ Ducklin &mdash;
-      <a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a> &mdash;
-      <a href="/imprint.html">Legal Notice</a>
-    </footer>
-
+    <footer>&copy; 2025 Aaron Postels @ Ducklin &mdash;<a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a> &mdash;<a href="/imprint.html">Legal Notice</a></footer>
 </body>
 </html>
