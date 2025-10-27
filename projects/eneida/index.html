@@ -3,11 +3,15 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>INITIALIZING ACCESS :: ENEIDA SECURE_TERMINAL</title>
+        <meta name="robots" content="noindex, follow">
+        <title>ENEIDA SECURE_TERMINAL | Interactive Portfolio</title>
+        <meta name="description" content="An interactive portfolio terminal with a command-line interface and playable games.">
+        <link rel="icon" href="/favicon.ico" sizes="any">
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
         <link rel="stylesheet" href="style.css">
         <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
-        
     </head>
     <body>
         <!-- Particle Background -->
@@ -29,23 +33,17 @@
         <!-- Login Screen (Initially Hidden) -->
         <div id="login-screen" class="hidden">
             <div class="auth-module-wrapper">
-                <!-- Added wrapper for potential perspective/animations -->
                 <div id="auth-module" class="auth-module">
-                    <!-- Renamed main container, added ID -->
-                    <!-- Header -->
                     <div class="auth-header">
-                        <!-- NEW: Top Brackets -->
                         <div class="header-brackets">
                             <span class="bracket top-left"></span>
                             <span class="bracket top-right"></span>
                         </div>
-                        <!-- End NEW -->
                         <div class="auth-title-line top"></div>
                         <h1>SECURE AUTHENTICATION</h1>
                         <p class="auth-subtitle">// RETINAL SCAN & V-ID BYPASS MODE //</p>
                         <div class="auth-title-line bottom"></div>
                     </div>
-                    <!-- Core Input Area -->
                     <div class="auth-core">
                         <div class="input-container">
                             <label for="password" class="password-label">ACCESS CODE:</label>
@@ -54,15 +52,11 @@
                                 <input type="password" id="password" class="password-input" autofocus>
                                 <span class="input-bracket right">]</span>
                                 <div class="input-glow"></div>
-                                <!-- Glow effect element -->
                                 <div class="scanline-indicator"></div>
-                                <!-- Animated scanline -->
                             </div>
                         </div>
                         <p id="login-error" class="error-message"></p>
-                        <!-- Error message moved here -->
                     </div>
-                    <!-- Footer/Hint Area -->
                     <div class="auth-footer">
                         <div class="status-lights">
                             <span class="light red"></span>
@@ -81,7 +75,6 @@
 
         <!-- Access Granted Overlay (Initially Hidden) -->
         <div id="access-granted-overlay" class="hidden">
-            <!-- Hexagonal Unlocking Mechanism -->
             <div id="access-granted-mechanism">
                 <div class="hex-ring hex-ring-1"></div>
                 <div class="hex-ring hex-ring-2"></div>
@@ -89,14 +82,10 @@
                 <div class="hex-ring hex-ring-4"></div>
                 <div class="hex-core"></div>
             </div>
-
-            <!-- NEW: Text Container -->
             <div id="access-granted-text-container">
                 <h1 id="access-granted-text">ACCESS GRANTED</h1>
                 <p id="access-granted-subtext">// Quantum Lock Disengaged //</p>
             </div>
-            <!-- End Text Container -->
-
         </div>
 
         <!-- Main Terminal (Initially Hidden) -->
@@ -119,20 +108,13 @@
             </div>
         </div>
         
-        <!-- SCRIPT TAG UPDATED -->
-
         <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
-
-        <!-- Firestore Database - Compatibility Version -->
         <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
-
-        <!-- OPTIONAL: Analytics - Compatibility Version -->
         <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics-compat.js"></script>
 
         <script>
-          // Your web app's Firebase configuration (remains the same)
           const firebaseConfig = {
-            apiKey: "AIzaSyAuR7FBPQNSekCIU_nS7N-w5rVn1slYizE", // Keep your actual key
+            apiKey: "AIzaSyAuR7FBPQNSekCIU_nS7N-w5rVn1slYizE",
             authDomain: "eneida-tetris-leaderboard.firebaseapp.com",
             projectId: "eneida-tetris-leaderboard",
             storageBucket: "eneida-tetris-leaderboard.firebasestorage.app",
@@ -140,33 +122,17 @@
             appId: "1:557485070697:web:020fbfb1e56b394d5685f8",
             measurementId: "G-LRV2PB1JMG"
           };
-
-          // Initialize Firebase using the global 'firebase' object
-          // This will now work because the -compat scripts create it.
           const app = firebase.initializeApp(firebaseConfig);
-
-          // Get Firestore instance using the compat API (firebase.firestore())
-          const db = firebase.firestore(); // <--- Use the compat way
-
-          // OPTIONAL: Initialize Analytics using the compat API
+          const db = firebase.firestore();
           try {
-             // Check if the analytics service is available on the global firebase object
              if (typeof firebase.analytics === 'function') {
-                 const analytics = firebase.analytics(); // <--- Use the compat way
-                 console.log("Firebase Analytics initialized (compat).");
+                 const analytics = firebase.analytics();
              }
           } catch (e) {
              console.warn("Could not initialize Firebase Analytics (compat):", e);
           }
-
-          console.log("Firebase Initialized (compat). Firestore instance 'db' is ready.");
-
         </script>
-
-        <!-- ========= FIREBASE SDK SCRIPTS & CONFIG END =========== -->
-
-
-        <!-- Your main application script *MUST* come AFTER Firebase init -->
+        
         <script type="module" src="js/main.js"></script>
     </body>
 </html>
