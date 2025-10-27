@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const createProjectCard = (project) => {
     const thumbnail = project.image
-      ? `<img src="${project.image}" alt="${project.name} thumbnail" loading="lazy">`
+      ? `<img src="${project.image}" alt="${project.name} thumbnail" loading="lazy" width="376" height="251">`
       : `<div class="card-thumbnail-placeholder"></div>`;
 
     const projectTags =
