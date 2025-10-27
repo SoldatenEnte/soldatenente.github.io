@@ -16,8 +16,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const iconPlay = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`;
 
   const createProjectCard = (project) => {
+    const baseName = project.image.replace(".webp", "");
+    const image1x = baseName + "_1x.webp";
+    const image2x = project.image;
+
+    const imageSrcset = project.image ? `${image1x} 376w, ${image2x} 600w` : "";
+    const imageSizes = "(max-width: 1200px) 50vw, 376px";
+
+    const primarySrc = project.featured ? image2x : image1x;
+
     const thumbnail = project.image
-      ? `<img src="${project.image}" alt="${project.name} thumbnail" loading="lazy" width="376" height="251">`
+      ? `<img src="${primarySrc}" alt="${project.name} thumbnail" loading="lazy" width="376" height="251" srcset="${imageSrcset}" sizes="${imageSizes}">`
       : `<div class="card-thumbnail-placeholder"></div>`;
 
     const projectTags =
@@ -173,14 +182,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const viewDemoButton = e.target.closest(".btn-primary");
     if (!viewDemoButton || viewDemoButton.hasAttribute("disabled")) return;
 
-    // Check if the button belongs to a project card.
-    // If not, it's the modal button, so we let its default link behavior proceed.
     const card = viewDemoButton.closest(".project-card");
     if (!card) {
       return;
     }
 
-    // This logic now only applies to a project card's "View Demo" button.
     if (viewDemoButton.tagName === "A") {
       e.preventDefault();
     }
