@@ -1,0 +1,42 @@
+/* src/components/TouchControls.css */
+
+/* This query correctly hides the component on non-touch/mouse-based devices */
+@media (hover: hover) and (pointer: fine) {
+    .touch-controls-container {
+        display: none;
+    }
+}
+
+.touch-controls-container {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    z-index: 100;
+    user-select: none;
+}
+
+.joystick-base {
+    position: relative;
+    width: 28vmin;
+    height: 28vmin;
+    max-width: 150px;
+    max-height: 150px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.joystick-handle {
+    width: 14vmin;
+    height: 14vmin;
+    max-width: 75px;
+    max-height: 75px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    position: absolute;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    touch-action: none;
+}

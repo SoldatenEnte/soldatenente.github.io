@@ -1,0 +1,87 @@
+/* src/components/Intro.css */
+
+.intro-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000000;
+  z-index: 1000;
+  opacity: 1;
+  transition: opacity 1s ease-in-out; /* Faster fade-out */
+  pointer-events: all;
+  cursor: pointer; /* Add cursor pointer */
+  -webkit-tap-highlight-color: transparent; /* FIX: Remove tap highlight on mobile */
+  user-select: none; /* FIX: Prevent text selection */
+}
+
+.intro-overlay.stage-finished {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.logo-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 1s ease-in-out; /* Faster fade-in/out */
+}
+
+.logo-container.stage-logoFadeIn,
+.logo-container.stage-logoVisible {
+  opacity: 1;
+}
+
+/* New style for the "Click to Begin" message */
+.click-to-begin {
+  position: absolute;
+  top: 75%; /* Lowered position */
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Nicer font */
+  font-size: 1.2rem; /* Slightly larger */
+  letter-spacing: 2px; /* Add some spacing */
+  text-transform: uppercase; /* Make it look more like a button */
+  opacity: 0;
+  animation: fadeInOut 2.5s infinite; /* Slower, more gentle pulse */
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Add a subtle glow */
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+
+.loading-indicator {
+  position: absolute;
+  bottom: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.logo-container img {
+  width: clamp(200px, 45vmin, 300px);
+  height: auto;
+}

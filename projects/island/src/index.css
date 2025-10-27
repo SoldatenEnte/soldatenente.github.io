@@ -1,0 +1,152 @@
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #000000;
+}
+
+.game-ui-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  transition-delay: 0.5s;
+}
+
+.game-ui-container.visible {
+  opacity: 1;
+}
+
+.game-ui-container.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: none !important;
+}
+
+.minimap-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  /* UI FIX: Restore original size for desktop, will be overridden by media query for mobile */
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: rgba(35, 133, 158, 0.6);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+  transform-origin: top right;
+  transform: scale(1);
+}
+
+.minimap-container.hidden {
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+}
+
+.minimap-bezel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+  z-index: 20;
+}
+
+.minimap-rotator,
+.minimap-translator {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+.minimap-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 400px;
+  transform: translate(-50%, -50%);
+  image-rendering: pixelated;
+  opacity: 0.9;
+}
+
+.player-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 14px solid rgb(255, 60, 60);
+  filter: drop-shadow(0 0 3px white);
+  z-index: 10;
+}
+
+.compass {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.compass-letter {
+  position: absolute;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.north {
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.east {
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+}
+
+.south {
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.west {
+  top: 50%;
+  left: 6px;
+  transform: translateY(-50%);
+}
+
+/* UI FIX: Use a more specific media query for small screens */
+@media (max-width: 768px) {
+  .minimap-container {
+    width: 150px;
+    height: 150px;
+    top: 10px;
+    right: 10px;
+  }
+}

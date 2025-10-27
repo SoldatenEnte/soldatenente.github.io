@@ -1,0 +1,4009 @@
+--- START OF FILE project_bundle.txt ---
+
+--- PROJECT STRUCTURE ---
+
+IslandNavigator/
+├── public/
+│   ├── audio/
+│   │   ├── calm-music.mp3
+│   │   ├── dialogue-blip.mp3
+│   │   ├── ocean-ambient.mp3
+│   │   └── ship-sailing.mp3
+│   ├── projects/
+│   │   └── eneida_screenshot.png
+│   ├── ui/
+│   │   ├── box-background.png
+│   │   ├── box-border.png
+│   │   ├── box.png
+│   │   └── next-arrow.png
+│   ├── duck.glb
+│   ├── eneida_island.glb
+│   ├── foam.png
+│   ├── island.glb
+│   ├── logo.png
+│   ├── logo.svg
+│   ├── map-texture.png
+│   ├── normal.jpg
+│   ├── ship.glb
+│   ├── sky.hdr
+│   ├── useek_island.glb
+│   └── vite.svg
+├── src/
+│   ├── components/
+│   │   ├── water/
+│   │   │   ├── Blend.ts
+│   │   │   ├── DistortUv.ts
+│   │   │   ├── Fresnel.ts
+│   │   │   ├── HSVLerp.ts
+│   │   │   ├── index.tsx
+│   │   │   ├── usePlanarReflections.ts
+│   │   │   ├── water.frag
+│   │   │   └── water.vert
+│   │   ├── ActionButtons.css
+│   │   ├── ActionButtons.tsx
+│   │   ├── DialogueBox.css
+│   │   ├── DialogueBox.tsx
+│   │   ├── Duck.tsx
+│   │   ├── InteractionUI.css
+│   │   ├── InteractionUI.tsx
+│   │   ├── Intro.css
+│   │   ├── Intro.tsx
+│   │   ├── Map.css
+│   │   ├── Map.tsx
+│   │   ├── Minimap.tsx
+│   │   ├── PlayerCamera.tsx
+│   │   ├── PlayerShip.tsx
+│   │   ├── ProjectShowcase.css
+│   │   ├── ProjectShowcase.tsx
+│   │   ├── TouchControls.css
+│   │   ├── TouchControls.tsx
+│   │   └── UIController.tsx
+│   ├── config/
+│   │   ├── constants.ts
+│   │   └── projects.ts
+│   ├── context/
+│   │   ├── GameStateContext.tsx
+│   │   └── PlayerControlsContext.tsx
+│   ├── hooks/
+│   │   ├── useDucks.ts
+│   │   ├── useSceneControls.ts
+│   │   ├── useShipControls.ts
+│   │   ├── useSoundManager.ts
+│   │   └── useWaterControls.ts
+│   ├── types/
+│   │   └── custom.d.ts
+│   ├── utils/
+│   │   ├── assetUrl.ts
+│   │   ├── getWaveInfo.ts
+│   │   ├── isMobile.ts
+│   │   ├── useKeyToggle.ts
+│   │   └── useKeyboardControls.ts
+│   ├── App.tsx
+│   ├── DuckModel.tsx
+│   ├── IslandModel.tsx
+│   ├── Lights.tsx
+│   ├── ShipModel.tsx
+│   ├── index.css
+│   ├── main.tsx
+│   └── types.ts
+├── .gitattributes
+├── .gitignore
+├── README.md
+├── eslint.config.js
+├── index.html
+├── package.json
+├── tsconfig.json
+├── tsconfig.node.json
+└── vite.config.js
+
+--- END OF PROJECT STRUCTURE ---
+
+--- START OF FILE .gitattributes ---
+# Auto detect text files and perform LF normalization
+* text=auto
+
+--- END OF FILE .gitattributes ---
+
+--- START OF FILE .gitignore ---
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+--- END OF FILE .gitignore ---
+
+--- START OF FILE README.md ---
+# Ducklin's Ocean Adventure
+
+A real-time 3D ocean simulation featuring a player-controlled ship, dynamic Gerstner waves, planar reflections, and collectible ducks that follow your vessel. Built with React, Vite, and Three.js.
+
+## Features
+
+- **Dynamic Water:** Custom GLSL shaders for realistic wave motion, shoreline foam, and depth-based coloring.
+- **Player-Controlled Ship:** Physics-based ship movement with keyboard controls.
+- **Collectible Ducks:** Find ducks scattered across the ocean and have them follow you on your journey!
+- **Realistic Lighting & Reflections:** Environment lighting, directional shadows, and real-time planar reflections on the water surface.
+- **Extensible Island System:** Easily add new project showcase islands by updating a central configuration file.
+
+--- END OF FILE README.md ---
+
+--- START OF FILE eslint.config.js ---
+import js from "@eslint/js";
+import globals from "globals";
+import tseslint from "typescript-eslint";
+import reactHooks from "eslint-plugin-react-hooks";
+import reactRefresh from "eslint-plugin-react-refresh";
+
+export default tseslint.config(
+  {
+    ignores: ["dist", "eslint.config.js"],
+  },
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+  {
+    files: ["**/*.{js,jsx,ts,tsx}"],
+    plugins: {
+      "react-hooks": reactHooks,
+      "react-refresh": reactRefresh,
+    },
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+      },
+      parserOptions: {
+        ecmaFeatures: { jsx: true },
+      },
+    },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      "react-refresh/only-export-components": "warn",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { varsIgnorePattern: "^[A-Z_]" },
+      ],
+    },
+  }
+);
+
+--- END OF FILE eslint.config.js ---
+
+--- START OF FILE index.html ---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ducklin's Ocean Adventure</title>    
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+--- END OF FILE index.html ---
+
+--- START OF FILE package.json ---
+{
+  "name": "ducklin",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.4",
+    "@react-three/fiber": "^9.3.0",
+    "@react-three/postprocessing": "^3.0.4",
+    "gl-noise": "^1.6.1",
+    "howler": "^2.2.4",
+    "leva": "^0.10.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "simplex-noise": "^4.0.3",
+    "three": "^0.179.1",
+    "three-custom-shader-material": "^6.3.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.33.0",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@types/three": "^0.164.1",
+    "@types/howler": "^2.2.11",
+    "@typescript-eslint/eslint-plugin": "^8.0.0-alpha.34",
+    "@typescript-eslint/parser": "^8.0.0-alpha.34",
+    "@vitejs/plugin-react": "^5.0.0",
+    "eslint": "^9.34.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0",
+    "typescript": "^5.4.5",
+    "vite": "^7.1.2"
+  }
+}
+--- END OF FILE package.json ---
+
+--- START OF FILE tsconfig.json ---
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"]
+}
+--- END OF FILE tsconfig.json ---
+
+--- START OF FILE tsconfig.node.json ---
+{
+  "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "strict": true
+  },
+  "include": ["vite.config.ts"]
+}
+--- END OF FILE tsconfig.node.json ---
+
+--- START OF FILE vite.config.js ---
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  base: "/projects/island/",
+  plugins: [react()],
+});
+
+--- END OF FILE vite.config.js ---
+
+--- FILE: public/duck.glb (Content omitted due to extension) ---
+
+--- FILE: public/eneida_island.glb (Content omitted due to extension) ---
+
+--- FILE: public/foam.png (Content omitted due to extension) ---
+
+--- FILE: public/island.glb (Content omitted due to extension) ---
+
+--- FILE: public/logo.png (Content omitted due to extension) ---
+
+--- FILE: public/logo.svg (Content omitted due to extension) ---
+
+--- FILE: public/map-texture.png (Content omitted due to extension) ---
+
+--- FILE: public/normal.jpg (Content omitted due to extension) ---
+
+--- FILE: public/ship.glb (Content omitted due to extension) ---
+
+--- FILE: public/sky.hdr (Content omitted due to extension) ---
+
+--- FILE: public/useek_island.glb (Content omitted due to extension) ---
+
+--- FILE: public/vite.svg (Content omitted due to extension) ---
+
+--- FILE: public/audio/calm-music.mp3 (Content omitted due to extension) ---
+
+--- FILE: public/audio/dialogue-blip.mp3 (Content omitted due to extension) ---
+
+--- FILE: public/audio/ocean-ambient.mp3 (Content omitted due to extension) ---
+
+--- FILE: public/audio/ship-sailing.mp3 (Content omitted due to extension) ---
+
+--- FILE: public/projects/eneida_screenshot.png (Content omitted due to extension) ---
+
+--- FILE: public/ui/box-background.png (Content omitted due to extension) ---
+
+--- FILE: public/ui/box-border.png (Content omitted due to extension) ---
+
+--- FILE: public/ui/box.png (Content omitted due to extension) ---
+
+--- FILE: public/ui/next-arrow.png (Content omitted due to extension) ---
+
+--- START OF FILE src/App.tsx ---
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Environment, OrbitControls, useGLTF, useProgress } from "@react-three/drei";
+import { Suspense, useMemo, useRef, useEffect, createRef } from "react";
+import { EffectComposer, N8AO, Vignette } from "@react-three/postprocessing";
+import * as THREE from "three";
+import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
+import { Water } from "./components/water";
+import { Lights } from "./Lights.tsx";
+import { PlayerShip } from "./components/PlayerShip.tsx";
+import { IslandModel } from "./IslandModel.tsx";
+import { PlayerCamera } from "./components/PlayerCamera.tsx";
+import { Intro } from "./components/Intro.tsx";
+import { Minimap } from "./components/Minimap.tsx";
+import { useSceneControls } from "./hooks/useSceneControls.ts";
+import { useShipControls } from "./hooks/useShipControls.ts";
+import { useWaterControls } from "./hooks/useWaterControls.ts";
+import soundManager from "./hooks/useSoundManager.ts";
+import { useDucks } from "./hooks/useDucks.ts";
+import { Duck } from "./components/Duck.tsx";
+import { InteractionUI } from "./components/InteractionUI.tsx";
+import { Map } from "./components/Map.tsx";
+import { UIController } from "./components/UIController.tsx";
+import { useGameState } from "./context/GameStateContext.tsx";
+import { FADE_DURATION, ISLAND_INTERACTION_RADIUS } from "./config/constants.ts";
+import { DialogueBox } from "./components/DialogueBox";
+import { isMobile } from "./utils/isMobile.ts";
+import { TouchControls } from "./components/TouchControls.tsx";
+import { ActionButtons } from "./components/ActionButtons.tsx";
+import { PROJECTS } from "./config/projects.ts";
+import { asset } from "./utils/assetUrl.ts";
+
+const onMobile = isMobile;
+
+type GroundFogProps = { color: string; y: number };
+
+function GroundFog({ color, y }: GroundFogProps) {
+  return (
+    <mesh rotation-x={-Math.PI / 2} position-y={y} renderOrder={-1}>
+      <planeGeometry args={[10000, 10000]} />
+      <meshBasicMaterial color={color} depthWrite={false} />
+    </mesh>
+  );
+}
+
+type ExperienceProps = {
+  shipRef: React.RefObject<THREE.Group | null>;
+  islandRefs: React.RefObject<THREE.Group | null>[];
+  uiRefs: {
+    minimapRotatorRef: React.RefObject<HTMLDivElement | null>;
+    minimapTranslatorRef: React.RefObject<HTMLDivElement | null>;
+    mapPlayerIconRef: React.RefObject<HTMLDivElement | null>;
+    mapImageContainerRef: React.RefObject<HTMLDivElement | null>;
+  };
+  isPhysicsPaused: boolean;
+  isCameraPaused: boolean;
+  areControlsEnabled: boolean;
+};
+
+function Experience({ shipRef, islandRefs, uiRefs, isPhysicsPaused, isCameraPaused, areControlsEnabled, gameMode }: ExperienceProps & { gameMode: string }) {
+  const controlsRef = useRef<OrbitControlsImpl>(null);
+  const { state, dispatch } = useGameState();
+
+  const { waterLevel, fogEnabled, fogColor, fogNear, fogFar, aoEnabled, shadowBias, normalBias } = useSceneControls();
+  const { shipDimensions, shipScale } = useShipControls();
+  const { waterUniforms } = useWaterControls();
+  const { ducks, collectDuck } = useDucks();
+
+  const effects = useMemo(() => {
+    const effectList = [<Vignette key="vignette" offset={0.4} darkness={0.4} />];
+    if (aoEnabled && !onMobile) {
+      effectList.push(<N8AO key="n8ao" aoRadius={10} intensity={5} screenSpaceRadius />);
+    }
+    return effectList;
+  }, [aoEnabled]);
+
+  useFrame(() => {
+    if (!shipRef.current) return;
+
+    let closestIslandId: string | null = null;
+    let minDistance = ISLAND_INTERACTION_RADIUS;
+
+    PROJECTS.forEach(project => {
+      const distance = shipRef.current!.position.distanceTo(project.position);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIslandId = project.id;
+      }
+    });
+
+    if (closestIslandId !== state.nearIslandId) {
+      dispatch({ type: 'SET_NEAR_ISLAND', payload: closestIslandId });
+    }
+  });
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (isPhysicsPaused || event.key.toLowerCase() !== 'e' || !state.nearIslandId) return;
+      dispatch({ type: 'ENTER_ISLAND', payload: state.nearIslandId });
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [dispatch, isPhysicsPaused, state.nearIslandId]);
+
+  return (
+    <>
+      <OrbitControls
+        ref={controlsRef}
+        enabled={areControlsEnabled}
+        enableRotate={!onMobile}
+        enableZoom={true}
+        minDistance={onMobile ? 30 : 20}
+        maxDistance={onMobile ? 80 : 100}
+        minPolarAngle={Math.PI / 4}
+        maxPolarAngle={Math.PI / 2 - 0.1}
+        enablePan={false}
+      />
+      <PlayerCamera shipRef={shipRef} controlsRef={controlsRef} waterLevel={waterLevel} islandRefs={islandRefs} isPaused={isCameraPaused} gameMode={gameMode} />
+      {fogEnabled ? <fog attach="fog" args={[fogColor, fogNear, fogFar]} /> : null}
+      <Suspense fallback={null}>
+        <UIController shipRef={shipRef} {...uiRefs} />
+        <Environment files={asset("sky.hdr")} background />
+        <Lights shadowBias={shadowBias} normalBias={normalBias} />
+        {fogEnabled ? <GroundFog color={fogColor} y={waterLevel - 0.1} /> : null}
+        <PlayerShip ref={shipRef} waterUniforms={waterUniforms} waterLevel={waterLevel} shipDimensions={shipDimensions} shipScale={shipScale} updateSailingSound={soundManager.updateSailingSound} isPhysicsPaused={isPhysicsPaused} />
+        {PROJECTS.map((project, index) => (
+          <IslandModel
+            key={project.id}
+            ref={islandRefs[index]}
+            modelUrl={project.modelUrl}
+            position={project.position}
+            rotation-y={project.rotationY}
+            scale={project.scale}
+          />
+        ))}
+        {ducks.map(duck => (<Duck key={duck.id} duckData={duck} shipRef={shipRef} waterUniforms={waterUniforms} waterLevel={waterLevel} onCollect={collectDuck} />))}
+        <Water waterUniforms={waterUniforms} position-y={waterLevel} fogColor={fogColor} fogNear={fogFar} fogFar={fogFar} />
+        <EffectComposer>{effects}</EffectComposer>
+      </Suspense>
+    </>
+  );
+}
+
+const INTRO_DIALOGUE_PAGES = [
+  "Welcome, Captain! This is a small world I built to explore the ocean and showcase some of my web projects.",
+  "Use W-A-S-D or the Arrow Keys to steer your ship. Press 'M' to open and close the world map.",
+  "Sail towards the islands on the horizon. When you get close, you can dock to view a project. Let's set sail!"
+];
+
+function LoadingController() {
+  const { active } = useProgress();
+  const { state, dispatch } = useGameState();
+
+  useEffect(() => {
+    if (state.isLoading && !active) {
+      dispatch({ type: 'FINISH_LOADING' });
+    }
+  }, [active, state.isLoading, dispatch]);
+
+  return null;
+}
+
+export default function App() {
+  const { state, dispatch } = useGameState();
+  const { gameMode, mapMode, projectRendered, isLoading, isLoaded } = state;
+
+  const shipRef = useRef<THREE.Group>(null);
+  const islandRefs = useMemo(() => Array.from({ length: PROJECTS.length }, () => createRef<THREE.Group | null>()), []);
+  const minimapRotatorRef = useRef<HTMLDivElement>(null);
+  const minimapTranslatorRef = useRef<HTMLDivElement>(null);
+  const mapPlayerIconRef = useRef<HTMLDivElement>(null);
+  const mapImageContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    PROJECTS.forEach(project => useGLTF.preload(project.modelUrl));
+  }, []);
+
+  useEffect(() => {
+    let timeoutId: number;
+    if (gameMode === 'transitioning') {
+      timeoutId = window.setTimeout(() => dispatch({ type: 'TRANSITION_COMPLETE' }), FADE_DURATION);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [gameMode, dispatch]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() === 'm') {
+        event.stopPropagation();
+        dispatch({ type: 'TOGGLE_MAP' });
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown, { capture: true });
+    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
+  }, [dispatch]);
+
+  const showFullMap = gameMode === 'ocean' && mapMode === 'full';
+  const showMinimap = gameMode === 'ocean' && mapMode === 'minimap';
+
+  const isPhysicsPaused = gameMode !== 'ocean';
+  const isCameraPaused = gameMode === 'island' || gameMode === 'transitioning';
+  const areControlsEnabled = gameMode === 'ocean' && mapMode === 'minimap';
+
+  const isCanvasVisible = isLoaded;
+  const isCanvasHidden = gameMode === 'island' || (gameMode === 'transitioning' && projectRendered);
+  const shouldRenderCanvas = isLoading || isLoaded;
+
+  const uiRefs = { minimapRotatorRef, minimapTranslatorRef, mapPlayerIconRef, mapImageContainerRef };
+
+  return (
+    <div style={{ position: "relative", width: "100%", height: "100%" }}>
+      {shouldRenderCanvas && (
+        <div className={`game-ui-container ${isCanvasVisible ? 'visible' : ''} ${isCanvasHidden ? 'hidden' : ''}`}>
+          <Canvas dpr={[1, 1.5]} shadows={{ type: THREE.PCFSoftShadowMap }} camera={{ fov: 50, near: 0.1, far: 2000, position: [0, 20, 50] }}>
+            <Experience
+              shipRef={shipRef}
+              islandRefs={islandRefs}
+              uiRefs={uiRefs}
+              isPhysicsPaused={isPhysicsPaused}
+              isCameraPaused={isCameraPaused}
+              areControlsEnabled={areControlsEnabled}
+              gameMode={gameMode}
+            />
+            <LoadingController />
+          </Canvas>
+          <Minimap show={showMinimap} rotatorRef={minimapRotatorRef} translatorRef={minimapTranslatorRef} />
+        </div>
+      )}
+
+      <Intro />
+      <InteractionUI />
+      <Map show={showFullMap} playerIconRef={mapPlayerIconRef} imageContainerRef={mapImageContainerRef} />
+
+      <TouchControls />
+      <ActionButtons />
+
+      <DialogueBox
+        show={gameMode === 'dialogue'}
+        pages={INTRO_DIALOGUE_PAGES}
+        onComplete={() => dispatch({ type: 'DIALOGUE_COMPLETE' })}
+      />
+    </div>
+  );
+}
+--- END OF FILE src/App.tsx ---
+
+--- START OF FILE src/DuckModel.tsx ---
+import { useGLTF } from "@react-three/drei";
+import { useLayoutEffect } from "react";
+import * as THREE from "three";
+import { asset } from "./utils/assetUrl"; // Import the helper
+
+const duckUrl = asset("duck.glb"); // Define the URL outside the component
+
+type DuckModelProps = React.JSX.IntrinsicElements["group"];
+
+export function DuckModel(props: DuckModelProps) {
+    const { scene } = useGLTF(duckUrl); // Use the correct URL
+
+    useLayoutEffect(() => {
+        scene.traverse((child) => {
+            if (child instanceof THREE.Mesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
+    }, [scene]);
+
+    return <primitive object={scene.clone()} {...props} />;
+}
+
+useGLTF.preload(duckUrl); // Preload with the correct URL
+--- END OF FILE src/DuckModel.tsx ---
+
+--- START OF FILE src/IslandModel.tsx ---
+import { useGLTF } from "@react-three/drei";
+import { useLayoutEffect, forwardRef } from "react";
+import * as THREE from "three";
+
+type IslandModelProps = React.JSX.IntrinsicElements['group'] & {
+  shadows?: boolean;
+  modelUrl: string;
+};
+
+export const IslandModel = forwardRef<THREE.Group, IslandModelProps>(
+  ({ shadows = true, modelUrl, ...props }, ref) => {
+    const { scene } = useGLTF(modelUrl);
+
+    useLayoutEffect(() => {
+      scene.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          child.castShadow = shadows;
+          child.receiveShadow = shadows;
+        }
+      });
+    }, [scene, shadows]);
+
+    return <primitive object={scene.clone()} ref={ref} {...props} />;
+  }
+);
+
+IslandModel.displayName = "IslandModel";
+--- END OF FILE src/IslandModel.tsx ---
+
+--- START OF FILE src/Lights.tsx ---
+import React from "react";
+import * as THREE from "three";
+
+type LightsProps = {
+  shadowBias: number;
+  normalBias: number;
+};
+
+export const Lights = React.memo(React.forwardRef<THREE.DirectionalLight, LightsProps>(
+  ({ shadowBias, normalBias }, ref) => {
+    return (
+      <>
+        <hemisphereLight intensity={2.0} color="white" groundColor="#8d8d8d" />
+        <directionalLight
+          ref={ref}
+          color="orange"
+          intensity={7.5}
+          position={[-30, 40, -30]}
+          castShadow
+          shadow-mapSize={4096}
+          shadow-bias={shadowBias}
+          shadow-normalBias={normalBias}
+        >
+          <orthographicCamera
+            attach="shadow-camera"
+            args={[-100, 100, 100, -100, 1, 100]}
+          />
+        </directionalLight>
+      </>
+    );
+  }
+));
+
+Lights.displayName = "Lights";
+--- END OF FILE src/Lights.tsx ---
+
+--- START OF FILE src/ShipModel.tsx ---
+import { useGLTF } from "@react-three/drei";
+import { useLayoutEffect } from "react";
+import * as THREE from "three";
+import { asset } from "./utils/assetUrl"; // Import the helper
+
+const shipUrl = asset("ship.glb"); // Define the URL outside the component
+
+type ShipModelProps = React.JSX.IntrinsicElements["group"];
+
+export function ShipModel(props: ShipModelProps) {
+  const { scene } = useGLTF(shipUrl); // Use the correct URL
+
+  useLayoutEffect(() => {
+    scene.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+  }, [scene]);
+
+  return <primitive object={scene.clone()} {...props} />;
+}
+
+useGLTF.preload(shipUrl); // Preload with the correct URL
+--- END OF FILE src/ShipModel.tsx ---
+
+--- START OF FILE src/index.css ---
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #000000;
+}
+
+.game-ui-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  transition-delay: 0.5s;
+}
+
+.game-ui-container.visible {
+  opacity: 1;
+}
+
+.game-ui-container.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: none !important;
+}
+
+.minimap-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  /* UI FIX: Restore original size for desktop, will be overridden by media query for mobile */
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: rgba(35, 133, 158, 0.6);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+  transform-origin: top right;
+  transform: scale(1);
+}
+
+.minimap-container.hidden {
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+}
+
+.minimap-bezel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+  z-index: 20;
+}
+
+.minimap-rotator,
+.minimap-translator {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+.minimap-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 400px;
+  transform: translate(-50%, -50%);
+  image-rendering: pixelated;
+  opacity: 0.9;
+}
+
+.player-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 14px solid rgb(255, 60, 60);
+  filter: drop-shadow(0 0 3px white);
+  z-index: 10;
+}
+
+.compass {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.compass-letter {
+  position: absolute;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.north {
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.east {
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+}
+
+.south {
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.west {
+  top: 50%;
+  left: 6px;
+  transform: translateY(-50%);
+}
+
+/* UI FIX: Use a more specific media query for small screens */
+@media (max-width: 768px) {
+  .minimap-container {
+    width: 150px;
+    height: 150px;
+    top: 10px;
+    right: 10px;
+  }
+}
+--- END OF FILE src/index.css ---
+
+--- START OF FILE src/main.tsx ---
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.js";
+import "./index.css";
+import { GameStateProvider } from "./context/GameStateContext.tsx";
+import { PlayerControlsProvider } from "./context/PlayerControlsContext.tsx";
+
+const rootElement = document.getElementById("root");
+if (rootElement) {
+  ReactDOM.createRoot(rootElement).render(
+    <React.StrictMode>
+      <GameStateProvider>
+        <PlayerControlsProvider>
+          <App />
+        </PlayerControlsProvider>
+      </GameStateProvider>
+    </React.StrictMode>
+  );
+}
+--- END OF FILE src/main.tsx ---
+
+--- START OF FILE src/types.ts ---
+import * as THREE from 'three';
+
+export interface IUniform<T> {
+    value: T;
+}
+
+export type AllWaterUniforms = {
+    // From Leva controls
+    uWaveSteepness: IUniform<number>;
+    uWaveLength: IUniform<number>;
+    uWaveSpeed: IUniform<number>;
+    uWaveDirection: IUniform<THREE.Vector3>;
+    uWaterShallowColor: IUniform<THREE.Color>;
+    uWaterDeepColor: IUniform<THREE.Color>;
+    uWaterDepth: IUniform<number>;
+    uWaveCrestStart: IUniform<number>; // Replaced uWaveFalloff
+    uWaveCrestEnd: IUniform<number>;   // Replaced uWaveFalloff
+    uWaveCrestColor: IUniform<THREE.Color>;
+    uFoamColor: IUniform<THREE.Color>;
+    uFoamSpeed: IUniform<number>;
+    uFoamTiling: IUniform<number>;
+    uFoamDistortion: IUniform<number>;
+    // Static uniforms
+    uPlaneSize: IUniform<number>;
+    uFbmSpeed: IUniform<number>;
+    uReflectionStrength: IUniform<number>;
+    uReflectionMix: IUniform<number>;
+    uReflectionFresnelPower: IUniform<number>;
+    uHorizonColor: IUniform<THREE.Color>;
+    uHorizonDistance: IUniform<number>;
+    uFoamAlpha: IUniform<number>;
+    uFoamBlend: IUniform<number>;
+    uNormalsScale: IUniform<number>;
+    uNormalsSpeed: IUniform<number>;
+    uNormalsStrength: IUniform<number>;
+    uFoamIntersectionFade: IUniform<number>;
+    uFoamIntersectionCutoff: IUniform<number>;
+    uFogNear: IUniform<number>;
+    uFogFar: IUniform<number>;
+    // From planar reflections
+    uReflectionEnabled: IUniform<boolean>;
+    uReflectedTexture: IUniform<THREE.Texture | null>;
+    uReflectionTextureMatrix: IUniform<THREE.Matrix4>;
+    // From water component
+    uDepthTexture: IUniform<THREE.DepthTexture | null>;
+    uCameraNearFar: IUniform<THREE.Vector2>;
+    uResolution: IUniform<THREE.Vector2>;
+    uTime: IUniform<number>;
+    uFoamTexture: IUniform<THREE.Texture | null>;
+    uNormalsTexture: IUniform<THREE.Texture | null>;
+};
+
+export type PartialWaterUniforms = Pick<
+    AllWaterUniforms,
+    | 'uWaveSteepness'
+    | 'uWaveLength'
+    | 'uWaveSpeed'
+    | 'uWaveDirection'
+    | 'uFbmSpeed'
+>;
+
+// Type definition for a single duck's state
+export type DuckData = {
+    id: number;
+    position: THREE.Vector3;
+    status: 'IDLE' | 'FOLLOWING';
+    followIndex: number | null;
+};
+
+// Type definition for a project island
+export type Project = {
+    id: string;
+    name: string;
+    description: string;
+    position: THREE.Vector3;
+    rotationY: number;
+    scale: number;
+    modelUrl: string;
+    imageUrl: string;
+    projectUrl: string;
+};
+--- END OF FILE src/types.ts ---
+
+--- START OF FILE src/components/ActionButtons.css ---
+/* src/components/ActionButtons.css */
+
+/* This query correctly hides the component on non-touch/mouse-based devices */
+@media (hover: hover) and (pointer: fine) {
+    .action-buttons-container {
+        display: none;
+    }
+}
+
+.action-buttons-container {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-end;
+}
+
+.action-button {
+    width: 18vmin;
+    height: 18vmin;
+    max-width: 85px;
+    max-height: 85px;
+    background-color: rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    font-family: 'Segoe UI', sans-serif;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s;
+    -webkit-tap-highlight-color: transparent; /* FIX: Remove tap highlight on mobile */
+}
+
+.action-button:active {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+--- END OF FILE src/components/ActionButtons.css ---
+
+--- START OF FILE src/components/ActionButtons.tsx ---
+// src/components/ActionButtons.tsx
+import './ActionButtons.css';
+import { useGameState } from '../context/GameStateContext';
+import { isMobile } from '../utils/isMobile';
+
+export function ActionButtons() {
+    const { state, dispatch } = useGameState();
+    const { gameMode, nearIslandId, mapMode } = state;
+
+    const handleMapToggle = () => {
+        dispatch({ type: 'TOGGLE_MAP' });
+    };
+
+    const handleDock = () => {
+        if (!nearIslandId) return;
+        dispatch({ type: 'ENTER_ISLAND', payload: nearIslandId });
+    };
+
+    // FIX: Add JS check to ensure buttons only appear on mobile devices.
+    if (!isMobile || gameMode !== 'ocean' || mapMode !== 'minimap') {
+        return null;
+    }
+
+    return (
+        <div className="action-buttons-container">
+            {nearIslandId && (
+                <button className="action-button" onClick={handleDock}>
+                    Dock
+                </button>
+            )}
+            <button className="action-button" onClick={handleMapToggle}>
+                Map
+            </button>
+        </div>
+    );
+}
+--- END OF FILE src/components/ActionButtons.tsx ---
+
+--- START OF FILE src/components/DialogueBox.css ---
+:root {
+    --dialogue-text-color: #ffffff;
+}
+
+.dialogue-box-container {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 700px;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    pointer-events: none;
+    z-index: 200;
+}
+
+.dialogue-box-container.visible {
+    opacity: 1;
+    pointer-events: all;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent; /* FIX: Remove tap highlight on mobile */
+}
+
+.dialogue-box-wrapper {
+    position: relative;
+    aspect-ratio: 1949 / 612; /* Maintains original proportions */
+    background-image: url('/ui/box.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dialogue-box-content {
+    position: relative;
+    z-index: 3;
+    padding: 6.5% 8%; 
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1.7rem;
+    font-weight: 600;
+    color: var(--dialogue-text-color);
+    line-height: 1.5;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+    user-select: none;
+}
+
+.dialogue-next-arrow {
+    position: absolute;
+    bottom: 15%;
+    right: 8%;
+    width: 30px;
+    height: 30px;
+    background-image: url('/ui/next-arrow.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0;
+    z-index: 4;
+}
+
+.dialogue-next-arrow.visible {
+    opacity: 1;
+}
+
+@media (max-width: 600px) {
+    .dialogue-box-content {
+        font-size: 0.9rem;
+        padding: 6% 8%;
+        line-height: 1.5;
+    }
+
+    .dialogue-next-arrow {
+        width: 25px;
+        height: 25px;
+        bottom: 18%;
+        right: 10%;
+    }
+}
+--- END OF FILE src/components/DialogueBox.css ---
+
+--- START OF FILE src/components/DialogueBox.tsx ---
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Howl } from 'howler';
+import './DialogueBox.css';
+import { asset } from '../utils/assetUrl'; // Import the helper
+
+type DialogueBoxProps = {
+    show: boolean;
+    pages: string[];
+    onComplete: () => void;
+};
+
+const useDialogue = (pages: string[], typingSpeed: number, soundSrc: string, startTyping: boolean) => {
+    const [pageIndex, setPageIndex] = useState(0);
+    const [displayedText, setDisplayedText] = useState('');
+    const [isPageComplete, setIsPageComplete] = useState(false);
+
+    const soundRef = useRef<Howl | null>(null);
+    const timeoutRef = useRef<number | undefined>(undefined);
+
+    useEffect(() => {
+        soundRef.current = new Howl({
+            src: [soundSrc],
+            loop: true,
+            volume: 0.2,
+        });
+        return () => {
+            soundRef.current?.unload();
+        };
+    }, [soundSrc]);
+
+    useEffect(() => {
+        if (pageIndex >= pages.length || !startTyping) return;
+
+        setIsPageComplete(false);
+        setDisplayedText('');
+        soundRef.current?.play();
+
+        const currentPage = pages[pageIndex];
+        if (!currentPage) return;
+
+        let charIndex = 0;
+        const typeChar = () => {
+            if (charIndex < currentPage.length) {
+                setDisplayedText(currentPage.substring(0, charIndex + 1));
+                charIndex++;
+                timeoutRef.current = window.setTimeout(typeChar, typingSpeed);
+            } else {
+                setIsPageComplete(true);
+                soundRef.current?.stop();
+            }
+        };
+
+        typeChar();
+
+        return () => {
+            clearTimeout(timeoutRef.current);
+            soundRef.current?.stop();
+        };
+    }, [pageIndex, pages, typingSpeed, startTyping]);
+
+    const skip = useCallback(() => {
+        clearTimeout(timeoutRef.current);
+        soundRef.current?.stop();
+        setDisplayedText(pages[pageIndex]);
+        setIsPageComplete(true);
+    }, [pageIndex, pages]);
+
+    const next = useCallback(() => {
+        if (isPageComplete) {
+            setPageIndex((prev) => prev + 1);
+        }
+    }, [isPageComplete]);
+
+    const isFinished = pageIndex >= pages.length - 1 && isPageComplete;
+
+    return { displayedText, isPageComplete, skip, next, isFinished };
+};
+
+export function DialogueBox({ show, pages, onComplete }: DialogueBoxProps) {
+    const [canBeVisible, setCanBeVisible] = useState(false);
+    // FIX: Use the asset helper for the sound path
+    const { displayedText, isPageComplete, skip, next, isFinished } = useDialogue(pages, 30, asset('audio/dialogue-blip.mp3'), canBeVisible);
+
+    const handleInteraction = useCallback(() => {
+        if (!isPageComplete) {
+            skip();
+        } else if (isFinished) {
+            onComplete();
+        } else {
+            next();
+        }
+    }, [isPageComplete, isFinished, skip, next, onComplete]);
+
+    useEffect(() => {
+        if (show) {
+            const timer = setTimeout(() => setCanBeVisible(true), 1000);
+
+            const handleKeyDown = (e: KeyboardEvent) => {
+                if (e.key === ' ' || e.key.toLowerCase() === 'e') {
+                    e.preventDefault();
+                    handleInteraction();
+                }
+            };
+
+            window.addEventListener('keydown', handleKeyDown);
+
+            return () => {
+                clearTimeout(timer);
+                window.removeEventListener('keydown', handleKeyDown);
+            };
+        } else {
+            setCanBeVisible(false);
+        }
+    }, [show, handleInteraction]);
+
+    if (!show) {
+        return null;
+    }
+
+    return (
+        <div
+            className={`dialogue-box-container ${canBeVisible ? 'visible' : ''}`}
+            onClick={handleInteraction}
+        >
+            <div className="dialogue-box-wrapper">
+                <div className="dialogue-box-content">
+                    <div>{displayedText}</div>
+                </div>
+                <div className={`dialogue-next-arrow ${isPageComplete ? 'visible' : ''}`} />
+            </div>
+        </div>
+    );
+}
+--- END OF FILE src/components/DialogueBox.tsx ---
+
+--- START OF FILE src/components/Duck.tsx ---
+import { useRef, useState } from "react";
+import * as THREE from "three";
+import { useFrame } from "@react-three/fiber";
+import { Trail } from "@react-three/drei";
+import { DuckModel } from "../DuckModel";
+import { getDisplacedPosition } from "../utils/getWaveInfo";
+import { AllWaterUniforms, DuckData } from "../types";
+import { DUCK_COLLECTION_RADIUS, DUCK_FOLLOW_OFFSETS, DUCK_FOLLOW_SPEED } from "../config/constants";
+
+type DuckProps = {
+    duckData: DuckData;
+    shipRef: React.RefObject<THREE.Group | null>;
+    waterUniforms: Pick<AllWaterUniforms, "uFbmSpeed" | "uWaveSpeed" | "uWaveDirection" | "uWaveSteepness" | "uWaveLength">;
+    waterLevel: number;
+    onCollect: (id: number) => void;
+};
+
+const worldPos = new THREE.Vector3();
+
+export function Duck({ duckData, shipRef, waterUniforms, waterLevel, onCollect }: DuckProps) {
+    const duckRef = useRef<THREE.Group>(null!);
+    const initialPosition = useRef(new THREE.Vector3().copy(duckData.position)).current;
+    const wakeSourceRef = useRef<THREE.Object3D>(null!);
+    const projectedWakeTargetRef = useRef<THREE.Object3D>(null!);
+    const [wakeOpacity, setWakeOpacity] = useState(0);
+    const previousPosition = useRef<THREE.Vector3 | null>(null);
+
+    useFrame(({ clock }, delta) => {
+        const dt = Math.min(delta, 1 / 30);
+        const time = clock.getElapsedTime();
+        if (!shipRef.current || !duckRef.current) return;
+
+        let currentSpeed = 0;
+
+        if (duckData.status === 'IDLE') {
+            const wavePos = getDisplacedPosition([initialPosition.x, 0, initialPosition.z], time, waterUniforms);
+            duckRef.current.position.lerp(wavePos.add(new THREE.Vector3(0, waterLevel - 1.5, 0)), dt * 5);
+            duckRef.current.rotation.y += Math.sin(time * 0.5) * 0.005;
+
+            const distanceToShip = duckRef.current.position.distanceTo(shipRef.current.position);
+            if (distanceToShip < DUCK_COLLECTION_RADIUS) {
+                onCollect(duckData.id);
+            }
+        } else if (duckData.status === 'FOLLOWING' && duckData.followIndex !== null) {
+            const offsetIndex = duckData.followIndex % DUCK_FOLLOW_OFFSETS.length;
+            const followOffset = new THREE.Vector3().set(...DUCK_FOLLOW_OFFSETS[offsetIndex]);
+
+            followOffset.applyQuaternion(shipRef.current.quaternion);
+            const targetPos = new THREE.Vector3().addVectors(shipRef.current.position, followOffset);
+
+            const waterTarget = getDisplacedPosition([targetPos.x, 0, targetPos.z], time, waterUniforms);
+            const finalTarget = waterTarget.add(new THREE.Vector3(0, waterLevel - 1.5, 0));
+
+            duckRef.current.position.lerp(finalTarget, dt * DUCK_FOLLOW_SPEED);
+            duckRef.current.lookAt(shipRef.current.position);
+        }
+
+        if (previousPosition.current && dt > 0) {
+            const displacement = duckRef.current.position.clone().sub(previousPosition.current);
+            currentSpeed = displacement.length() / dt;
+        }
+        previousPosition.current = duckRef.current.position.clone();
+
+        const targetOpacity = duckData.status === 'FOLLOWING' && currentSpeed > 0.1 ? 0.6 : 0.0;
+        const newOpacity = THREE.MathUtils.lerp(wakeOpacity, targetOpacity, dt * 2.0);
+        setWakeOpacity(newOpacity);
+
+        if (wakeSourceRef.current && projectedWakeTargetRef.current) {
+            wakeSourceRef.current.getWorldPosition(worldPos);
+            const projectedLeft = getDisplacedPosition([worldPos.x, 0, worldPos.z], time, waterUniforms);
+            projectedWakeTargetRef.current.position.set(projectedLeft.x, projectedLeft.y + waterLevel, projectedLeft.z);
+        }
+    });
+
+    return (
+        <>
+            <group ref={duckRef} position={initialPosition}>
+                <DuckModel scale={1} />
+                <object3D ref={wakeSourceRef} position={[0, 0.1, 0.5]} />
+            </group>
+            <object3D ref={projectedWakeTargetRef} />
+            {wakeOpacity > 0.01 && (
+                <group renderOrder={1}>
+                    <Trail
+                        target={projectedWakeTargetRef}
+                        width={0}
+                        length={1}
+                        color={"#ffffff"}
+                        attenuation={(t) => Math.pow(t, 2) * wakeOpacity}
+                    />
+                </group>
+            )}
+        </>
+    );
+}
+--- END OF FILE src/components/Duck.tsx ---
+
+--- START OF FILE src/components/InteractionUI.css ---
+/* src/components/InteractionUI.css */
+
+.interaction-prompt {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 8px;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 1.1rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+    z-index: 50;
+}
+
+.interaction-prompt.visible {
+    opacity: 1;
+}
+
+/* Full-screen overlay for fade-to-black effect */
+.scene-transition {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1001;
+    transition: opacity 1.5s ease-in-out;
+}
+
+.scene-transition.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+
+/* "Project" view screen */
+.project-view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent; /* Changed from #0d1a24 */
+    color: #e0f2ff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', sans-serif;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 999;
+    transition: opacity 1s ease-in-out;
+}
+
+.project-view.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.project-view h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px rgba(173, 216, 230, 0.5);
+}
+
+.project-view p {
+    font-size: 1.2rem;
+    max-width: 500px;
+    text-align: center;
+    line-height: 1.6;
+}
+
+--- END OF FILE src/components/InteractionUI.css ---
+
+--- START OF FILE src/components/InteractionUI.tsx ---
+import { useState, useEffect } from 'react';
+import './InteractionUI.css';
+import { useGameState } from '../context/GameStateContext';
+// FIX: Add the .tsx extension to make the import explicit and resolve the error.
+import { ProjectShowcase } from './ProjectShowcase.tsx';
+import { isMobile } from '../utils/isMobile';
+import { PROJECTS } from '../config/projects';
+
+export function InteractionUI() {
+    const { state, dispatch } = useGameState();
+    const { gameMode, nearIslandId, currentIslandId, projectRendered } = state;
+    const [isProjectContentActive, setIsProjectContentActive] = useState(false);
+
+    useEffect(() => {
+        if (gameMode === 'island') {
+            const timer = setTimeout(() => {
+                setIsProjectContentActive(true);
+            }, 50);
+            return () => clearTimeout(timer);
+        } else {
+            setIsProjectContentActive(false);
+        }
+    }, [gameMode]);
+
+    const currentProject = PROJECTS.find(p => p.id === currentIslandId);
+    const nearProject = PROJECTS.find(p => p.id === nearIslandId);
+
+    const isTransitioning = gameMode === 'transitioning';
+    const showProject = (gameMode === 'island' || (isTransitioning && projectRendered)) && currentProject;
+
+    const promptVisible = nearProject && gameMode === 'ocean' && !isMobile;
+    const promptText = nearProject ? `Press [E] to Dock at ${nearProject.name}` : 'Press [E] to Dock';
+
+    const handleReturn = () => {
+        dispatch({ type: 'RETURN_TO_OCEAN' });
+    };
+
+    return (
+        <>
+            <div className={`interaction-prompt ${promptVisible ? 'visible' : ''}`}>
+                {promptText}
+            </div>
+
+            <div className={`scene-transition ${isTransitioning ? 'active' : ''}`} />
+
+            {showProject && (
+                <div className={`project-view ${isProjectContentActive ? 'active' : ''}`}>
+                    <ProjectShowcase
+                        title={currentProject.name}
+                        description={currentProject.description}
+                        imageUrl={currentProject.imageUrl}
+                        projectUrl={currentProject.projectUrl}
+                        onReturn={handleReturn}
+                    />
+                </div>
+            )}
+        </>
+    );
+}
+--- END OF FILE src/components/InteractionUI.tsx ---
+
+--- START OF FILE src/components/Intro.css ---
+/* src/components/Intro.css */
+
+.intro-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000000;
+  z-index: 1000;
+  opacity: 1;
+  transition: opacity 1s ease-in-out; /* Faster fade-out */
+  pointer-events: all;
+  cursor: pointer; /* Add cursor pointer */
+  -webkit-tap-highlight-color: transparent; /* FIX: Remove tap highlight on mobile */
+  user-select: none; /* FIX: Prevent text selection */
+}
+
+.intro-overlay.stage-finished {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.logo-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 1s ease-in-out; /* Faster fade-in/out */
+}
+
+.logo-container.stage-logoFadeIn,
+.logo-container.stage-logoVisible {
+  opacity: 1;
+}
+
+/* New style for the "Click to Begin" message */
+.click-to-begin {
+  position: absolute;
+  top: 75%; /* Lowered position */
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Nicer font */
+  font-size: 1.2rem; /* Slightly larger */
+  letter-spacing: 2px; /* Add some spacing */
+  text-transform: uppercase; /* Make it look more like a button */
+  opacity: 0;
+  animation: fadeInOut 2.5s infinite; /* Slower, more gentle pulse */
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Add a subtle glow */
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+
+.loading-indicator {
+  position: absolute;
+  bottom: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.logo-container img {
+  width: clamp(200px, 45vmin, 300px);
+  height: auto;
+}
+--- END OF FILE src/components/Intro.css ---
+
+--- START OF FILE src/components/Intro.tsx ---
+import { useState } from "react";
+import "./Intro.css";
+import { useGameState } from "../context/GameStateContext";
+import soundManager from "../hooks/useSoundManager";
+import { asset } from "../utils/assetUrl";
+
+export function Intro() {
+    const { state, dispatch } = useGameState();
+    const { gameMode, isLoading, isLoaded } = state;
+    const [isMounted, setIsMounted] = useState(true);
+
+    const isFading = isLoaded;
+
+    const handleClick = () => {
+        if (gameMode === 'intro' && !isLoading) {
+            soundManager.initializeSounds();
+            dispatch({ type: 'START_LOADING' });
+        }
+    };
+
+    const handleTransitionEnd = () => {
+        if (isFading) {
+            setIsMounted(false);
+        }
+    };
+
+    if (!isMounted) {
+        return null;
+    }
+
+    const overlayClasses = `intro-overlay ${isFading ? 'stage-finished' : ''}`;
+
+    return (
+        <div className={overlayClasses} onClick={handleClick} onTransitionEnd={handleTransitionEnd}>
+            <div className="logo-container stage-logoFadeIn">
+                <img src={asset("logo.svg")} alt="Loading Logo" />
+            </div>
+            {!isLoading && !isLoaded && <div className="click-to-begin">Click to Begin</div>}
+            {isLoading && (
+                <div className="loading-indicator">
+                    <div className="spinner"></div>
+                </div>
+            )}
+        </div>
+    );
+}
+--- END OF FILE src/components/Intro.tsx ---
+
+--- START OF FILE src/components/Map.css ---
+/* src/components/Map.css */
+
+.map-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(10, 25, 40, 0.95);
+    backdrop-filter: blur(5px);
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.map-overlay.visible {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.map-content {
+    width: 90vmin;
+    height: 90vmin;
+    max-width: 800px;
+    max-height: 800px;
+    border: 3px solid rgba(173, 216, 230, 0.7);
+    border-radius: 8px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    position: relative;
+    background-color: #000;
+}
+
+.map-image-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 800px;
+    height: 800px;
+    transform: translate(-50%, -50%);
+    user-select: none;
+    -webkit-user-drag: none;
+    will-change: transform; /* Performance hint */
+}
+
+.map-image-container img {
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+.map-player-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 20px solid rgb(255, 60, 60);
+    filter: drop-shadow(0 0 5px white);
+    z-index: 10;
+    will-change: transform;
+}
+
+.map-instructions {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.8);
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 1.1rem;
+    padding: 8px 16px;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* --- FIX: Mobile Map Close Button --- */
+.map-close-button {
+    display: none; /* Hidden on desktop by default */
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    color: white;
+    font-size: 2rem;
+    line-height: 40px;
+    text-align: center;
+    cursor: pointer;
+    z-index: 110;
+    /* FIX: Add these properties to prevent selection/highlighting on touch */
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+/* Show button and hide text on non-hover devices (mobile/touch) */
+@media (hover: none), (pointer: coarse) {
+    .map-instructions {
+        display: none;
+    }
+    .map-close-button {
+        display: block;
+    }
+}
+--- END OF FILE src/components/Map.css ---
+
+--- START OF FILE src/components/Map.tsx ---
+import React from 'react';
+import './Map.css';
+import { asset } from '../utils/assetUrl';
+import { useGameState } from '../context/GameStateContext';
+
+type MapProps = {
+    show: boolean;
+    playerIconRef: React.RefObject<HTMLDivElement | null>;
+    imageContainerRef: React.RefObject<HTMLDivElement | null>;
+};
+
+export const Map = React.memo(function Map({ show, playerIconRef, imageContainerRef }: MapProps) {
+    const { dispatch } = useGameState();
+
+    const closeMap = () => {
+        dispatch({ type: 'TOGGLE_MAP' });
+    };
+
+    // FIX: Create a dedicated handler for the button to prevent default actions
+    // and stop the event from bubbling up to the overlay.
+    const handleButtonClose = (e: React.PointerEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        closeMap();
+    };
+
+    // This handler remains for the map content itself.
+    const stopPropagation = (e: React.PointerEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+    };
+
+    return (
+        // Tapping the background overlay will close the map.
+        <div className={`map-overlay ${show ? 'visible' : ''}`} onPointerUp={closeMap}>
+            {/* Tapping the map content will do nothing. */}
+            <div className="map-content" onPointerUp={stopPropagation}>
+                <div className="map-image-container" ref={imageContainerRef}>
+                    <img src={asset("map-texture.png")} alt="World Map" />
+                </div>
+                <div className="map-player-icon" ref={playerIconRef} />
+            </div>
+            <div className="map-instructions">Press [M] to close Map</div>
+            {/* FIX: Use the new, more robust handler for the button. */}
+            <button className="map-close-button" onPointerUp={handleButtonClose}>
+                &times;
+            </button>
+        </div>
+    );
+});
+--- END OF FILE src/components/Map.tsx ---
+
+--- START OF FILE src/components/Minimap.tsx ---
+import React, { forwardRef } from "react";
+import { asset } from "../utils/assetUrl"; // Import the helper
+
+type MinimapProps = {
+    show: boolean;
+    rotatorRef: React.RefObject<HTMLDivElement | null>;
+    translatorRef: React.RefObject<HTMLDivElement | null>;
+};
+
+export const Minimap = React.memo(forwardRef<HTMLDivElement, MinimapProps>(({ show, rotatorRef, translatorRef }, ref) => {
+    const containerClasses = `minimap-container ${!show ? 'hidden' : ''}`;
+
+    return (
+        <div className={containerClasses} ref={ref}>
+            <div className="minimap-rotator" ref={rotatorRef}>
+                <div className="minimap-translator" ref={translatorRef}>
+                    <img
+                        // FIX: Use the asset helper for the image path
+                        src={asset("map-texture.png")}
+                        className="minimap-image"
+                        alt="Map of the island"
+                    />
+                </div>
+                <div className="compass">
+                    <div className="compass-letter north">N</div>
+                    <div className="compass-letter east">E</div>
+                    <div className="compass-letter south">S</div>
+                    <div className="compass-letter west">W</div>
+                </div>
+            </div>
+            <div className="player-icon" />
+            <div className="minimap-bezel" />
+        </div>
+    );
+}));
+
+Minimap.displayName = "Minimap";
+--- END OF FILE src/components/Minimap.tsx ---
+
+--- START OF FILE src/components/PlayerCamera.tsx ---
+import { useFrame, useThree } from "@react-three/fiber";
+import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
+import * as THREE from "three";
+import { useRef, useState, useEffect, useLayoutEffect, RefObject } from "react";
+import { INACTIVITY_TIMEOUT } from "../config/constants";
+import { isMobile } from "../utils/isMobile";
+
+function usePrevious(value: any) {
+    const ref = useRef<any>(undefined);
+    useEffect(() => {
+        ref.current = value;
+    });
+    return ref.current;
+}
+
+type PlayerCameraProps = {
+    shipRef: React.RefObject<THREE.Group | null>;
+    controlsRef: React.RefObject<OrbitControlsImpl | null>;
+    waterLevel: number;
+    islandRefs: RefObject<THREE.Group | null>[];
+    isPaused: boolean;
+    gameMode: string;
+};
+
+const a = new THREE.Vector3();
+const b = new THREE.Vector3();
+
+export function PlayerCamera({ shipRef, controlsRef, waterLevel, islandRefs, isPaused, gameMode }: PlayerCameraProps) {
+    const { camera } = useThree();
+    const lastShipPosition = useRef(new THREE.Vector3());
+    const [isIdle, setIsIdle] = useState(true);
+    const [isMobileIdle, setIsMobileIdle] = useState(true);
+    const idleTimerRef = useRef<number | null>(null);
+    const raycaster = useRef(new THREE.Raycaster()).current;
+
+    const prevIsPaused = usePrevious(isPaused);
+    const prevGameMode = usePrevious(gameMode);
+
+    useEffect(() => {
+        if (gameMode === 'ocean' && prevGameMode !== 'ocean') {
+            if (isMobile) {
+                setIsMobileIdle(true);
+            } else {
+                setIsIdle(true);
+                if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+            }
+        }
+    }, [gameMode, prevGameMode]);
+
+    useEffect(() => {
+        if (!isMobile || !isMobileIdle) return;
+
+        const handleFirstTouch = () => {
+            setIsMobileIdle(false);
+        };
+
+        window.addEventListener('touchstart', handleFirstTouch, { once: true });
+
+        return () => {
+            window.removeEventListener('touchstart', handleFirstTouch);
+        };
+    }, [isMobileIdle]);
+
+    useLayoutEffect(() => {
+        if (prevIsPaused && !isPaused && controlsRef.current && shipRef.current) {
+            const shipPosition = shipRef.current.position;
+            const cameraPivot = new THREE.Vector3(shipPosition.x, waterLevel + 5.0, shipPosition.z);
+            controlsRef.current.target.copy(cameraPivot);
+            controlsRef.current.update();
+        }
+    }, [isPaused, prevIsPaused, controlsRef, shipRef, waterLevel]);
+
+    useEffect(() => {
+        if (isMobile) return;
+
+        const controls = controlsRef.current;
+        const handleUserActivity = () => {
+            if (isPaused) return;
+            setIsIdle(false);
+            if (idleTimerRef.current) {
+                clearTimeout(idleTimerRef.current);
+            }
+            idleTimerRef.current = window.setTimeout(() => {
+                setIsIdle(true);
+            }, INACTIVITY_TIMEOUT);
+        };
+
+        window.addEventListener("keydown", handleUserActivity);
+        controls?.addEventListener('start', handleUserActivity);
+
+        return () => {
+            window.removeEventListener("keydown", handleUserActivity);
+            controls?.removeEventListener('start', handleUserActivity);
+            if (idleTimerRef.current) {
+                clearTimeout(idleTimerRef.current);
+            }
+        };
+    }, [controlsRef, isPaused]);
+
+    useFrame((state) => {
+        if (!shipRef.current || !controlsRef.current) return;
+
+        const shipPosition = shipRef.current.position;
+        const cameraPivotHeight = 5.0;
+        const cameraPivot = a.set(shipPosition.x, waterLevel + cameraPivotHeight, shipPosition.z);
+
+        if (isMobile) {
+            if (isMobileIdle) {
+                const time = state.clock.getElapsedTime();
+                const angle = time * 0.1;
+                const radius = 45;
+                const height = 18;
+                const idlePosition = b.set(
+                    shipPosition.x + Math.sin(angle) * radius,
+                    waterLevel + height,
+                    shipPosition.z + Math.cos(angle) * radius
+                );
+                camera.position.lerp(idlePosition, 0.02);
+            } else {
+                const idealOffset = new THREE.Vector3(0, 18, 45);
+                idealOffset.applyQuaternion(shipRef.current.quaternion);
+                const idealPosition = new THREE.Vector3().copy(shipPosition).add(idealOffset);
+                const idealDirection = new THREE.Vector3().subVectors(idealPosition, cameraPivot).normalize();
+                const currentDistance = camera.position.distanceTo(cameraPivot);
+                const targetPosition = cameraPivot.clone().add(idealDirection.multiplyScalar(currentDistance));
+                camera.position.lerp(targetPosition, 0.05);
+            }
+            controlsRef.current.target.copy(cameraPivot);
+
+        } else {
+            const delta = b.subVectors(shipPosition, lastShipPosition.current);
+            if (!isPaused) {
+                camera.position.add(delta);
+            }
+
+            if (isIdle && !isPaused) {
+                const time = state.clock.getElapsedTime();
+                const angle = time * 0.1;
+                const radius = 40;
+                const height = 15;
+                const idlePosition = b.set(
+                    shipPosition.x + Math.sin(angle) * radius,
+                    waterLevel + height,
+                    shipPosition.z + Math.cos(angle) * radius
+                );
+                camera.position.lerp(idlePosition, 0.02);
+            }
+
+            const desiredDistance = camera.position.distanceTo(cameraPivot);
+            const direction = b.subVectors(camera.position, cameraPivot).normalize();
+
+            raycaster.set(cameraPivot, direction);
+            raycaster.far = desiredDistance;
+
+            const islandObjects = islandRefs.map(ref => ref.current).filter((obj): obj is THREE.Group => obj !== null);
+            if (islandObjects.length > 0) {
+                const intersects = raycaster.intersectObjects(islandObjects, true);
+                if (intersects.length > 0) {
+                    const intersectionDistance = intersects[0].distance;
+                    const newDistance = Math.max(8, intersectionDistance - 2.0);
+                    camera.position.copy(cameraPivot).add(direction.multiplyScalar(newDistance));
+                }
+            }
+            controlsRef.current.target.copy(cameraPivot);
+        }
+
+        lastShipPosition.current.copy(shipPosition);
+
+        if (!isPaused) {
+            controlsRef.current.update();
+        }
+    });
+
+    return null;
+}
+--- END OF FILE src/components/PlayerCamera.tsx ---
+
+--- START OF FILE src/components/PlayerShip.tsx ---
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import * as THREE from "three";
+import { useFrame } from "@react-three/fiber";
+import { Trail } from "@react-three/drei";
+import { usePlayerControls } from "../context/PlayerControlsContext.tsx";
+import { getAveragedWaveInfo, getDisplacedPosition } from "../utils/getWaveInfo.ts";
+import { ShipModel } from "../ShipModel.tsx";
+import { AllWaterUniforms } from "../types.ts";
+import { WORLD_BOUNDARY, ISLAND_COLLISION_RADIUS } from "../config/constants.ts";
+import { PROJECTS } from "../config/projects.ts";
+
+type PlayerShipProps = {
+    waterUniforms: Pick<
+        AllWaterUniforms,
+        | "uFbmSpeed" | "uWaveSpeed" | "uWaveDirection" | "uWaveSteepness" | "uWaveLength"
+    >;
+    waterLevel: number;
+    shipScale: number;
+    shipDimensions: { length: number; width: number };
+    updateSailingSound: (speed: number) => void;
+    isPhysicsPaused: boolean;
+};
+
+const upVector = new THREE.Vector3(0, 1, 0);
+const targetQuaternion = new THREE.Quaternion();
+const rotationMatrix = new THREE.Matrix4();
+const dampenedNormal = new THREE.Vector3();
+
+const worldPosLeft = new THREE.Vector3();
+const worldPosRight = new THREE.Vector3();
+
+export const PlayerShip = forwardRef<THREE.Group, PlayerShipProps>(
+    ({ waterUniforms, waterLevel, shipScale, shipDimensions, updateSailingSound, isPhysicsPaused }, ref) => {
+        const groupRef = useRef<THREE.Group>(null!);
+        useImperativeHandle(ref, () => groupRef.current);
+
+        const wakeSourceRefLeft = useRef<THREE.Object3D>(null!);
+        const wakeSourceRefRight = useRef<THREE.Object3D>(null!);
+        const projectedWakeTargetRefLeft = useRef<THREE.Object3D>(null!);
+        const projectedWakeTargetRefRight = useRef<THREE.Object3D>(null!);
+        const airWakeTargetRefLeft = useRef<THREE.Object3D>(null!);
+        const airWakeTargetRefRight = useRef<THREE.Object3D>(null!);
+
+        const [wakeOpacity, setWakeOpacity] = useState(0);
+        const currentSpeed = useRef(0);
+
+        const controls = usePlayerControls();
+        const physics = useRef({
+            position: new THREE.Vector3(0, 5, 0),
+            velocity: new THREE.Vector3(),
+            rotation: new THREE.Euler(0, Math.PI, 0),
+            angularVelocity: new THREE.Vector3(),
+        }).current;
+        const shipParams = useRef({
+            thrust: 45.0,
+            turnSpeed: 3.0,
+            linearDrag: 0.98,
+            angularDrag: 0.97,
+            rotationStability: 0.7,
+            animationSmoothing: 2.0,
+            waterInfluence: 0.2,
+        }).current;
+
+        useFrame(({ clock }, delta) => {
+            const dt = Math.min(delta, 1 / 30);
+
+            if (isPhysicsPaused) {
+                physics.velocity.multiplyScalar(0.9);
+                currentSpeed.current = physics.velocity.length();
+                updateSailingSound(currentSpeed.current);
+                const newOpacity = THREE.MathUtils.lerp(wakeOpacity, 0.0, dt * 2.0);
+                setWakeOpacity(newOpacity);
+                return;
+            }
+
+            const time = clock.getElapsedTime();
+            // FIX: Destructure analog controls (x, y)
+            const { forward, backward, left, right, x, y } = controls.current;
+            const basePosition: [number, number, number] = [physics.position.x, 0, physics.position.z];
+
+            const { position: wavePosition, normal: waveNormal, velocity: waterVelocity } = getAveragedWaveInfo(basePosition, shipDimensions, time, waterUniforms);
+            wavePosition.y += waterLevel;
+
+            physics.velocity.lerp(waterVelocity, dt * shipParams.waterInfluence);
+
+            // FIX: Use analog values for thrust and turning, with keyboard fallback
+            const thrustInput = y !== 0 ? y : (forward ? 1.0 : (backward ? -1.0 : 0));
+            const turnInput = x !== 0 ? -x : (left ? 1.0 : (right ? -1.0 : 0));
+
+            const acceleration = new THREE.Vector3();
+            const forwardVector = new THREE.Vector3(0, 0, 1).applyEuler(physics.rotation);
+
+            if (thrustInput !== 0) {
+                // Apply half thrust for backward movement
+                const effectiveThrust = thrustInput > 0 ? thrustInput : thrustInput * 0.5;
+                acceleration.add(forwardVector.multiplyScalar(shipParams.thrust * effectiveThrust));
+            }
+
+            physics.velocity.add(acceleration.multiplyScalar(dt));
+            physics.velocity.multiplyScalar(shipParams.linearDrag);
+
+            const potentialPosition = physics.position.clone().add(physics.velocity.clone().multiplyScalar(dt));
+
+            let collisionDetected = false;
+            for (const project of PROJECTS) {
+                const distToIsland = potentialPosition.distanceTo(project.position);
+                if (distToIsland < ISLAND_COLLISION_RADIUS) {
+                    const pushoutVector = potentialPosition.clone().sub(project.position).normalize();
+                    // Note: project.position includes y-offset, we should probably collide on the XZ plane
+                    const islandXZ = new THREE.Vector3(project.position.x, 0, project.position.z);
+                    const correctedPosition = islandXZ.clone().add(pushoutVector.multiplyScalar(ISLAND_COLLISION_RADIUS));
+                    physics.position.copy(correctedPosition);
+                    physics.velocity.multiplyScalar(0.9);
+                    collisionDetected = true;
+                    break; // Assume collision with one island is enough
+                }
+            }
+
+            if (!collisionDetected) {
+                potentialPosition.x = THREE.MathUtils.clamp(potentialPosition.x, -WORLD_BOUNDARY, WORLD_BOUNDARY);
+                potentialPosition.z = THREE.MathUtils.clamp(potentialPosition.z, -WORLD_BOUNDARY, WORLD_BOUNDARY);
+                physics.position.copy(potentialPosition);
+            }
+
+            currentSpeed.current = physics.velocity.length();
+            updateSailingSound(currentSpeed.current);
+
+            const turnFactor = Math.max(0.1, Math.min(1, currentSpeed.current / 2));
+            const angularAcceleration = new THREE.Vector3();
+            if (turnInput !== 0) {
+                angularAcceleration.y += shipParams.turnSpeed * turnFactor * turnInput;
+            }
+            physics.angularVelocity.add(angularAcceleration.multiplyScalar(dt));
+            physics.angularVelocity.multiplyScalar(shipParams.angularDrag);
+            physics.rotation.y += physics.angularVelocity.y * dt;
+
+            const targetPosition = wavePosition;
+            groupRef.current.position.lerp(targetPosition, dt * shipParams.animationSmoothing);
+            dampenedNormal.lerpVectors(waveNormal, upVector, shipParams.rotationStability).normalize();
+            const lookAtTarget = groupRef.current.position.clone().add(new THREE.Vector3(0, 0, 1).applyEuler(new THREE.Euler(0, physics.rotation.y, 0)));
+            rotationMatrix.lookAt(groupRef.current.position, lookAtTarget, dampenedNormal);
+            targetQuaternion.setFromRotationMatrix(rotationMatrix);
+            groupRef.current.quaternion.slerp(targetQuaternion, dt * shipParams.animationSmoothing);
+
+            const targetOpacity = currentSpeed.current > 0.5 ? 1.0 : 0.0;
+            const newOpacity = THREE.MathUtils.lerp(wakeOpacity, targetOpacity, dt * 2.0);
+            setWakeOpacity(newOpacity);
+
+            if (wakeSourceRefLeft.current && projectedWakeTargetRefLeft.current) {
+                wakeSourceRefLeft.current.getWorldPosition(worldPosLeft);
+                const projectedLeft = getDisplacedPosition([worldPosLeft.x, 0, worldPosLeft.z], time, waterUniforms);
+                projectedWakeTargetRefLeft.current.position.set(projectedLeft.x, projectedLeft.y + waterLevel, projectedLeft.z);
+            }
+            if (wakeSourceRefRight.current && projectedWakeTargetRefRight.current) {
+                wakeSourceRefRight.current.getWorldPosition(worldPosRight);
+                const projectedRight = getDisplacedPosition([worldPosRight.x, 0, worldPosRight.z], time, waterUniforms);
+                projectedWakeTargetRefRight.current.position.set(projectedRight.x, projectedRight.y + waterLevel, projectedRight.z);
+            }
+        });
+
+        return (
+            <>
+                <group ref={groupRef}>
+                    <ShipModel scale={shipScale} />
+                    <object3D ref={wakeSourceRefLeft} position={[-1.65 * shipScale, 0.5, 3.0 * shipScale]} />
+                    <object3D ref={wakeSourceRefRight} position={[1.65 * shipScale, 0.5, 3.0 * shipScale]} />
+                    <object3D ref={airWakeTargetRefLeft} position={[-2.2 * shipScale, 6.25 * shipScale, 0.5 * shipScale]} />
+                    <object3D ref={airWakeTargetRefRight} position={[2.2 * shipScale, 6.25 * shipScale, 0.5 * shipScale]} />
+                </group>
+
+                <object3D ref={projectedWakeTargetRefLeft} />
+                <object3D ref={projectedWakeTargetRefRight} />
+
+                {wakeOpacity > 0.01 && (
+                    <>
+                        <group renderOrder={2}>
+                            <Trail
+                                target={projectedWakeTargetRefLeft}
+                                width={16 * shipScale}
+                                length={20 * shipScale}
+                                color={"#ffffff"}
+                                attenuation={(t) => Math.pow(t, 2) * wakeOpacity}
+                            />
+                            <Trail
+                                target={projectedWakeTargetRefRight}
+                                width={16 * shipScale}
+                                length={20 * shipScale}
+                                color={"#ffffff"}
+                                attenuation={(t) => Math.pow(t, 2) * wakeOpacity}
+                            />
+                        </group>
+                        <Trail
+                            target={airWakeTargetRefLeft}
+                            width={6 * shipScale}
+                            length={4 * shipScale}
+                            color={"#ffffff"}
+                            attenuation={(t) => Math.pow(t, 2) * wakeOpacity * 0.6}
+                        />
+                        <Trail
+                            target={airWakeTargetRefRight}
+                            width={6 * shipScale}
+                            length={4 * shipScale}
+                            color={"#ffffff"}
+                            attenuation={(t) => Math.pow(t, 2) * wakeOpacity * 0.6}
+                        />
+                    </>
+                )}
+            </>
+        );
+    }
+);
+
+PlayerShip.displayName = "PlayerShip";
+--- END OF FILE src/components/PlayerShip.tsx ---
+
+--- START OF FILE src/components/ProjectShowcase.css ---
+.project-showcase-container {
+    width: 100%;
+    max-width: 1100px;
+    height: auto;
+    max-height: 90vh;
+    padding: 2.5rem;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+    align-items: center;
+    background-color: rgba(13, 26, 36, 0.85);
+    border: 2px solid #3d8dae;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.project-image-container {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.project-image-container img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.project-details-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #e0f2ff;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.project-details-container h1 {
+    font-size: 3rem;
+    margin: 0 0 1rem 0;
+    text-shadow: 0 0 10px rgba(173, 216, 230, 0.5);
+    text-align: left;
+}
+
+.project-details-container p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin: 0 0 2rem 0;
+    color: #cde6f5;
+    text-align: left;
+}
+
+.project-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.project-button {
+    padding: 12px 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+    text-align: center;
+    white-space: nowrap;
+    margin: 0;
+}
+
+.project-button.primary {
+    color: #e0f2ff;
+    background-color: #1a5c7a;
+    border: 2px solid #3d8dae;
+}
+
+.project-button.primary:hover {
+    background-color: #3d8dae;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(61, 141, 174, 0.4);
+}
+
+.project-button.secondary {
+    color: #e0f2ff;
+    background-color: transparent;
+    border: 2px solid #5a6875;
+}
+
+.project-button.secondary:hover {
+    background-color: #5a6875;
+    border-color: #8c9ba8;
+}
+
+@media (max-width: 768px) {
+    .project-showcase-container {
+        padding: 1.5rem;
+        gap: 1.5rem;
+        max-height: 95vh;
+        overflow-y: auto;
+        width: 90%;
+    }
+
+    .project-details-container {
+        /* FIX: Center text content on mobile */
+        text-align: center;
+    }
+
+    .project-details-container h1 {
+        font-size: 2rem;
+        text-align: center;
+    }
+
+    .project-details-container p {
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    .project-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+--- END OF FILE src/components/ProjectShowcase.css ---
+
+--- START OF FILE src/components/ProjectShowcase.tsx ---
+import './ProjectShowcase.css';
+
+type ProjectShowcaseProps = {
+    title: string;
+    description: string;
+    imageUrl: string;
+    projectUrl: string;
+    onReturn: () => void;
+};
+
+export function ProjectShowcase({
+    title,
+    description,
+    imageUrl,
+    projectUrl,
+    onReturn
+}: ProjectShowcaseProps) {
+    return (
+        <div className="project-showcase-container">
+            <div className="project-image-container">
+                <img src={imageUrl} alt={`${title} project screenshot`} />
+            </div>
+            <div className="project-details-container">
+                <h1>{title}</h1>
+                <p>{description}</p>
+                <div className="project-actions">
+                    <a
+                        href={projectUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="project-button primary"
+                    >
+                        Launch Project
+                    </a>
+                    <button onClick={onReturn} className="project-button secondary">
+                        Return to Ocean
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+--- END OF FILE src/components/ProjectShowcase.tsx ---
+
+--- START OF FILE src/components/TouchControls.css ---
+/* src/components/TouchControls.css */
+
+/* This query correctly hides the component on non-touch/mouse-based devices */
+@media (hover: hover) and (pointer: fine) {
+    .touch-controls-container {
+        display: none;
+    }
+}
+
+.touch-controls-container {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    z-index: 100;
+    user-select: none;
+}
+
+.joystick-base {
+    position: relative;
+    width: 28vmin;
+    height: 28vmin;
+    max-width: 150px;
+    max-height: 150px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.joystick-handle {
+    width: 14vmin;
+    height: 14vmin;
+    max-width: 75px;
+    max-height: 75px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    position: absolute;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    touch-action: none;
+}
+--- END OF FILE src/components/TouchControls.css ---
+
+--- START OF FILE src/components/TouchControls.tsx ---
+// src/components/TouchControls.tsx
+import { useRef, useState } from 'react';
+import './TouchControls.css';
+import { usePlayerControls } from '../context/PlayerControlsContext';
+import { useGameState } from '../context/GameStateContext';
+
+// Create separate dead zones to make forward movement easier.
+// A larger X dead zone means the stick must be moved further horizontally to register a turn.
+const Y_DEAD_ZONE = 0.1;
+const X_DEAD_ZONE = 0.3;
+
+export function TouchControls() {
+    const controlsRef = usePlayerControls();
+    const handleRef = useRef<HTMLDivElement>(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const { state } = useGameState();
+
+    const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+        setIsDragging(true);
+        updateJoystick(e.touches[0]);
+    };
+
+    const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+        if (!isDragging) return;
+        updateJoystick(e.touches[0]);
+    };
+
+    const handleTouchEnd = () => {
+        setIsDragging(false);
+        if (handleRef.current) {
+            handleRef.current.style.transform = `translate(0px, 0px)`;
+        }
+        // FIX: Reset all control values, including analog ones
+        controlsRef.current.forward = false;
+        controlsRef.current.backward = false;
+        controlsRef.current.left = false;
+        controlsRef.current.right = false;
+        controlsRef.current.x = 0;
+        controlsRef.current.y = 0;
+    };
+
+    const updateJoystick = (touch: React.Touch) => {
+        if (!handleRef.current?.parentElement) return;
+
+        const baseElement = handleRef.current.parentElement;
+        const handleElement = handleRef.current;
+
+        const baseRect = baseElement.getBoundingClientRect();
+        const radius = baseElement.clientWidth / 2;
+        const handleRadius = handleElement.clientWidth / 2;
+
+        const baseX = baseRect.left + radius;
+        const baseY = baseRect.top + radius;
+
+        let dx = touch.clientX - baseX;
+        let dy = touch.clientY - baseY;
+
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance > radius - handleRadius) {
+            dx = (dx / distance) * (radius - handleRadius);
+            dy = (dy / distance) * (radius - handleRadius);
+        }
+
+        handleElement.style.transform = `translate(${dx}px, ${dy}px)`;
+
+        const normalizedX = dx / (radius - handleRadius);
+        const normalizedY = -dy / (radius - handleRadius);
+
+        // FIX: Set analog x and y values instead of booleans
+        controlsRef.current.y = Math.abs(normalizedY) > Y_DEAD_ZONE ? normalizedY : 0;
+        controlsRef.current.x = Math.abs(normalizedX) > X_DEAD_ZONE ? normalizedX : 0;
+
+        // Clear boolean flags to prevent conflicts
+        controlsRef.current.forward = false;
+        controlsRef.current.backward = false;
+        controlsRef.current.left = false;
+        controlsRef.current.right = false;
+    };
+
+    if (state.gameMode !== 'ocean' || state.mapMode !== 'minimap') {
+        return null;
+    }
+
+    return (
+        <div className="touch-controls-container">
+            <div
+                className="joystick-base"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                onTouchCancel={handleTouchEnd}
+            >
+                <div ref={handleRef} className="joystick-handle" />
+            </div>
+        </div>
+    );
+}
+--- END OF FILE src/components/TouchControls.tsx ---
+
+--- START OF FILE src/components/UIController.tsx ---
+import { useFrame } from "@react-three/fiber";
+import * as THREE from "three";
+import { MAP_PIXELS_PER_UNIT, MINIMAP_PIXELS_PER_UNIT } from "../config/constants";
+import { isMobile } from "../utils/isMobile";
+
+type UIControllerProps = {
+    shipRef: React.RefObject<THREE.Group | null>;
+    minimapRotatorRef: React.RefObject<HTMLDivElement | null>;
+    minimapTranslatorRef: React.RefObject<HTMLDivElement | null>;
+    mapPlayerIconRef: React.RefObject<HTMLDivElement | null>;
+    mapImageContainerRef: React.RefObject<HTMLDivElement | null>;
+};
+
+const euler = new THREE.Euler();
+
+export function UIController({
+    shipRef,
+    minimapRotatorRef,
+    minimapTranslatorRef,
+    mapPlayerIconRef,
+    mapImageContainerRef
+}: UIControllerProps) {
+    useFrame(() => {
+        if (!shipRef?.current) return;
+
+        const shipPosition = shipRef.current.position;
+        euler.setFromQuaternion(shipRef.current.quaternion, 'YXZ');
+        const rotation = euler.y;
+
+        // Minimap logic (no change)
+        if (minimapRotatorRef.current && minimapTranslatorRef.current) {
+            const translateX = -shipPosition.x * MINIMAP_PIXELS_PER_UNIT;
+            const translateY = -shipPosition.z * MINIMAP_PIXELS_PER_UNIT;
+            minimapRotatorRef.current.style.transform = `rotate(${rotation}rad)`;
+            minimapTranslatorRef.current.style.transform = `translate(${translateX}px, ${translateY}px)`;
+        }
+
+        // --- FIX for Full Map ---
+        if (isMobile) {
+            // Mobile behavior: Player is centered, map moves
+            if (mapImageContainerRef.current) {
+                const translateX = -shipPosition.x * MAP_PIXELS_PER_UNIT;
+                const translateY = -shipPosition.z * MAP_PIXELS_PER_UNIT;
+                mapImageContainerRef.current.style.transform = `translate(-50%, -50%) translate(${translateX}px, ${translateY}px)`;
+            }
+            if (mapPlayerIconRef.current) {
+                mapPlayerIconRef.current.style.transform = `translate(-50%, -50%) rotate(${-rotation}rad)`;
+            }
+        } else {
+            // Desktop behavior: Map is fixed, player moves
+            if (mapImageContainerRef.current) {
+                mapImageContainerRef.current.style.transform = `translate(-50%, -50%)`;
+            }
+            if (mapPlayerIconRef.current) {
+                const translateX = shipPosition.x * MAP_PIXELS_PER_UNIT;
+                const translateY = shipPosition.z * MAP_PIXELS_PER_UNIT;
+                mapPlayerIconRef.current.style.transform = `translate(-50%, -50%) translate(${translateX}px, ${translateY}px) rotate(${-rotation}rad)`;
+            }
+        }
+    });
+
+    return null;
+}
+--- END OF FILE src/components/UIController.tsx ---
+
+--- START OF FILE src/components/water/Blend.ts ---
+export default /* glsl */ `
+vec4 Overwrite(vec4 Base, vec4 Blend, float Opacity) {
+    return mix(Base, Blend, Opacity);
+}
+
+vec4 LinearDodge(vec4 Base, vec4 Blend, float Opacity) {
+    vec4 Out = Base + Blend;
+    Out = mix(Base, Out, Opacity);
+    return Out;
+}
+`;
+
+--- END OF FILE src/components/water/Blend.ts ---
+
+--- START OF FILE src/components/water/DistortUv.ts ---
+export default /* glsl */ `
+vec2 DistortUv(vec2 uv, float amount) {
+    float time = uTime;
+
+    uv.y += amount * 0.01 * (sin(uv.x * 3.5 + time * 0.35) + sin(uv.x * 4.8 + time * 1.05) + sin(uv.x * 7.3 + time * 0.45)) / 3.0;
+    uv.x += amount * 0.12 * (sin(uv.y * 4.0 + time * 0.50) + sin(uv.y * 6.8 + time * 0.75) + sin(uv.y * 11.3 + time * 0.2)) / 3.0;
+    uv.y += amount * 0.12 * (sin(uv.x * 4.2 + time * 0.64) + sin(uv.x * 6.3 + time * 1.65) + sin(uv.x * 8.2 + time * 0.45)) / 3.0;
+    return uv;
+}
+`;
+
+--- END OF FILE src/components/water/DistortUv.ts ---
+
+--- START OF FILE src/components/water/Fresnel.ts ---
+export default /* glsl */ `
+float Fresnel(float power) {
+    vec3 normal = vNormal;
+    vec3 viewDir = normalize(vViewPosition);
+
+    return pow((1.0 - saturate(dot(normalize(normal), normalize(viewDir)))), power);
+}
+`;
+
+--- END OF FILE src/components/water/Fresnel.ts ---
+
+--- START OF FILE src/components/water/HSVLerp.ts ---
+export default /* glsl */ `
+vec3 RGBToHSV(vec3 rgb) {
+    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+    vec4 P = mix(vec4(rgb.bg, K.wz), vec4(rgb.gb, K.xy), step(rgb.b, rgb.g));
+    vec4 Q = mix(vec4(P.xyw, rgb.r), vec4(rgb.r, P.yzx), step(P.x, rgb.r));
+    float D = Q.x - min(Q.w, Q.y);
+    float E = 1.0e-10;
+    return vec3(abs(Q.z + (Q.w - Q.y)/(6.0 * D + E)), D / (Q.x + E), Q.x);
+}
+
+vec3 HSVToRGB(vec3 hsv) {
+    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+    vec3 P = abs(fract(hsv.xxx + K.xyz) * 6.0 - K.www);
+    return hsv.z * mix(K.xxx, saturate(P - K.xxx), hsv.y);
+}
+
+vec4 HSVLerp(vec4 A, vec4 B, float T) {
+    A.xyz = RGBToHSV(A.xyz);
+    B.xyz = RGBToHSV(B.xyz);
+
+    float t = T; // used to mix alpha, needs to remain unchanged
+
+    float hue;
+    float d = B.x - A.x; // hue difference
+
+    if(A.x > B.x) {
+        float temp = B.x;
+        B.x = A.x;
+        A.x = temp;
+
+        d = -d;
+        T = 1.0 - t;
+    }
+
+    if(d > 0.5) {
+        A.x = A.x + 1.0;
+        hue = mod((A.x + t * (B.x - A.x)), 1.0);
+    }
+
+    if(d <= 0.5) hue = A.x + t * d;
+
+    float sat = A.y + t * (B.y - A.y);
+    float val = A.z + t * (B.z - A.z);
+    float alpha = A.w + t * (B.w - A.w);
+
+    vec3 rgb = HSVToRGB(vec3(hue,sat,val));
+    
+    return vec4(rgb, alpha);
+}
+`;
+
+--- END OF FILE src/components/water/HSVLerp.ts ---
+
+--- START OF FILE src/components/water/index.tsx ---
+import * as THREE from "three";
+import * as React from "react";
+import { useTexture } from "@react-three/drei";
+import { useFrame, useThree, RootState } from "@react-three/fiber";
+import CSM from "three-custom-shader-material";
+import { patchShaders } from "gl-noise/build/glNoise.m";
+
+import HSVLerp from "./HSVLerp.ts";
+import Fresnel from "./Fresnel.ts";
+import DistortUv from "./DistortUv.ts";
+import Blend from "./Blend.ts";
+import { usePlanarReflections } from "./usePlanarReflections.ts";
+import { AllWaterUniforms } from "../../types.ts";
+import { asset } from "../../utils/assetUrl.ts"; // Import the helper
+
+import vertexShader from "./water.vert?raw";
+import fragmentShader from "./water.frag?raw";
+
+type WaterProps = React.JSX.IntrinsicElements['group'] & {
+  waterUniforms: Omit<
+    AllWaterUniforms,
+    | "uReflectionEnabled" | "uReflectedTexture" | "uReflectionTextureMatrix" | "uDepthTexture"
+    | "uCameraNearFar" | "uResolution" | "uTime" | "uFoamTexture" | "uNormalsTexture"
+  >;
+  fogColor: string;
+  fogNear: number;
+  fogFar: number;
+};
+
+const finalFragmentShader = fragmentShader
+  .replace("#include <hsv_lerp>", HSVLerp)
+  .replace("#include <fresnel>", Fresnel)
+  .replace("#include <distort_uv>", DistortUv)
+  .replace("#include <blend>", Blend);
+
+export function Water({ waterUniforms, fogColor, fogNear, fogFar, ...props }: WaterProps) {
+  const waterRef = React.useRef<THREE.Mesh>(null);
+  const { size, viewport, scene, gl, camera } = useThree();
+
+  const depthFBO = React.useMemo(() => {
+    const w = size.width * viewport.dpr;
+    const h = size.height * viewport.dpr;
+    const target = new THREE.WebGLRenderTarget(w, h);
+    target.depthTexture = new THREE.DepthTexture(w, h, THREE.FloatType);
+    return target;
+  }, [size, viewport]);
+
+  const hasReflection = true;
+
+  // FIX: Use the asset helper for texture paths
+  const [foamTexture, normalsTexture] = useTexture([asset("foam.png"), asset("normal.jpg")]);
+  const planarReflections = usePlanarReflections(waterRef, hasReflection);
+
+  const uniforms = React.useMemo(
+    () => ({
+      ...waterUniforms,
+      ...planarReflections.uniforms,
+      uDepthTexture: { value: depthFBO.depthTexture },
+      uCameraNearFar: { value: new THREE.Vector2() },
+      uResolution: { value: new THREE.Vector2() },
+      uTime: { value: 0 },
+      uFoamTexture: { value: foamTexture },
+      uNormalsTexture: { value: normalsTexture },
+    }),
+    [depthFBO, foamTexture, normalsTexture, planarReflections, waterUniforms]
+  );
+
+  React.useEffect(() => {
+    uniforms.uHorizonColor.value.set(fogColor);
+    uniforms.uFogNear.value = fogNear;
+    uniforms.uFogFar.value = fogFar;
+  }, [fogColor, fogNear, fogFar, uniforms]);
+
+  useFrame((state: RootState) => {
+    uniforms.uTime.value = state.clock.getElapsedTime();
+    uniforms.uCameraNearFar.value.x = camera.near;
+    uniforms.uCameraNearFar.value.y = camera.far;
+    uniforms.uResolution.value.x = size.width * viewport.dpr;
+    uniforms.uResolution.value.y = size.height * viewport.dpr;
+
+    if (waterRef.current) waterRef.current.visible = false;
+    gl.setRenderTarget(depthFBO);
+    gl.clear();
+    gl.render(scene, camera);
+    gl.setRenderTarget(null);
+    if (waterRef.current) waterRef.current.visible = true;
+
+    planarReflections.render(state);
+  });
+
+  return (
+    <group {...props}>
+      <mesh receiveShadow rotation-x={-Math.PI / 2} ref={waterRef} renderOrder={1}>
+        <planeGeometry args={[2000, 2000, 256, 256]} />
+        <CSM
+          baseMaterial={THREE.MeshStandardMaterial}
+          key={vertexShader + finalFragmentShader}
+          uniforms={uniforms}
+          vertexShader={patchShaders(vertexShader)}
+          fragmentShader={patchShaders(finalFragmentShader)}
+          patchMap={{
+            csm_FragNormal: {
+              "#include <normal_fragment_maps>": `normal = csm_FragNormal;`,
+            },
+          }}
+          roughness={0}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+    </group>
+  );
+}
+--- END OF FILE src/components/water/index.tsx ---
+
+--- START OF FILE src/components/water/usePlanarReflections.ts ---
+import * as THREE from "three";
+import * as React from "react";
+import { useThree, RootState } from "@react-three/fiber";
+
+const resolution = 512,
+  reflectorOffset = 0;
+
+export function usePlanarReflections(
+  // Allow the ref to be null initially
+  waterRef: React.RefObject<THREE.Mesh | null>,
+  hasReflection: boolean
+) {
+  const { camera } = useThree();
+  const [reflectorPlane] = React.useState(() => new THREE.Plane());
+  const [normal] = React.useState(() => new THREE.Vector3());
+  const [reflectorWorldPosition] = React.useState(() => new THREE.Vector3());
+  const [cameraWorldPosition] = React.useState(() => new THREE.Vector3());
+  const [rotationMatrix] = React.useState(() => new THREE.Matrix4());
+  const [lookAtPosition] = React.useState(() => new THREE.Vector3(0, 0, -1));
+  const [clipPlane] = React.useState(() => new THREE.Vector4());
+  const [view] = React.useState(() => new THREE.Vector3());
+  const [target] = React.useState(() => new THREE.Vector3());
+  const [q] = React.useState(() => new THREE.Vector4());
+  const [textureMatrix] = React.useState(() => new THREE.Matrix4());
+  const [virtualCamera] = React.useState(() => new THREE.PerspectiveCamera());
+
+  const beforeRender = React.useCallback(() => {
+    const parent = waterRef.current;
+    if (!parent) return;
+
+    reflectorWorldPosition.setFromMatrixPosition(parent.matrixWorld);
+    cameraWorldPosition.setFromMatrixPosition(camera.matrixWorld);
+    rotationMatrix.extractRotation(parent.matrixWorld);
+    normal.set(0, 1, 0); // Water is on XZ plane, so normal is Y up
+    normal.applyMatrix4(rotationMatrix);
+    reflectorWorldPosition.addScaledVector(normal, reflectorOffset);
+    view.subVectors(reflectorWorldPosition, cameraWorldPosition);
+    if (view.dot(normal) > 0) return;
+    view.reflect(normal).negate();
+    view.add(reflectorWorldPosition);
+    rotationMatrix.extractRotation(camera.matrixWorld);
+    lookAtPosition.set(0, 0, -1);
+    lookAtPosition.applyMatrix4(rotationMatrix);
+    lookAtPosition.add(cameraWorldPosition);
+    target.subVectors(reflectorWorldPosition, lookAtPosition);
+    target.reflect(normal).negate();
+    target.add(reflectorWorldPosition);
+    virtualCamera.position.copy(view);
+    virtualCamera.up.set(0, 1, 0);
+    virtualCamera.up.applyMatrix4(rotationMatrix);
+    virtualCamera.up.reflect(normal);
+    virtualCamera.lookAt(target);
+    virtualCamera.far = camera.far;
+    virtualCamera.updateMatrixWorld();
+    virtualCamera.projectionMatrix.copy(camera.projectionMatrix);
+    textureMatrix.set(
+      0.5, 0.0, 0.0, 0.5,
+      0.0, 0.5, 0.0, 0.5,
+      0.0, 0.0, 0.5, 0.5,
+      0.0, 0.0, 0.0, 1.0
+    );
+    textureMatrix.multiply(virtualCamera.projectionMatrix);
+    textureMatrix.multiply(virtualCamera.matrixWorldInverse);
+    textureMatrix.multiply(parent.matrixWorld);
+    reflectorPlane.setFromNormalAndCoplanarPoint(
+      normal,
+      reflectorWorldPosition
+    );
+    reflectorPlane.applyMatrix4(virtualCamera.matrixWorldInverse);
+    clipPlane.set(
+      reflectorPlane.normal.x,
+      reflectorPlane.normal.y,
+      reflectorPlane.normal.z,
+      reflectorPlane.constant
+    );
+    const projectionMatrix = virtualCamera.projectionMatrix;
+    q.x =
+      (Math.sign(clipPlane.x) + projectionMatrix.elements[8]) /
+      projectionMatrix.elements[0];
+    q.y =
+      (Math.sign(clipPlane.y) + projectionMatrix.elements[9]) /
+      projectionMatrix.elements[5];
+    q.z = -1.0;
+    q.w = (1.0 + projectionMatrix.elements[10]) / projectionMatrix.elements[14];
+    clipPlane.multiplyScalar(2.0 / clipPlane.dot(q));
+    projectionMatrix.elements[2] = clipPlane.x;
+    projectionMatrix.elements[6] = clipPlane.y;
+    projectionMatrix.elements[10] = clipPlane.z + 1.0;
+    projectionMatrix.elements[14] = clipPlane.w;
+  }, [camera, waterRef]);
+
+  const fbo1 = React.useMemo(() => {
+    const parameters = {
+      minFilter: THREE.LinearFilter,
+      magFilter: THREE.LinearFilter,
+      type: THREE.HalfFloatType,
+    };
+    const fbo = new THREE.WebGLRenderTarget(resolution, resolution, parameters);
+    fbo.depthBuffer = true;
+    fbo.depthTexture = new THREE.DepthTexture(
+      resolution,
+      resolution,
+      THREE.UnsignedShortType
+    );
+    return fbo;
+  }, []);
+
+  const uniforms = React.useMemo(
+    () => ({
+      uReflectionEnabled: { value: hasReflection },
+      uReflectedTexture: { value: fbo1.texture },
+      uReflectionTextureMatrix: { value: textureMatrix },
+    }),
+    [fbo1, textureMatrix, hasReflection]
+  );
+
+  React.useEffect(
+    () => void (uniforms.uReflectionEnabled.value = hasReflection),
+    [hasReflection, uniforms]
+  );
+
+  return {
+    uniforms,
+    render: ({ gl, scene }: RootState) => {
+      const parent = waterRef.current;
+      if (!parent || !hasReflection) return;
+
+      parent.visible = false;
+      const currentXrEnabled = gl.xr.enabled;
+      const currentShadowAutoUpdate = gl.shadowMap.autoUpdate;
+      beforeRender();
+      gl.xr.enabled = false;
+      gl.shadowMap.autoUpdate = false;
+      gl.setRenderTarget(fbo1);
+      gl.state.buffers.depth.setMask(true);
+      if (!gl.autoClear) gl.clear();
+      gl.render(scene, virtualCamera);
+      gl.xr.enabled = currentXrEnabled;
+      gl.shadowMap.autoUpdate = currentShadowAutoUpdate;
+      parent.visible = true;
+      gl.setRenderTarget(null);
+    },
+  };
+}
+--- END OF FILE src/components/water/usePlanarReflections.ts ---
+
+--- START OF FILE src/components/water/water.frag ---
+uniform sampler2D uDepthTexture;
+uniform sampler2D uReflectedTexture;
+uniform vec2 uCameraNearFar;
+uniform vec2 uResolution;
+uniform float uTime;
+
+uniform float uWaterDepth;
+uniform vec3 uWaterShallowColor;
+uniform vec3 uWaterDeepColor;
+uniform vec3 uHorizonColor;
+uniform float uHorizonDistance;
+uniform sampler2D uFoamTexture;
+uniform vec3 uFoamColor;
+uniform float uFoamAlpha;
+uniform float uFoamBlend;
+uniform float uFoamIntersectionFade;
+uniform float uFoamIntersectionCutoff;
+uniform sampler2D uNormalsTexture;
+
+uniform float uWaveCrestStart;
+uniform float uWaveCrestEnd;
+
+uniform vec3 uWaveCrestColor;
+uniform float uReflectionFresnelPower;
+uniform float uReflectionStrength;
+uniform float uReflectionMix;
+uniform bool uReflectionEnabled;
+uniform float uFoamTiling;
+uniform float uFoamSpeed;
+uniform float uFoamDistortion;
+uniform float uNormalsScale;
+uniform float uNormalsSpeed;
+uniform float uNormalsStrength;
+uniform float uPlaneSize;
+uniform float uFogNear;
+uniform float uFogFar;
+
+varying vec2 vUv;
+varying vec3 vWorldPosition;
+varying vec3 vViewVector;
+varying vec3 vCameraPosition;
+varying vec4 vReflectionUv;
+varying float vWaveHeight;
+
+float getDepth(vec2 screenPosition) {
+    return texture2D(uDepthTexture, screenPosition).x;
+}
+
+float getViewZ(float depth) {
+    return perspectiveDepthToViewZ(depth, uCameraNearFar.x, uCameraNearFar.y);
+}
+
+vec3 getWorldSpaceScenePosition(vec2 uv) {
+    vec3 viewVector = -vViewVector;
+    float screenPositionZ = getViewZ(gl_FragCoord.z);
+    float sceneDepthZ = getViewZ(getDepth(uv));
+    viewVector = viewVector / screenPositionZ;
+    viewVector = viewVector * sceneDepthZ;
+    viewVector = viewVector + vCameraPosition;
+    return viewVector;
+}
+
+// Injected GLSL functions will go here
+#include <hsv_lerp>
+#include <fresnel>
+#include <distort_uv>
+#include <blend>
+
+vec2 panUV(vec2 _uv, float _tiling, float _speed) {
+    return mod((_uv * _tiling) + (uTime * _speed), 1.0);
+}
+
+vec4 overlay(vec4 base, vec4 over, float blend) {
+    float overAlpha = saturate(over.a);
+    return mix(Overwrite(base, over, overAlpha), LinearDodge(base, over, overAlpha), blend);
+}
+
+void main() {
+    vec2 screenUV = gl_FragCoord.xy / uResolution;
+    vec2 worldUv = mod(vWorldPosition.xz, uPlaneSize) * 0.1;
+
+    vec3 worldSpaceScenePosition = getWorldSpaceScenePosition(screenUV);
+    float shoreDepth = max(0.0, vWorldPosition.y - worldSpaceScenePosition.y);
+    float shoreT = smoothstep(0.0, uWaterDepth, shoreDepth);
+    vec3 waterColor = mix(uWaterShallowColor, uWaterDeepColor, shoreT);
+    vec4 color = vec4(waterColor, 1.0);
+
+    color = HSVLerp(color, vec4(uHorizonColor, 1.0), Fresnel(uHorizonDistance));
+
+    float intersectionFoamDepth = saturate(exp(-shoreDepth / uFoamIntersectionFade));
+    float intersectionFoamMask = intersectionFoamDepth + 0.1;
+    intersectionFoamMask = smoothstep(1.0 - uFoamIntersectionFade, 1.0, intersectionFoamMask);
+
+    vec2 foamUv = panUV(worldUv, uFoamTiling, uFoamSpeed);
+    foamUv = DistortUv(foamUv, uFoamDistortion);
+    float foamTexColor = texture2D(uFoamTexture, foamUv).r;
+    float foamMask = foamTexColor * intersectionFoamMask;
+    foamMask = smoothstep(1.0 - uFoamIntersectionCutoff, 1.0, foamMask);
+    vec4 foam = vec4(uFoamColor, foamMask * uFoamAlpha);
+    color = overlay(color, foam, uFoamBlend);
+
+    float crestFactor = smoothstep(uWaveCrestStart, uWaveCrestEnd, vWaveHeight);
+    color.rgb = mix(color.rgb, uWaveCrestColor, crestFactor);
+
+    vec2 normalUvA = panUV(worldUv, uNormalsScale, uNormalsSpeed);
+    vec3 normalsA = texture2D(uNormalsTexture, normalUvA).rgb * 2.0 - 1.0;
+    vec2 normalUvB = panUV(worldUv, uNormalsScale * 0.75, uNormalsSpeed * -0.6);
+    vec3 normalsB = texture2D(uNormalsTexture, normalUvB).rgb * 2.0 - 1.0;
+    vec3 normals = normalize(normalsA + normalsB);
+    normals = normalize(vec3(normals.xy * uNormalsStrength, normals.z));
+
+    if (uReflectionEnabled) {
+        vec4 reflected = texture2DProj(uReflectedTexture, vReflectionUv + vec4(normals, 0.0) * 0.1);
+        float reflectionFresnel = Fresnel(uReflectionFresnelPower) * uReflectionStrength;
+        vec4 finalReflectionColor = mix(vec4(0.0), reflected, reflectionFresnel);
+        float distanceToCamera = distance(vCameraPosition, vWorldPosition);
+        float fogFactor = smoothstep(uFogNear, uFogFar, distanceToCamera);
+        finalReflectionColor.rgb = mix(finalReflectionColor.rgb, uHorizonColor, fogFactor);
+        color = overlay(color, finalReflectionColor, uReflectionMix);
+    }
+
+    csm_DiffuseColor = color;
+    csm_FragNormal = normals;
+}
+--- END OF FILE src/components/water/water.frag ---
+
+--- START OF FILE src/components/water/water.vert ---
+varying vec2 vUv;
+varying vec3 vWorldPosition;
+varying vec3 vViewVector;
+varying vec3 vCameraPosition;
+varying vec4 vReflectionUv;
+varying float vWaveHeight;
+
+uniform float uTime;
+uniform float uWaveSteepness;
+uniform float uWaveLength;
+uniform float uWaveSpeed;
+uniform float uFbmSpeed;
+uniform vec3 uWaveDirection;
+uniform mat4 uReflectionTextureMatrix;
+
+vec2 angleToDirection(float angle) {
+    return vec2(cos(angle * (PI / 180.0)), sin(angle * (PI / 180.0)));
+}
+
+float fbm(vec2 p) {
+    float total = 0.0;
+    float amplitude = 1.0;
+    float frequency = 1.0;
+    float lacunarity = 2.3;
+    float gain = 0.4;
+    int octaves = 5;
+    float maxValue = 0.0;
+    for (int i = 0; i < octaves; i++) {
+        total += gln_simplex(p * frequency) * amplitude;
+        maxValue += amplitude;
+        frequency *= lacunarity;
+        amplitude *= gain;
+    }
+    return total / maxValue;
+}
+
+vec3 gerstnerWave(vec3 point, vec2 direction, float steepness, float waveLength, float time) {
+    float k = 2.0 * PI / waveLength;
+    float a = steepness / k;
+    float d_dot_p = point.x * direction.x + point.y * direction.y;
+    float f = k * (d_dot_p - time);
+    float cos_f = cos(f);
+    float sin_f = sin(f);
+
+    return vec3(
+        direction.x * a * cos_f,
+        direction.y * a * cos_f,
+        a * sin_f
+    );
+}
+
+vec3 displace(vec3 point) {
+    vec3 totalDisplacement = vec3(0.0);
+
+    float noiseInput = (uTime * uFbmSpeed);
+    float fbmNoise = gln_normalize(fbm((point.xy * 0.5) + noiseInput));
+    totalDisplacement.z += fbmNoise * 0.5;
+
+    float waveTime = uTime * uWaveSpeed;
+
+    vec2 dirA = angleToDirection(uWaveDirection.x);
+    totalDisplacement += gerstnerWave(point, dirA, uWaveSteepness, uWaveLength, waveTime);
+
+    vec2 dirB = angleToDirection(uWaveDirection.y);
+    totalDisplacement += gerstnerWave(point, dirB, uWaveSteepness * 0.5, uWaveLength * 0.5, waveTime);
+
+    vec2 dirC = angleToDirection(uWaveDirection.z);
+    totalDisplacement += gerstnerWave(point, dirC, uWaveSteepness * 0.25, uWaveLength * 0.25, waveTime);
+
+    vWaveHeight = totalDisplacement.z;
+    return point + totalDisplacement;
+}
+
+vec3 orthogonal(vec3 v) {
+    return normalize(abs(v.x) > abs(v.z) ? vec3(-v.y, v.x, 0.0) : vec3(0.0, -v.z, v.y));
+}
+
+vec3 recalcNormals(vec3 newPos) {
+    float offset = 0.001;
+    vec3 tangent = orthogonal(normal);
+    vec3 bitangent = normalize(cross(normal, tangent));
+    vec3 neighbour1 = position + tangent * offset;
+    vec3 neighbour2 = position + bitangent * offset;
+    vec3 displacedNeighbour1 = displace(neighbour1);
+    vec3 displacedNeighbour2 = displace(neighbour2);
+    vec3 displacedTangent = displacedNeighbour1 - newPos;
+    vec3 displacedBitangent = displacedNeighbour2 - newPos;
+    return normalize(cross(displacedTangent, displacedBitangent));
+}
+
+void main() {
+    csm_Position = displace(position);
+    csm_Normal = recalcNormals(csm_Position);
+    vUv = uv;
+    vWorldPosition = (modelMatrix * vec4(csm_Position, 1.0)).xyz;
+    vViewVector = cameraPosition - vWorldPosition;
+    vCameraPosition = cameraPosition;
+    vReflectionUv = uReflectionTextureMatrix * vec4(csm_Position, 1.0);
+}
+--- END OF FILE src/components/water/water.vert ---
+
+--- START OF FILE src/config/constants.ts ---
+import * as THREE from 'three';
+
+// --- Timing & Durations ---
+export const FADE_DURATION = 1500;
+export const PROJECT_FADE_DURATION = 1000;
+export const INACTIVITY_TIMEOUT = 5000;
+
+// --- Gameplay & World ---
+export const WORLD_BOUNDARY = 450;
+export const ISLAND_INTERACTION_RADIUS = 80;
+export const ISLAND_COLLISION_RADIUS = 55;
+export const DUCK_COLLECTION_RADIUS = 15;
+
+// --- UI & Map ---
+export const MINIMAP_WORLD_SIZE = 1000;
+export const MINIMAP_IMAGE_SIZE_PX = 400;
+export const MINIMAP_PIXELS_PER_UNIT = MINIMAP_IMAGE_SIZE_PX / MINIMAP_WORLD_SIZE;
+export const MAP_WORLD_SIZE = 1000;
+export const MAP_IMAGE_SIZE_PX = 800;
+export const MAP_PIXELS_PER_UNIT = MAP_IMAGE_SIZE_PX / MAP_WORLD_SIZE;
+
+// --- Duck Behavior ---
+export const DUCK_FOLLOW_SPEED = 2;
+export const DUCK_FOLLOW_OFFSETS: [number, number, number][] = [
+    [-5, 0, 12],
+    [5, 0, 12],
+    [-10, 0, 20],
+    [10, 0, 20],
+    [0, 0, 20],
+];
+--- END OF FILE src/config/constants.ts ---
+
+--- START OF FILE src/config/projects.ts ---
+import * as THREE from 'three';
+import { asset } from '../utils/assetUrl';
+import { Project } from '../types';
+
+/**
+ * The single source of truth for all project island data.
+ * To add a new island, simply add a new object to this array.
+ */
+export const PROJECTS: Project[] = [
+    {
+        id: 'eneida',
+        name: 'Project Eneida',
+        description: "An interactive portfolio terminal inspired by retro-futuristic interfaces. Explore projects, uncover secrets, and even destabilize the system for fun.",
+        position: new THREE.Vector3(0, -1.5, -300),
+        rotationY: -Math.PI / 4,
+        scale: 2,
+        modelUrl: asset("eneida_island.glb"),
+        imageUrl: asset("projects/eneida_screenshot.png"),
+        projectUrl: "https://ducklin.de/eneida",
+    },
+    {
+        id: 'useek',
+        name: 'Project Useek',
+        description: "A proof-of-concept for a university course search platform, designed to simplify academic planning. (Note: This is a conceptual project).",
+        position: new THREE.Vector3(250, -1.5, 150),
+        rotationY: Math.PI / 0.2,
+        scale: 2.5,
+        modelUrl: asset("useek_island.glb"),
+        imageUrl: asset("projects/useek_screenshot.png"),
+        projectUrl: "#", // Replace with actual URL when available
+    },
+    // --- Future Projects ---
+    // {
+    //     id: 'duckslayer',
+    //     name: 'Duck Slayer',
+    //     description: "Description for Duck Slayer.",
+    //     position: new THREE.Vector3(-200, -1.5, -50),
+    //     rotationY: 0,
+    //     scale: 2,
+    //     modelUrl: asset("duckslayer_island.glb"),
+    //     imageUrl: asset("projects/duckslayer_screenshot.png"),
+    //     projectUrl: "#",
+    // },
+];
+--- END OF FILE src/config/projects.ts ---
+
+--- START OF FILE src/context/GameStateContext.tsx ---
+import { createContext, useReducer, useContext, ReactNode } from 'react';
+
+type GameMode = 'intro' | 'dialogue' | 'ocean' | 'island' | 'transitioning';
+
+type State = {
+    gameMode: GameMode;
+    isLoading: boolean;
+    isLoaded: boolean;
+    projectRendered: boolean;
+    mapMode: 'minimap' | 'full';
+    nearIslandId: string | null;
+    currentIslandId: string | null;
+};
+
+type Action =
+    | { type: 'START_LOADING' }
+    | { type: 'FINISH_LOADING' }
+    | { type: 'DIALOGUE_COMPLETE' }
+    | { type: 'TOGGLE_MAP' }
+    | { type: 'ENTER_ISLAND'; payload: string }
+    | { type: 'RETURN_TO_OCEAN' }
+    | { type: 'TRANSITION_COMPLETE' }
+    | { type: 'SET_NEAR_ISLAND'; payload: string | null };
+
+const initialState: State = {
+    gameMode: 'intro',
+    isLoading: false,
+    isLoaded: false,
+    projectRendered: false,
+    mapMode: 'minimap',
+    nearIslandId: null,
+    currentIslandId: null,
+};
+
+function gameReducer(state: State, action: Action): State {
+    switch (action.type) {
+        case 'START_LOADING':
+            if (state.gameMode !== 'intro' || state.isLoading) return state;
+            return { ...state, isLoading: true };
+
+        case 'FINISH_LOADING':
+            if (!state.isLoading || state.isLoaded) return state;
+            return { ...state, isLoading: false, isLoaded: true, gameMode: 'dialogue' };
+
+        case 'DIALOGUE_COMPLETE':
+            if (state.gameMode !== 'dialogue') return state;
+            return { ...state, gameMode: 'ocean' };
+
+        case 'TOGGLE_MAP':
+            if (state.gameMode !== 'ocean') return state;
+            return { ...state, mapMode: state.mapMode === 'minimap' ? 'full' : 'minimap' };
+        case 'SET_NEAR_ISLAND':
+            return { ...state, nearIslandId: action.payload };
+        case 'ENTER_ISLAND':
+            if (state.gameMode !== 'ocean' || !state.nearIslandId) return state;
+            return { ...state, gameMode: 'transitioning', currentIslandId: action.payload };
+        case 'RETURN_TO_OCEAN':
+            if (state.gameMode !== 'island') return state;
+            return { ...state, gameMode: 'transitioning' };
+        case 'TRANSITION_COMPLETE':
+            if (state.projectRendered) {
+                return { ...state, gameMode: 'ocean', projectRendered: false, currentIslandId: null };
+            } else {
+                return { ...state, gameMode: 'island', projectRendered: true };
+            }
+        default:
+            return state;
+    }
+}
+
+type GameContextType = {
+    state: State;
+    dispatch: React.Dispatch<Action>;
+};
+
+const GameStateContext = createContext<GameContextType | null>(null);
+
+export const GameStateProvider = ({ children }: { children: ReactNode }) => {
+    const [state, dispatch] = useReducer(gameReducer, initialState);
+    return <GameStateContext.Provider value={{ state, dispatch }}>{children}</GameStateContext.Provider>;
+};
+
+export const useGameState = () => {
+    const context = useContext(GameStateContext);
+    if (!context) {
+        throw new Error('useGameState must be used within a GameStateProvider');
+    }
+    return context;
+};
+--- END OF FILE src/context/GameStateContext.tsx ---
+
+--- START OF FILE src/context/PlayerControlsContext.tsx ---
+// src/context/PlayerControlsContext.tsx
+import { createContext, useEffect, useRef, useContext, ReactNode } from 'react';
+
+type ControlState = {
+    forward: boolean;
+    backward: boolean;
+    left: boolean;
+    right: boolean;
+    x: number; // For analog stick
+    y: number; // For analog stick
+};
+
+type PlayerControlsContextType = React.RefObject<ControlState>;
+
+const PlayerControlsContext = createContext<PlayerControlsContextType | null>(null);
+
+export const PlayerControlsProvider = ({ children }: { children: ReactNode }) => {
+    const controlsRef = useRef<ControlState>({
+        forward: false,
+        backward: false,
+        left: false,
+        right: false,
+        x: 0,
+        y: 0,
+    });
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            switch (event.key.toLowerCase()) {
+                case "w": case "arrowup": controlsRef.current.forward = true; break;
+                case "s": case "arrowdown": controlsRef.current.backward = true; break;
+                case "a": case "arrowleft": controlsRef.current.left = true; break;
+                case "d": case "arrowright": controlsRef.current.right = true; break;
+            }
+        };
+
+        const handleKeyUp = (event: KeyboardEvent) => {
+            switch (event.key.toLowerCase()) {
+                case "w": case "arrowup": controlsRef.current.forward = false; break;
+                case "s": case "arrowdown": controlsRef.current.backward = false; break;
+                case "a": case "arrowleft": controlsRef.current.left = false; break;
+                case "d": case "arrowright": controlsRef.current.right = false; break;
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        window.addEventListener("keyup", handleKeyUp);
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+            window.removeEventListener("keyup", handleKeyUp);
+        };
+    }, []);
+
+    return (
+        <PlayerControlsContext.Provider value={controlsRef}>
+            {children}
+        </PlayerControlsContext.Provider>
+    );
+};
+
+export const usePlayerControls = () => {
+    const context = useContext(PlayerControlsContext);
+    if (!context) {
+        throw new Error('usePlayerControls must be used within a PlayerControlsProvider');
+    }
+    return context;
+};
+--- END OF FILE src/context/PlayerControlsContext.tsx ---
+
+--- START OF FILE src/hooks/useDucks.ts ---
+import { useState, useCallback } from "react";
+import * as THREE from "three";
+import { DuckData } from "../types";
+
+const INITIAL_DUCK_POSITIONS: [number, number, number][] = [
+    [50, 0, 50],
+    [-80, 0, 120],
+    [100, 0, -150],
+    [-150, 0, -200],
+    [200, 0, -50],
+];
+
+const initialDucks: DuckData[] = INITIAL_DUCK_POSITIONS.map((pos, i) => ({
+    id: i,
+    position: new THREE.Vector3(...pos),
+    status: 'IDLE',
+    followIndex: null,
+}));
+
+export const useDucks = () => {
+    const [ducks, setDucks] = useState<DuckData[]>(initialDucks);
+    const [followingCount, setFollowingCount] = useState(0);
+
+    const collectDuck = useCallback((id: number) => {
+        setDucks(prevDucks => {
+            let wasCollected = false;
+            const newDucks = prevDucks.map((duck): DuckData => { // Ensure map returns DuckData
+                if (duck.id === id && duck.status === 'IDLE') {
+                    wasCollected = true;
+                    return {
+                        ...duck,
+                        status: 'FOLLOWING', // This is now correctly typed
+                        followIndex: followingCount,
+                    };
+                }
+                return duck;
+            });
+
+            if (wasCollected) {
+                setFollowingCount(prev => prev + 1);
+                return newDucks;
+            }
+            return prevDucks;
+        });
+    }, [followingCount]);
+
+    return { ducks, collectDuck };
+};
+--- END OF FILE src/hooks/useDucks.ts ---
+
+--- START OF FILE src/hooks/useSceneControls.ts ---
+// src/hooks/useSceneControls.ts
+export const useSceneControls = () => {
+    return {
+        waterLevel: 0.1,
+        fogEnabled: true,
+        fogColor: "#23859e",
+        fogNear: 10,
+        fogFar: 500,
+        aoEnabled: true,
+        shadowBias: -0.0004,
+        normalBias: 0.02,
+    };
+};
+--- END OF FILE src/hooks/useSceneControls.ts ---
+
+--- START OF FILE src/hooks/useShipControls.ts ---
+// src/hooks/useShipControls.ts
+export const useShipControls = () => {
+    return {
+        shipDimensions: { length: 8.0, width: 2.0 },
+        shipScale: 2,
+    };
+};
+--- END OF FILE src/hooks/useShipControls.ts ---
+
+--- START OF FILE src/hooks/useSoundManager.ts ---
+import { Howl, Howler } from 'howler';
+import { asset } from '../utils/assetUrl';
+
+const FADE_DURATION = 2000;
+const MAX_SAILING_SPEED = 20.0;
+const MUSIC_VOLUME = 0.5;
+const AMBIENT_BASE_VOLUME = 0.03;
+const AMBIENT_MAX_VOLUME = 0.1;
+const SAILING_MAX_VOLUME = 0.2;
+
+class SoundManager {
+    private music: Howl | null = null;
+    private ambientSound: Howl | null = null;
+    private sailingSound: Howl | null = null;
+    private isInitialized: boolean = false;
+
+    private init() {
+        if (this.isInitialized) return;
+
+        Howler.autoUnlock = true;
+
+        this.music = new Howl({
+            src: [asset('audio/calm-music.mp3')],
+            loop: true,
+            volume: 0.0,
+        });
+
+        this.ambientSound = new Howl({
+            src: [asset('audio/ocean-ambient.mp3')],
+            loop: true,
+            volume: AMBIENT_BASE_VOLUME,
+        });
+
+        this.sailingSound = new Howl({
+            src: [asset('audio/ship-sailing.mp3')],
+            loop: true,
+            volume: 0.0,
+        });
+    }
+
+    public initializeSounds() {
+        if (this.isInitialized) return;
+        this.init();
+        this.playMusic();
+        this.playAmbient();
+        this.isInitialized = true;
+    }
+
+    private playMusic() {
+        if (!this.music) return;
+        this.music.once('play', (soundId) => {
+            if (this.music) {
+                this.music.volume(0.0, soundId);
+                this.music.fade(0.0, MUSIC_VOLUME, FADE_DURATION, soundId);
+            }
+        });
+        this.music.play();
+    }
+
+    private playAmbient() {
+        if (this.ambientSound && !this.ambientSound.playing()) this.ambientSound.play();
+        if (this.sailingSound && !this.sailingSound.playing()) this.sailingSound.play();
+    }
+
+    public updateSailingSound = (speed: number) => {
+        if (!this.isInitialized || !this.ambientSound || !this.sailingSound) return;
+
+        const normalizedSpeed = Math.min(speed, MAX_SAILING_SPEED) / MAX_SAILING_SPEED;
+        const dynamicVolumeRange = AMBIENT_MAX_VOLUME - AMBIENT_BASE_VOLUME;
+        const targetAmbientVolume = AMBIENT_BASE_VOLUME + (normalizedSpeed * dynamicVolumeRange);
+        this.ambientSound.volume(targetAmbientVolume);
+
+        const targetSailingVolume = Math.pow(normalizedSpeed, 2) * SAILING_MAX_VOLUME;
+        this.sailingSound.volume(targetSailingVolume);
+
+        const targetRate = 0.7 + normalizedSpeed * 0.8;
+        this.sailingSound.rate(targetRate);
+    }
+}
+
+let soundManager: SoundManager;
+
+if (import.meta.env.PROD) {
+    soundManager = new SoundManager();
+} else {
+    if (!(window as any).__SOUND_MANAGER_INSTANCE__) {
+        (window as any).__SOUND_MANAGER_INSTANCE__ = new SoundManager();
+    }
+    soundManager = (window as any).__SOUND_MANAGER_INSTANCE__;
+}
+
+export default soundManager;
+--- END OF FILE src/hooks/useSoundManager.ts ---
+
+--- START OF FILE src/hooks/useWaterControls.ts ---
+// src/hooks/useWaterControls.ts
+import * as THREE from "three";
+import { AllWaterUniforms, IUniform } from "../types.ts";
+
+export const useWaterControls = () => {
+    // Hardcoded values that were previously in Leva
+    const waterControls = {
+        uWaveSteepness: 0.1,
+        uWaveLength: 40,
+        uWaveSpeed: 5,
+        uWaveDirection: [45.0, 0, 0],
+        uWaterShallowColor: "#b9e4ef",
+        uWaterDeepColor: "#023b3d",
+        uWaterDepth: 1.2,
+        uWaveCrestStart: 0,
+        uWaveCrestEnd: 2,
+        uWaveCrestColor: "#59bcd5",
+        uFoamColor: "#ffffff",
+        uFoamSpeed: 0.1,
+        uFoamTiling: 4.8,
+        uFoamDistortion: 1.41,
+    };
+
+    const uniforms: { [key: string]: IUniform<any> } = {};
+    for (const [key, value] of Object.entries(waterControls)) {
+        uniforms[key] = {
+            value: key.toLowerCase().includes("color")
+                ? new THREE.Color(value as string)
+                : key === "uWaveDirection"
+                    ? new THREE.Vector3(...(value as [number, number, number]))
+                    : value,
+        };
+    }
+
+    // Add static uniforms
+    uniforms.uPlaneSize = { value: 2000.0 };
+    uniforms.uFbmSpeed = { value: 0.01 };
+    uniforms.uReflectionStrength = { value: 0.3 };
+    uniforms.uReflectionMix = { value: 0.5 };
+    uniforms.uReflectionFresnelPower = { value: 5.0 };
+    uniforms.uHorizonColor = { value: new THREE.Color("#abeaff") };
+    uniforms.uHorizonDistance = { value: 6.0 };
+    uniforms.uFoamAlpha = { value: 1 };
+    uniforms.uFoamBlend = { value: 1 };
+    uniforms.uNormalsScale = { value: 1.2 };
+    uniforms.uNormalsSpeed = { value: 0.1 };
+    uniforms.uNormalsStrength = { value: 1.4 };
+    uniforms.uFoamIntersectionFade = { value: 1.8 };
+    uniforms.uFoamIntersectionCutoff = { value: 0.8 };
+    uniforms.uFogNear = { value: 0.0 };
+    uniforms.uFogFar = { value: 0.0 };
+
+    const waterUniforms = uniforms as AllWaterUniforms;
+
+    return { waterUniforms };
+};
+--- END OF FILE src/hooks/useWaterControls.ts ---
+
+--- START OF FILE src/types/custom.d.ts ---
+/// <reference types="vite/client" />
+
+declare module '*.png';
+declare module '*.jpg';
+declare module '*.hdr';
+declare module '*.js';
+declare module '*.jsx';
+declare module '*.ts';
+declare module '*.mp3';
+
+declare module '*.vert?raw' {
+    const value: string;
+    export default value;
+}
+
+declare module '*.frag?raw' {
+    const value: string;
+    export default value;
+}
+
+declare module 'gl-noise/build/glNoise.m' {
+    export function patchShaders(shader: string): string;
+}
+--- END OF FILE src/types/custom.d.ts ---
+
+--- START OF FILE src/utils/assetUrl.ts ---
+// src/utils/assetUrl.ts
+export const asset = (path: string) => {
+    // Remove leading slash from the path if it exists,
+    // as BASE_URL already has a trailing slash.
+    const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+    return `${import.meta.env.BASE_URL}${cleanPath}`;
+};
+--- END OF FILE src/utils/assetUrl.ts ---
+
+--- START OF FILE src/utils/getWaveInfo.ts ---
+import * as THREE from "three";
+import { createNoise2D } from "simplex-noise";
+import { AllWaterUniforms } from "../types";
+
+type PartialWaterUniforms = Pick<
+  AllWaterUniforms,
+  | "uFbmSpeed"
+  | "uWaveSpeed"
+  | "uWaveDirection"
+  | "uWaveSteepness"
+  | "uWaveLength"
+>;
+
+const simplex = createNoise2D();
+
+function fbm(p: THREE.Vector2): number {
+  let total = 0.0, amplitude = 1.0, frequency = 1.0;
+  const lacunarity = 2.3, gain = 0.4, octaves = 5;
+  let maxValue = 0.0;
+  for (let i = 0; i < octaves; i++) {
+    total += simplex(p.x * frequency, p.y * frequency) * amplitude;
+    maxValue += amplitude;
+    frequency *= lacunarity;
+    amplitude *= gain;
+  }
+  return total / maxValue;
+}
+
+function angleToDirection(angle: number): { x: number; y: number } {
+
+
+  const rad = ((angle - 90) * Math.PI) / 180.0;
+  return { x: Math.cos(rad), y: Math.sin(rad) };
+}
+
+type GerstnerWaveOpts = { direction: { x: number; y: number }; steepness: number; length: number };
+
+function gerstnerWave(point: THREE.Vector3, opts: GerstnerWaveOpts, time: number): THREE.Vector3 {
+  const k = (2 * Math.PI) / opts.length;
+  const a = opts.steepness / k;
+  const d_dot_p = point.x * opts.direction.x + point.z * opts.direction.y;
+  const f = k * (d_dot_p - time);
+  const offset = new THREE.Vector3();
+  offset.x = opts.direction.x * a * Math.cos(f);
+  offset.z = opts.direction.y * a * Math.cos(f);
+  offset.y = a * Math.sin(f);
+  return offset;
+}
+
+export function getDisplacedPosition(position: [number, number, number], time: number, uniforms: PartialWaterUniforms): THREE.Vector3 {
+  const point = new THREE.Vector3(position[0], position[1], position[2]);
+  const totalDisplacement = new THREE.Vector3(0, 0, 0);
+
+  const noiseInput = time * uniforms.uFbmSpeed.value;
+  const fbmNoisePoint = new THREE.Vector2(point.x * 0.5 + noiseInput, point.z * 0.5 + noiseInput);
+  totalDisplacement.y += (fbm(fbmNoisePoint) + 1.0) / 2.0 * 0.5;
+
+  const waveTime = time * uniforms.uWaveSpeed.value;
+  const directions = uniforms.uWaveDirection.value;
+  const steepness = uniforms.uWaveSteepness.value;
+  const length = uniforms.uWaveLength.value;
+
+  const dirA = angleToDirection(directions.x);
+  const optsA = { direction: dirA, steepness: steepness, length: length };
+  totalDisplacement.add(gerstnerWave(point, optsA, waveTime));
+
+  const dirB = angleToDirection(directions.y);
+  const optsB = { direction: dirB, steepness: steepness * 0.5, length: length * 0.5 };
+  totalDisplacement.add(gerstnerWave(point, optsB, waveTime));
+
+  const dirC = angleToDirection(directions.z);
+  const optsC = { direction: dirC, steepness: steepness * 0.25, length: length * 0.25 };
+  totalDisplacement.add(gerstnerWave(point, optsC, waveTime));
+
+  return new THREE.Vector3().copy(point).add(totalDisplacement);
+}
+
+
+function getWaveNormal(position: [number, number, number], time: number, uniforms: PartialWaterUniforms): THREE.Vector3 {
+  const center = getDisplacedPosition(position, time, uniforms);
+  const offset = 0.1;
+  const pointX = getDisplacedPosition([position[0] + offset, position[1], position[2]], time, uniforms);
+  const pointZ = getDisplacedPosition([position[0], position[1], position[2] + offset], time, uniforms);
+  return new THREE.Vector3().crossVectors(
+    new THREE.Vector3().subVectors(pointZ, center),
+    new THREE.Vector3().subVectors(pointX, center)
+  ).normalize();
+}
+
+
+function getWaveVelocity(position: [number, number, number], time: number, uniforms: PartialWaterUniforms): THREE.Vector3 {
+  const dt = 0.01;
+  const p1 = getDisplacedPosition(position, time, uniforms);
+  const p2 = getDisplacedPosition(position, time - dt, uniforms);
+
+  return new THREE.Vector3().subVectors(p1, p2).divideScalar(dt);
+}
+
+
+
+export function getAveragedWaveInfo(
+  centerPosition: [number, number, number],
+  dimensions: { length: number, width: number },
+  time: number,
+  uniforms: PartialWaterUniforms
+): { position: THREE.Vector3; normal: THREE.Vector3; velocity: THREE.Vector3 } {
+
+  const halfLength = dimensions.length / 2;
+  const halfWidth = dimensions.width / 2;
+  const samplePoints: [number, number, number][] = [
+    [centerPosition[0], 0, centerPosition[2]],
+    [centerPosition[0], 0, centerPosition[2] + halfLength],
+    [centerPosition[0], 0, centerPosition[2] - halfLength],
+    [centerPosition[0] - halfWidth, 0, centerPosition[2]],
+    [centerPosition[0] + halfWidth, 0, centerPosition[2]],
+  ];
+
+  const positions: THREE.Vector3[] = [];
+  const normals: THREE.Vector3[] = [];
+  const velocities: THREE.Vector3[] = [];
+
+
+  samplePoints.forEach(point => {
+    positions.push(getDisplacedPosition(point, time, uniforms));
+    normals.push(getWaveNormal(point, time, uniforms));
+    velocities.push(getWaveVelocity(point, time, uniforms));
+  });
+
+
+  const averagedPosition = new THREE.Vector3();
+  positions.forEach(pos => averagedPosition.add(pos));
+  averagedPosition.divideScalar(positions.length);
+
+
+  averagedPosition.x = positions[0].x;
+  averagedPosition.z = positions[0].z;
+
+
+  const averagedNormal = new THREE.Vector3();
+  normals.forEach(norm => averagedNormal.add(norm));
+  averagedNormal.divideScalar(normals.length).normalize();
+
+
+  const averagedVelocity = new THREE.Vector3();
+  velocities.forEach(vel => averagedVelocity.add(vel));
+  averagedVelocity.divideScalar(velocities.length);
+
+  return { position: averagedPosition, normal: averagedNormal, velocity: averagedVelocity };
+}
+--- END OF FILE src/utils/getWaveInfo.ts ---
+
+--- START OF FILE src/utils/isMobile.ts ---
+
+export const isMobile = !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+--- END OF FILE src/utils/isMobile.ts ---
+
+--- START OF FILE src/utils/useKeyToggle.ts ---
+// src/utils/useKeyToggle.ts
+import { useState, useEffect, useCallback } from "react";
+
+export const useKeyToggle = (key: string, initialState = true) => {
+    const [isOn, setIsOn] = useState(initialState);
+
+    const handleKeyDown = useCallback(
+        (event: KeyboardEvent) => {
+            if (event.key.toLowerCase() === key.toLowerCase()) {
+                setIsOn(prev => !prev);
+            }
+        },
+        [key]
+    );
+
+    useEffect(() => {
+        window.addEventListener("keydown", handleKeyDown);
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [handleKeyDown]);
+
+    return isOn;
+};
+--- END OF FILE src/utils/useKeyToggle.ts ---
+
+--- START OF FILE src/utils/useKeyboardControls.ts ---
+import { useEffect, useRef } from "react";
+
+export const useKeyboardControls = () => {
+    const keys = useRef({
+        forward: false,
+        backward: false,
+        left: false,
+        right: false,
+    });
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            switch (event.key.toLowerCase()) {
+                case "w":
+                case "arrowup":
+                    keys.current.forward = true;
+                    break;
+                case "s":
+                case "arrowdown":
+                    keys.current.backward = true;
+                    break;
+                case "a":
+                case "arrowleft":
+                    keys.current.left = true;
+                    break;
+                case "d":
+                case "arrowright":
+                    keys.current.right = true;
+                    break;
+                default:
+                    break;
+            }
+        };
+
+        const handleKeyUp = (event: KeyboardEvent) => {
+            switch (event.key.toLowerCase()) {
+                case "w":
+                case "arrowup":
+                    keys.current.forward = false;
+                    break;
+                case "s":
+                case "arrowdown":
+                    keys.current.backward = false;
+                    break;
+                case "a":
+                case "arrowleft":
+                    keys.current.left = false;
+                    break;
+                case "d":
+                case "arrowright":
+                    keys.current.right = false;
+                    break;
+                default:
+                    break;
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        window.addEventListener("keyup", handleKeyUp);
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+            window.removeEventListener("keyup", handleKeyUp);
+        };
+    }, []);
+
+    return keys;
+};
+--- END OF FILE src/utils/useKeyboardControls.ts ---
