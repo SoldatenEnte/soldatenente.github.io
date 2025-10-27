@@ -16,16 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const iconPlay = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`;
 
   const createProjectCard = (project) => {
-    // ULTIMATE OPTIMIZATION: Ensure src points to the smallest image by default,
-    // and srcset handles higher resolutions. Explicit width/height match rendered 1x size.
-    const primarySrc = project.image1x; // Start with the 1x version (e.g., 376w)
-    const imageSrcset = project.image
-      ? `${project.image1x} 376w, ${project.image} 600w`
-      : "";
-    const imageSizes = "(max-width: 1200px) 50vw, 376px"; // This reflects actual displayed width
-
+    // OPTIMIZED: Simple single image source, but with explicit dimensions to prevent layout shift.
     const thumbnail = project.image
-      ? `<img src="${primarySrc}" alt="${project.name} thumbnail" loading="lazy" width="376" height="251" srcset="${imageSrcset}" sizes="${imageSizes}">`
+      ? `<img src="${project.image}" alt="${project.name} thumbnail" loading="lazy" width="600" height="400">`
       : `<div class="card-thumbnail-placeholder"></div>`;
 
     const projectTags =
