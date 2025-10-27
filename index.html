@@ -6,33 +6,24 @@
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <title>Aaron Postels (Ducklin) - Creative Full-Stack & Game Developer</title>
-    <meta name="description" content="Explore the portfolio of Aaron Postels (Ducklin), a creative technologist and full-stack developer specializing in interactive web applications, game development, and unique hardware projects." />
+    <title>Aaron Postels (Ducklin) - Full-Stack & Game Developer</title>
+    <meta name="description" content="Explore the portfolio of Aaron Postels (Ducklin), a technologist and full-stack developer specializing in interactive web applications, game development, and unique hardware projects." />
     <meta name="author" content="Aaron Postels" />
     <meta name="keywords" content="Aaron Postels, Ducklin, Portfolio, Full-Stack Developer, Game Developer, Creative Technologist, React, TypeScript, Three.js, Python, Unity, Godot" />
     <link rel="canonical" href="https://ducklin.de/" />
-    <meta property="og:title" content="Aaron Postels (Ducklin) - Creative Developer Portfolio" />
+    <meta property="og:title" content="Aaron Postels (Ducklin) - Developer Portfolio" />
     <meta property="og:description" content="A showcase of web, game, and hardware projects by Aaron Postels." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://ducklin.de/" />
     <meta property="og:image" content="https://ducklin.de/images/aaron_postels_profile_2x.webp" />
     <meta property="og:site_name" content="Ducklin Portfolio" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Aaron Postels (Ducklin) - Creative Developer Portfolio" />
+    <meta name="twitter:title" content="Aaron Postels (Ducklin) - Developer Portfolio" />
     <meta name="twitter:description" content="A showcase of web, game, and hardware projects by Aaron Postels." />
     <meta name="twitter:image" content="https://ducklin.de/images/aaron_postels_profile_2x.webp" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link rel="preload" as="font" type="font/woff2" crossorigin 
-          href="https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFd2JQEk.woff2">
-    <link rel="preload" as="font" type="font/woff2" crossorigin 
-          href="https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z1xlFd2JQEk.woff2">
-    <link rel="preload" as="font" type="font/woff2" crossorigin 
-          href="https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFd2JQEk.woff2">
-    <link rel="preload" as="font" type="font/woff2" crossorigin 
-          href="https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2">
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
     
@@ -46,8 +37,26 @@
       .hero { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 90vh; padding: 2rem; }
       .hero-content { animation: fadeIn 1s ease-out forwards; max-width: 750px; }
       .hero-profile-pic { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin-bottom: 1.5rem; border: 3px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-      .hero-content h1 { font-size: clamp(3rem, 8vw, 5.5rem); font-weight: 700; margin: 0 0 0.5rem; line-height: 1.1; }
-      .hero-tagline { font-size: clamp(1.25rem, 3vw, 1.75rem); font-weight: 300; margin: 0 0 1.5rem; color: var(--text-color-secondary); background: linear-gradient(90deg, #a5b4fc, #e6edf3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+      
+      .hero-content h1 { 
+        font-size: clamp(2.25rem, 8vw, 5.5rem); 
+        font-weight: 700; 
+        margin: 0 0 0.5rem; 
+        line-height: 1.1;
+        background: none;
+        -webkit-text-fill-color: initial;
+        color: var(--text-color);
+      }
+      
+      .hero-tagline { 
+        font-size: clamp(1.1rem, 3vw, 1.75rem);
+        font-weight: 400;
+        margin: 0 0 2.5rem;
+        color: var(--text-color);
+        opacity: 0.8;
+        letter-spacing: 0.05em;
+      }
+
       .hero-intro { font-size: 1.1rem; line-height: 1.7; margin: 0 auto 2.5rem; max-width: 600px; color: var(--text-color-secondary); }
       .hero-actions { display: flex; justify-content: center; align-items: center; gap: 1.5rem; }
       .hero-socials { display: flex; gap: 1.25rem; }
@@ -68,7 +77,7 @@
           srcset="/images/aaron_postels_profile.webp 120w, /images/aaron_postels_profile_2x.webp 240w"
           sizes="120px">
         <h1>Aaron Postels</h1>
-        <p class="hero-tagline">Creative Full-Stack & Game Developer</p>
+        <p class="hero-tagline">Full-Stack & Game Developer</p>
         <p class="hero-intro">I'm Aaron (Ducklin), a developer passionate about building unique interactive experiences, from web applications and 3D graphics to physical hardware projects.</p>
         <div class="hero-actions">
           <a href="#work-section" class="btn btn-primary hero-cta">View My Work</a>
