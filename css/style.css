@@ -307,6 +307,8 @@ h2 {
   display: flex;
   gap: 0.5rem;
   z-index: 5;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 .card-tag {
   background-color: rgba(0, 0, 0, 0.6);
@@ -317,6 +319,11 @@ h2 {
   border-radius: 9999px;
   backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.card-tag.desktop-only-tag {
+  background-color: rgba(210, 153, 34, 0.8); /* Corresponds to 'on-hold' status color */
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
 }
 .card-content {
   padding: 1.25rem;
@@ -349,21 +356,27 @@ h2 {
   color: #fff;
   flex-shrink: 0;
 }
-[data-status="completed"] .project-status, .project-status[data-status-slug="completed"] {
+[data-status="completed"] .project-status,
+.project-status[data-status-slug="completed"] {
   background-color: var(--status-completed);
 }
-[data-status="in-development"] .project-status, .project-status[data-status-slug="in-development"] {
+[data-status="in-development"] .project-status,
+.project-status[data-status-slug="in-development"] {
   background-color: var(--status-in-development);
 }
-[data-status="on-hold"] .project-status, .project-status[data-status-slug="on-hold"] {
+[data-status="on-hold"] .project-status,
+.project-status[data-status-slug="on-hold"] {
   background-color: var(--status-on-hold);
 }
-[data-status="archived"] .project-status, .project-status[data-status-slug="archived"] {
+[data-status="archived"] .project-status,
+.project-status[data-status-slug="archived"] {
   background-color: var(--status-archived);
 }
-[data-status="planned"] .project-status, .project-status[data-status-slug="planned"],
-[data-status="concept"] .project-status, .project-status[data-status-slug="concept"] {
-    background-color: var(--status-concept);
+[data-status="planned"] .project-status,
+.project-status[data-status-slug="planned"],
+[data-status="concept"] .project-status,
+.project-status[data-status-slug="concept"] {
+  background-color: var(--status-concept);
 }
 .project-description {
   font-size: 0.95rem;
@@ -414,7 +427,8 @@ h2 {
   gap: 0.5rem;
 }
 .btn svg {
-  width: 16px; height: 16px;
+  width: 16px;
+  height: 16px;
 }
 .btn-primary {
   background-image: linear-gradient(
@@ -480,7 +494,7 @@ h2 {
 .archive-item:hover {
   border-color: var(--card-hover-border-color);
   transform: translateY(-4px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 .archive-item.has-image {
   display: flex;
@@ -582,10 +596,10 @@ h2 {
   font-size: 0.8rem;
 }
 .mobile-tags-container {
-    display: none;
+  display: none;
 }
 .desktop-view-only {
-    display: flex;
+  display: flex;
 }
 .mobile-date-view {
   display: none;
@@ -612,7 +626,7 @@ h2 {
   .archive-item.has-image .archive-item-content {
     padding: 1.25rem;
   }
-  
+
   /* Mobile Tags (Overlay) */
   .mobile-tags-container {
     display: flex;
@@ -634,7 +648,12 @@ h2 {
     backdrop-filter: blur(5px);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
-  
+  .archive-tech-tag.mobile-tag-overlay.desktop-only-tag {
+    background-color: rgba(210, 153, 34, 0.8);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
   /* Hide the desktop tags and date, show mobile date */
   .desktop-view-only {
     display: none;
@@ -647,7 +666,7 @@ h2 {
   }
 
   .archive-item-footer {
-      min-height: auto;
+    min-height: auto;
   }
   .archive-item.has-image .archive-item-footer {
     justify-content: space-between;

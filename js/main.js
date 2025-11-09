@@ -14,6 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!featuredContainer || !regularContainer || !otherContainer) return;
 
+  const isMobile = window.innerWidth < 768;
+
   const iconDesktop = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>`;
   const iconMobile = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>`;
   const iconPlay = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`;
@@ -24,12 +26,23 @@ document.addEventListener("DOMContentLoaded", () => {
       ? `<img src="${project.image}" alt="${project.name} thumbnail" loading="lazy" width="600" height="400">`
       : `<div class="card-thumbnail-placeholder"></div>`;
 
-    const projectTags =
+    let projectTagsHTML =
       project.tags && project.tags.length
-        ? `<div class="card-tags">${project.tags
+        ? project.tags
             .map((tag) => `<span class="card-tag">${tag}</span>`)
-            .join("")}</div>`
+            .join("")
         : "";
+
+    if (
+      isMobile &&
+      (!project.deviceSupport || !project.deviceSupport.includes("mobile"))
+    ) {
+      projectTagsHTML += `<span class="card-tag desktop-only-tag">Desktop Only</span>`;
+    }
+
+    const tagsContainer = projectTagsHTML
+      ? `<div class="card-tags">${projectTagsHTML}</div>`
+      : "";
 
     const demoButton = project.href
       ? `<a href="${project.href}" class="btn btn-primary">${iconPlay} <span>View Demo</span></a>`
@@ -39,12 +52,14 @@ document.addEventListener("DOMContentLoaded", () => {
       ? `<a href="${project.docHref}" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">Docs</a>`
       : "";
 
-    const deviceIcons = `
+    const deviceIcons = project.deviceSupport
+      ? `
       <div class="device-support-icons">
         ${project.deviceSupport.includes("desktop") ? iconDesktop : ""}
         ${project.deviceSupport.includes("mobile") ? iconMobile : ""}
       </div>
-    `;
+    `
+      : "";
 
     const formattedDate = new Date(project.date).toLocaleDateString("en-US", {
       year: "numeric",
@@ -61,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="card-inner">
           <div class="card-thumbnail">
             ${thumbnail}
-            ${projectTags}
+            ${tagsContainer}
           </div>
           <div class="card-content">
             <div class="card-header">
@@ -88,12 +103,20 @@ document.addEventListener("DOMContentLoaded", () => {
       .map((tech) => `<span class="archive-tech-tag">${tech}</span>`)
       .join("");
 
-    const mobileImageTags = (project.techStack || [])
+    let mobileImageTags = (project.techStack || [])
       .map(
         (tech) =>
           `<span class="archive-tech-tag mobile-tag-overlay">${tech}</span>`
       )
       .join("");
+
+    if (
+      isMobile &&
+      project.image &&
+      (!project.deviceSupport || !project.deviceSupport.includes("mobile"))
+    ) {
+      mobileImageTags += `<span class="archive-tech-tag mobile-tag-overlay desktop-only-tag">Desktop Only</span>`;
+    }
 
     const docLink = project.docHref
       ? `<a href="${project.docHref}" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">${iconBook}<span>Docs</span></a>`
@@ -214,21 +237,35 @@ document.addEventListener("DOMContentLoaded", () => {
     const allProjects = projects.filter((p) => p.type !== "skill");
     const allSkills = projects.filter((p) => p.type === "skill");
 
+    const sortProjects = (projects) => {
+      return projects.sort((a, b) => {
+        if (isMobile) {
+          const aIsMobile =
+            a.deviceSupport && a.deviceSupport.includes("mobile");
+          const bIsMobile =
+            b.deviceSupport && b.deviceSupport.includes("mobile");
+          if (aIsMobile !== bIsMobile) {
+            return aIsMobile ? -1 : 1;
+          }
+        }
+        return (b.relevance || 0) - (a.relevance || 0);
+      });
+    };
+
     const projectsWithDemo = allProjects.filter((p) => p.href);
-    const projectsWithoutDemo = allProjects.filter(
-      (p) => !p.href && !p.featured
+    const projectsWithoutDemo = allProjects.filter((p) => !p.href);
+
+    const featuredProjects = sortProjects(
+      projectsWithDemo.filter((p) => p.featured)
     );
+    const regularProjects = sortProjects(
+      projectsWithDemo.filter((p) => !p.featured)
+    );
+    const otherProjects = sortProjects(projectsWithoutDemo);
 
-    const sortFn = (a, b) => (b.relevance || 0) - (a.relevance || 0);
-
-    const featuredProjects = projectsWithDemo
-      .filter((p) => p.featured)
-      .sort(sortFn);
-    const regularProjects = projectsWithDemo
-      .filter((p) => !p.featured)
-      .sort(sortFn);
-    const otherProjects = projectsWithoutDemo.sort(sortFn);
-    const sortedSkills = allSkills.sort(sortFn);
+    const sortedSkills = allSkills.sort(
+      (a, b) => (b.relevance || 0) - (a.relevance || 0)
+    );
 
     featuredContainer.innerHTML = featuredProjects
       .map(createProjectCard)
@@ -252,10 +289,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const showWarningModal = (href) => {
-    const isMobileDevice = window.innerWidth < 768;
-    modalMessage.textContent = `This project is not optimized for a ${
-      isMobileDevice ? "mobile" : "desktop"
-    } device. It may not display or function correctly.`;
+    modalMessage.innerHTML = `<strong>This is a desktop-only experience.</strong><br>The layout is not designed for mobile and will appear broken. Please view on a larger screen for the intended experience.`;
     modalContinueBtn.href = href;
     warningModal.classList.remove("hidden");
   };
@@ -268,10 +302,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const viewDemoButton = e.target.closest(".btn-primary");
     if (!viewDemoButton || viewDemoButton.hasAttribute("disabled")) return;
 
-    const card = viewDemoButton.closest(".project-card");
-    if (!card) return;
-
     if (viewDemoButton.tagName === "A") e.preventDefault();
+
+    const card = viewDemoButton.closest(".project-card, .archive-item");
+    if (!card) return;
 
     const projectName = card.dataset.projectName;
     const project = projects.find((p) => p.name === projectName);
@@ -279,18 +313,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!project || !href) return;
 
-    const isMobileDevice = window.innerWidth < 768;
-    const isDesktopOptimized = project.deviceSupport.includes("desktop");
-    const isMobileOptimized = project.deviceSupport.includes("mobile");
+    const isMobileOptimized =
+      project.deviceSupport && project.deviceSupport.includes("mobile");
 
-    let shouldWarn = false;
-    if (isMobileDevice && !isMobileOptimized) {
-      shouldWarn = true;
-    } else if (!isMobileDevice && !isDesktopOptimized) {
-      shouldWarn = true;
-    }
-
-    if (shouldWarn) {
+    if (isMobile && !isMobileOptimized) {
       showWarningModal(href);
     } else {
       window.location.href = href;

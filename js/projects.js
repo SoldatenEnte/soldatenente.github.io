@@ -46,7 +46,7 @@ const projects = [
       "A web app featuring a suite of polished utilities like a QR Code Generator and JSON Formatter.",
     href: "./projects/toolbox/",
     image: "./images/toolbox_thumbnail.webp",
-    status: "In Development",
+    status: "On Hold",
     docHref: "./case-studies/toolbox.html",
     featured: true,
     relevance: 100,
@@ -114,7 +114,7 @@ const projects = [
     featured: false,
     relevance: 30,
     date: "2025-07-10",
-    deviceSupport: ["desktop", "mobile"],
+    deviceSupport: ["desktop"],
     tags: ["Web"],
     techStack: [
       "JavaScript",
