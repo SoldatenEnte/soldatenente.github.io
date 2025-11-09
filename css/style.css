@@ -13,6 +13,8 @@
   --status-in-development: #388bfd;
   --status-on-hold: #d29922;
   --status-archived: #848d97;
+  --status-planned: #a371f7;
+  --status-concept: #a371f7;
   --font-family-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
     Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   --font-family-heading: "Poppins", var(--font-family-sans);
@@ -57,7 +59,8 @@ main {
 }
 h1,
 h2,
-h3 {
+h3,
+h4 {
   font-family: var(--font-family-heading);
   letter-spacing: 0.02em;
   text-align: center;
@@ -69,6 +72,7 @@ h1 {
   margin-bottom: 1rem;
   background: linear-gradient(90deg, #e6edf3, #a5b4fc);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 h2 {
@@ -78,6 +82,9 @@ h2 {
   margin-bottom: 2rem;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--card-border-color);
+}
+#other-projects-section > h2, #skills-section > h2 {
+  margin-top: 5rem;
 }
 .project-grid {
   list-style: none;
@@ -342,17 +349,21 @@ h2 {
   color: #fff;
   flex-shrink: 0;
 }
-[data-status="completed"] .project-status {
+[data-status="completed"] .project-status, .project-status[data-status-slug="completed"] {
   background-color: var(--status-completed);
 }
-[data-status="in-development"] .project-status {
+[data-status="in-development"] .project-status, .project-status[data-status-slug="in-development"] {
   background-color: var(--status-in-development);
 }
-[data-status="on-hold"] .project-status {
+[data-status="on-hold"] .project-status, .project-status[data-status-slug="on-hold"] {
   background-color: var(--status-on-hold);
 }
-[data-status="archived"] .project-status {
+[data-status="archived"] .project-status, .project-status[data-status-slug="archived"] {
   background-color: var(--status-archived);
+}
+[data-status="planned"] .project-status, .project-status[data-status-slug="planned"],
+[data-status="concept"] .project-status, .project-status[data-status-slug="concept"] {
+    background-color: var(--status-concept);
 }
 .project-description {
   font-size: 0.95rem;
@@ -368,6 +379,9 @@ h2 {
   color: var(--text-color-secondary);
   font-size: 0.875rem;
   margin-top: auto;
+}
+.project-date {
+  font-size: 0.875rem;
 }
 .device-support-icons {
   display: flex;
@@ -397,6 +411,10 @@ h2 {
   transition: all 0.2s ease-out;
   cursor: pointer;
   text-align: center;
+  gap: 0.5rem;
+}
+.btn svg {
+  width: 16px; height: 16px;
 }
 .btn-primary {
   background-image: linear-gradient(
@@ -407,11 +425,6 @@ h2 {
   background-size: 200% auto;
   color: #fff;
   flex-grow: 1;
-  gap: 0.5rem;
-}
-.btn-primary svg {
-  width: 16px;
-  height: 16px;
 }
 .btn-primary:not(:disabled):hover {
   background-position: right center;
@@ -437,6 +450,255 @@ h2 {
   border-color: var(--text-color-secondary);
   background-color: rgba(139, 148, 158, 0.1);
 }
+
+/* --- Other Projects List --- */
+.archive-intro {
+  text-align: center;
+  max-width: 600px;
+  margin: -1rem auto 3rem;
+  color: var(--text-color-secondary);
+  font-size: 1.1rem;
+}
+.archive-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.archive-item {
+  background-color: var(--card-background);
+  border: 1px solid var(--card-border-color);
+  border-radius: 12px;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 1.25rem;
+}
+.archive-item:hover {
+  border-color: var(--card-hover-border-color);
+  transform: translateY(-4px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+.archive-item.has-image {
+  display: flex;
+  align-items: stretch;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+.archive-item-image {
+  flex-shrink: 0;
+  width: 140px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--background-color);
+  position: relative;
+}
+.archive-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+.archive-item.has-image:hover .archive-item-image img {
+  transform: scale(1.05);
+}
+.archive-item-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.archive-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+.archive-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  color: var(--text-color-secondary);
+}
+.archive-header-right .project-date {
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+.archive-item-title {
+  font-family: var(--font-family-heading);
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0;
+  color: var(--text-color);
+  text-align: left;
+}
+.archive-item-description {
+  color: var(--text-color-secondary);
+  line-height: 1.6;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+.archive-item-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: auto;
+  min-height: 35px;
+}
+.archive-item-footer .project-date {
+  font-size: 0.8rem;
+  color: var(--text-color-secondary);
+  white-space: nowrap;
+}
+.archive-item-tech-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+/* Desktop tags get regular gray style */
+.archive-tech-tag {
+  background-color: rgba(139, 148, 158, 0.1);
+  color: var(--text-color-secondary);
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.archive-item-links {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin-left: auto;
+}
+.archive-item-links .btn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+}
+.mobile-tags-container {
+    display: none;
+}
+.desktop-view-only {
+    display: flex;
+}
+.mobile-date-view {
+  display: none;
+}
+.desktop-date-view {
+  display: inline;
+}
+
+@media (max-width: 768px) {
+  /* Mobile layout for items with images */
+  .archive-item.has-image {
+    padding: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+  .archive-item-image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    border-radius: 12px 12px 0 0;
+    border-bottom: 1px solid var(--card-border-color);
+  }
+  .archive-item.has-image .archive-item-content {
+    padding: 1.25rem;
+  }
+  
+  /* Mobile Tags (Overlay) */
+  .mobile-tags-container {
+    display: flex;
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 2;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+  }
+  .archive-tech-tag.mobile-tag-overlay {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: var(--text-color);
+    padding: 0.2rem 0.6rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    border-radius: 9999px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  /* Hide the desktop tags and date, show mobile date */
+  .desktop-view-only {
+    display: none;
+  }
+  .desktop-date-view {
+    display: none;
+  }
+  .mobile-date-view {
+    display: inline;
+  }
+
+  .archive-item-footer {
+      min-height: auto;
+  }
+  .archive-item.has-image .archive-item-footer {
+    justify-content: space-between;
+    padding-top: 0.75rem;
+  }
+  .archive-header-right {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* --- Skills & Tools Section --- */
+.skills-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  max-width: 800px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+@media (min-width: 768px) {
+  .skills-list {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem 2rem;
+  }
+}
+.skill-item {
+  background-color: var(--card-background);
+  border: 1px solid var(--card-border-color);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+.skill-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+.skill-date {
+  font-size: 0.85rem;
+  color: var(--text-color-secondary);
+  margin-left: 0.75rem;
+}
+.skill-description {
+  font-size: 0.9rem;
+  color: var(--text-color-secondary);
+  line-height: 1.6;
+  margin: 0.75rem 0 0 0;
+}
+/* --- End Skills & Tools Section --- */
+
 footer {
   text-align: center;
   padding: 1.5rem;

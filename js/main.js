@@ -3,20 +3,23 @@ import projects from "./projects.js";
 document.addEventListener("DOMContentLoaded", () => {
   const featuredContainer = document.getElementById("featured-projects");
   const regularContainer = document.getElementById("regular-projects");
+  const otherContainer = document.getElementById("other-projects-list");
+  const skillsContainer = document.getElementById("skills-list");
+  const skillsSection = document.getElementById("skills-section");
 
   const warningModal = document.getElementById("warning-modal");
   const modalMessage = document.getElementById("modal-message");
   const modalContinueBtn = document.getElementById("modal-continue-btn");
   const modalCloseBtns = document.querySelectorAll(".js-modal-close");
 
-  if (!featuredContainer || !regularContainer) return;
+  if (!featuredContainer || !regularContainer || !otherContainer) return;
 
   const iconDesktop = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>`;
   const iconMobile = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>`;
   const iconPlay = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`;
+  const iconBook = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>`;
 
   const createProjectCard = (project) => {
-    // OPTIMIZED: Simple single image source, but with explicit dimensions to prevent layout shift.
     const thumbnail = project.image
       ? `<img src="${project.image}" alt="${project.name} thumbnail" loading="lazy" width="600" height="400">`
       : `<div class="card-thumbnail-placeholder"></div>`;
@@ -76,6 +79,73 @@ document.addEventListener("DOMContentLoaded", () => {
             ${demoButton}
           </div>
         </div>
+      </li>
+    `;
+  };
+
+  const createOtherProjectItem = (project) => {
+    const techStack = (project.techStack || [])
+      .map((tech) => `<span class="archive-tech-tag">${tech}</span>`)
+      .join("");
+
+    const mobileImageTags = (project.techStack || [])
+      .map(
+        (tech) =>
+          `<span class="archive-tech-tag mobile-tag-overlay">${tech}</span>`
+      )
+      .join("");
+
+    const docLink = project.docHref
+      ? `<a href="${project.docHref}" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">${iconBook}<span>Docs</span></a>`
+      : "";
+
+    const statusSlug = project.status.replace(/\s+/g, "-").toLowerCase();
+
+    const hasImage = !!project.image;
+    const liClass = hasImage ? "archive-item has-image" : "archive-item";
+    const imageHTML = hasImage
+      ? `
+      <div class="archive-item-image">
+        <img src="${project.image}" alt="${project.name} thumbnail" loading="lazy" width="200" height="200">
+        <div class="mobile-tags-container">${mobileImageTags}</div>
+      </div>
+    `
+      : "";
+
+    const desktopTechStack = hasImage
+      ? `<div class="archive-item-tech-stack desktop-view-only">${techStack}</div>`
+      : `<div class="archive-item-tech-stack">${techStack}</div>`;
+
+    return `
+      <li class="${liClass}" data-project-name="${project.name}">
+        ${imageHTML}
+        <div class="archive-item-content">
+          <div class="archive-item-header">
+            <h4 class="archive-item-title">${project.name}</h4>
+            <div class="archive-header-right">
+              <span class="project-date desktop-date-view">${project.date}</span>
+              <span class="project-status" data-status-slug="${statusSlug}">${project.status}</span>
+            </div>
+          </div>
+          <p class="archive-item-description">${project.description}</p>
+          <div class="archive-item-footer">
+            <span class="project-date mobile-date-view">${project.date}</span>
+            ${desktopTechStack}
+            <div class="archive-item-links">
+              ${docLink}
+            </div>
+          </div>
+        </div>
+      </li>
+    `;
+  };
+
+  const createSkillItem = (skill) => {
+    return `
+      <li class="skill-item">
+        <strong class="skill-name">${skill.name}</strong>
+        <span class="skill-date">${skill.date}</span>
+        <p class="skill-description">${skill.description}</p>
       </li>
     `;
   };
@@ -140,11 +210,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  const renderProjects = () => {
-    const featuredProjects = projects.filter((p) => p.featured);
-    const regularProjects = projects
+  const renderContent = () => {
+    const allProjects = projects.filter((p) => p.type !== "skill");
+    const allSkills = projects.filter((p) => p.type === "skill");
+
+    const projectsWithDemo = allProjects.filter((p) => p.href);
+    const projectsWithoutDemo = allProjects.filter(
+      (p) => !p.href && !p.featured
+    );
+
+    const sortFn = (a, b) => (b.relevance || 0) - (a.relevance || 0);
+
+    const featuredProjects = projectsWithDemo
+      .filter((p) => p.featured)
+      .sort(sortFn);
+    const regularProjects = projectsWithDemo
       .filter((p) => !p.featured)
-      .sort((a, b) => new Date(b.date) - new Date(a.date));
+      .sort(sortFn);
+    const otherProjects = projectsWithoutDemo.sort(sortFn);
+    const sortedSkills = allSkills.sort(sortFn);
 
     featuredContainer.innerHTML = featuredProjects
       .map(createProjectCard)
@@ -152,6 +236,16 @@ document.addEventListener("DOMContentLoaded", () => {
     regularContainer.innerHTML = regularProjects
       .map(createProjectCard)
       .join("");
+    otherContainer.innerHTML = otherProjects
+      .map(createOtherProjectItem)
+      .join("");
+
+    if (sortedSkills.length > 0 && skillsContainer && skillsSection) {
+      skillsContainer.innerHTML = sortedSkills.map(createSkillItem).join("");
+      skillsSection.classList.remove("hidden");
+    } else if (skillsSection) {
+      skillsSection.classList.add("hidden");
+    }
 
     setupCardHoverEffects();
     setupMobileCardFocus();
@@ -175,13 +269,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!viewDemoButton || viewDemoButton.hasAttribute("disabled")) return;
 
     const card = viewDemoButton.closest(".project-card");
-    if (!card) {
-      return;
-    }
+    if (!card) return;
 
-    if (viewDemoButton.tagName === "A") {
-      e.preventDefault();
-    }
+    if (viewDemoButton.tagName === "A") e.preventDefault();
 
     const projectName = card.dataset.projectName;
     const project = projects.find((p) => p.name === projectName);
@@ -214,5 +304,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  renderProjects();
+  renderContent();
 });

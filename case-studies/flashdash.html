@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <title>Flash Dash: Interactive LED Installation Game | Hardware & C++ Case Study</title>
+    <meta name="description" content="A case study on Flash Dash, a permanent physical installation of a 15-meter LED strip game powered by an ESP32, with a custom display and spatial audio."/>
+    <link rel="canonical" href="https://ducklin.de/case-studies/flashdash.html" />
+    <meta property="og:title" content="Flash Dash: Interactive LED Installation Game | Hardware & C++ Case Study" />
+    <meta property="og:description" content="A case study on Flash Dash, a permanent physical installation of a 15-meter LED strip game powered by an ESP32, with a custom display and spatial audio." />
+    <meta property="og:type" content="article" /><meta property="og:url" content="https://ducklin.de/case-studies/flashdash.html" />
+    <meta property="og:image" content="https://ducklin.de/images/flashdash_1.webp" />
+    <meta property="og:site_name" content="Ducklin Portfolio" /><meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Flash Dash: Interactive LED Installation Game | Hardware & C++ Case Study" />
+    <meta name="twitter:description" content="A case study on Flash Dash, a permanent physical installation of a 15-meter LED strip game powered by an ESP32, with a custom display and spatial audio." />
+    <meta name="twitter:image" content="https://ducklin.de/images/flashdash_1.webp" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Flash Dash: Interactive LED Installation Game","description":"A case study on Flash Dash, a permanent physical installation of a 15-meter LED strip game powered by an ESP32, with a custom display and spatial audio.","image":"https://ducklin.de/images/flashdash_1.webp","author":{"@type":"Person","name":"Aaron Postels","url":"https://ducklin.de"}}</script>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/case-study.css" />
+</head>
+<body>
+    <header class="case-study-header" style="--bg-image: url('/images/flashdash_1.webp');">
+        <h1>Flash Dash</h1><p>An Interactive LED Installation Game</p>
+        <div class="case-study-links"><a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a></div>
+    </header>
+    <main class="case-study-main">
+        <section><h2>Project Overview</h2><p>The vision for Flash Dash was to transform a communal space with an engaging, physical, and plug-and-play gaming experience. The goal was to create a game that is immediately intuitive—a simple game of 1D ping-pong—but with enough depth through dynamic speed and audio feedback to encourage friendly competition and social interaction. It serves as an ambient, interactive art piece for the classroom at HfK Bremen.</p></section>
+        
+        <section class="case-study-gallery">
+            <h2>Gallery</h2>
+            <div class="gallery-grid">
+                <a href="/images/flashdash_1.webp"><img src="/images/flashdash_1.webp" alt="Flash Dash LED game installation." loading="lazy" width="600"></a>
+                <a href="/images/flashdash_2.webp"><img src="/images/flashdash_2.webp" alt="The 15-meter LED strip in action." loading="lazy" width="600"></a>
+                <a href="/images/flashdash_3.webp"><img src="/images/flashdash_3.webp" alt="Custom 3D printed enclosure for the electronics." loading="lazy" width="600"></a>
+                <a href="/images/flashdash_4.webp"><img src="/images/flashdash_4.webp" alt="Custom-built wooden button controller stand." loading="lazy" width="600"></a>
+                <a href="/images/flashdash_5.webp"><img src="/images/flashdash_5.webp" alt="The custom LED matrix score display." loading="lazy" width="600"></a>
+            </div>
+        </section>
+
+        <section><h2>Tech Stack</h2><ul class="tech-stack-list"><li>ESP32</li><li>C++</li><li>WS2813B LEDs</li><li>Custom Electronics</li><li>3D Printing</li></ul></section>
+        
+        <section><h2>Key Features</h2><ul><li><strong>Complete Gameplay Loop:</strong> A complete and playable 1D ping-pong game is implemented on the 15-meter LED strip.</li><li><strong>Dynamic Difficulty:</strong> The 'ball' of light dynamically changes speed during play, increasing the challenge and excitement.</li><li><strong>Custom Display:</strong> A self-built LED matrix display shows the score, game status, and other visual feedback.</li><li><strong>Spatial Audio:</strong> The game features spatial audio, providing auditory cues that correspond to the ball's position and in-game events.</li><li><strong>Custom Hardware & Installation:</strong> The entire system is a permanent, plug-and-play installation with custom-fabricated wooden button stands and 3D-printed enclosures.</li></ul></section>
+    </main>
+    <footer>&copy; 2025 Aaron Postels @ Ducklin &mdash;<a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a> &mdash;<a href="/imprint.html">Legal Notice</a></footer>
+
+    <div class="lightbox-overlay" id="lightbox">
+        <div class="lightbox-content">
+            <img src="" alt="Enlarged gallery image" id="lightbox-img">
+        </div>
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close image viewer">&times;</button>
+    </div>
+    <script src="../js/case-study.js" defer></script>
+</body>
+</html>

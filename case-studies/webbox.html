@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <title>Webbox: A Component-Driven Eleventy & Tailwind CSS Starter | Web Dev Case Study</title>
+    <meta name="description" content="A case study on Webbox, a feature-complete static website starter built with Eleventy, Tailwind CSS v4, DaisyUI, and Alpine.js for rapid development."/>
+    <link rel="canonical" href="https://ducklin.de/case-studies/webbox.html" />
+    <meta property="og:title" content="Webbox: A Component-Driven Eleventy & Tailwind CSS Starter | Web Dev Case Study" />
+    <meta property="og:description" content="A case study on Webbox, a feature-complete static website starter built with Eleventy, Tailwind CSS v4, DaisyUI, and Alpine.js for rapid development." />
+    <meta property="og:type" content="article" /><meta property="og:url" content="https://ducklin.de/case-studies/webbox.html" />
+    <meta property="og:image" content="https://ducklin.de/images/webbox_1.webp" />
+    <meta property="og:site_name" content="Ducklin Portfolio" /><meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Webbox: A Component-Driven Eleventy & Tailwind CSS Starter | Web Dev Case Study" />
+    <meta name="twitter:description" content="A case study on Webbox, a feature-complete static website starter built with Eleventy, Tailwind CSS v4, DaisyUI, and Alpine.js for rapid development." />
+    <meta name="twitter:image" content="https://ducklin.de/images/webbox_1.webp" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Webbox: A Component-Driven Eleventy & Tailwind CSS Starter","description":"A case study on Webbox, a feature-complete static website starter built with Eleventy, Tailwind CSS v4, DaisyUI, and Alpine.js for rapid development.","image":"https://ducklin.de/images/webbox_1.webp","author":{"@type":"Person","name":"Aaron Postels","url":"https://ducklin.de"}}</script>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/case-study.css" />
+</head>
+<body>
+    <header class="case-study-header" style="--bg-image: url('/images/webbox_1.webp');">
+        <h1>Webbox</h1><p>A Component-Driven Eleventy & Tailwind CSS Starter</p>
+        <div class="case-study-links"><a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a></div>
+    </header>
+    <main class="case-study-main">
+        <section><h2>Project Overview</h2><p>The vision for Webbox is to create a robust, reusable template that accelerates the development of bespoke websites for clients. It follows a block-based architecture where developers can rapidly assemble complex pages by combining a rich library of pre-built, customizable "Blocks." This approach streamlines the creation of common web patterns, while the integrated DaisyUI theming system allows for quick and easy branding adjustments.</p></section>
+        
+        <section class="case-study-gallery">
+            <h2>Gallery</h2>
+            <div class="gallery-grid">
+                <a href="/images/webbox_1.webp"><img src="/images/webbox_1.webp" alt="A showcase of the Webbox template." loading="lazy" width="600"></a>
+                <a href="/images/webbox_2.webp"><img src="/images/webbox_2.webp" alt="Demonstration of different UI components and blocks." loading="lazy" width="600"></a>
+                <a href="/images/webbox_3.webp"><img src="/images/webbox_3.webp" alt="The live theme switcher in action." loading="lazy" width="600"></a>
+                <a href="/images/webbox_4.webp"><img src="/images/webbox_4.webp" alt="Example of a pricing table component." loading="lazy" width="600"></a>
+            </div>
+        </section>
+
+        <section><h2>Tech Stack</h2><ul class="tech-stack-list"><li>Eleventy (11ty)</li><li>Tailwind CSS v4</li><li>DaisyUI v5</li><li>Alpine.js</li><li>Nunjucks</li><li>Decap CMS</li></ul></section>
+        
+        <section><h2>Key Features</h2><ul><li><strong>Extensive Component Library:</strong> The core of the project is a library of over 30 reusable UI Blocks, including heroes, feature grids, testimonials, pricing tables, contact forms, and more.</li><li><strong>Dynamic Theming System:</strong> A fully functional theme switcher is implemented using Alpine.js and DaisyUI, allowing users to cycle through dozens of pre-configured themes in real-time.</li><li><strong>Complete Demonstration Site:</strong> A multi-page website has been built using the template's own blocks, serving as a live demonstration of its capabilities.</li><li><strong>CMS Integration:</strong> The project is ready for content management out-of-the-box with a pre-written configuration for Decap CMS.</li><li><strong>Interactive UI Elements:</strong> Several components are enhanced with Alpine.js, including a functional FAQ accordion, a cookie consent banner, and an image gallery with a lightbox.</li></ul></section>
+    </main>
+    <footer>&copy; 2025 Aaron Postels @ Ducklin &mdash;<a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a> &mdash;<a href="/imprint.html">Legal Notice</a></footer>
+
+    <div class="lightbox-overlay" id="lightbox">
+        <div class="lightbox-content">
+            <img src="" alt="Enlarged gallery image" id="lightbox-img">
+        </div>
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close image viewer">&times;</button>
+    </div>
+    <script src="../js/case-study.js" defer></script>
+</body>
+</html>

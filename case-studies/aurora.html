@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <title>Aurora: A Web-Based Visual Page Editor | Next.js, React & Turborepo Case Study</title>
+    <meta name="description" content="A case study on Aurora, a no-code visual page editor built with Next.js 15, React, and Tailwind CSS, featuring a block-based architecture and a scalable Turborepo setup."/>
+    <link rel="canonical" href="https://ducklin.de/case-studies/aurora.html" />
+    <meta property="og:title" content="Aurora: A Web-Based Visual Page Editor | Next.js, React & Turborepo Case Study" />
+    <meta property="og:description" content="A case study on Aurora, a no-code visual page editor built with Next.js 15, React, and Tailwind CSS, featuring a block-based architecture and a scalable Turborepo setup." />
+    <meta property="og:type" content="article" /><meta property="og:url" content="https://ducklin.de/case-studies/aurora.html" />
+    <meta property="og:image" content="https://ducklin.de/images/aurora_1.webp" />
+    <meta property="og:site_name" content="Ducklin Portfolio" /><meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Aurora: A Web-Based Visual Page Editor | Next.js, React & Turborepo Case Study" />
+    <meta name="twitter:description" content="A case study on Aurora, a no-code visual page editor built with Next.js 15, React, and Tailwind CSS, featuring a block-based architecture and a scalable Turborepo setup." />
+    <meta name="twitter:image" content="https://ducklin.de/images/aurora_1.webp" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Aurora: A Web-Based Visual Page Editor","description":"A case study on Aurora, a no-code visual page editor built with Next.js 15, React, and Tailwind CSS, featuring a block-based architecture and a scalable Turborepo setup.","image":"https://ducklin.de/images/aurora_1.webp","author":{"@type":"Person","name":"Aaron Postels","url":"https://ducklin.de"}}</script>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/case-study.css" />
+</head>
+<body>
+    <header class="case-study-header" style="--bg-image: url('/images/aurora_1.webp');">
+        <h1>Aurora</h1><p>A Web-Based Visual Page Editor</p>
+        <div class="case-study-links"><a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a></div>
+    </header>
+    <main class="case-study-main">
+        <section><h2>Project Overview</h2><p>The vision for Aurora is to create a powerful, no-code visual editor for building websites directly in the browser. It follows a block-based architecture where users construct pages by combining, nesting, and styling a library of pre-defined components. The editor aims to provide an intuitive user experience with features like drag-and-drop, a context-aware inspector panel, and a live global theming system, empowering users to create custom designs without writing a single line of code.</p></section>
+        
+        <section class="case-study-gallery">
+            <h2>Gallery</h2>
+            <div class="gallery-grid">
+                <a href="/images/aurora_1.webp">
+                    <img src="/images/aurora_1.webp" alt="Aurora editor showing the main interface with block palette and inspector." loading="lazy" width="600">
+                </a>
+                <a href="/images/aurora_2.webp">
+                    <img src="/images/aurora_2.webp" alt="A close-up of the live theming panel in Aurora, adjusting global color styles." loading="lazy" width="600">
+                </a>
+            </div>
+        </section>
+
+        <section><h2>Tech Stack</h2><ul class="tech-stack-list"><li>Next.js 15</li><li>React</li><li>TypeScript</li><li>Tailwind CSS v4</li><li>Turborepo</li><li>pnpm Workspaces</li><li>Next.js API Routes</li></ul></section>
+        
+        <section><h2>Key Features</h2><ul><li><strong>Monorepo Foundation:</strong> The entire project is structured as a scalable monorepo, with a clear separation between the main web app and shared UI/block libraries.</li><li><strong>Core Editor UI:</strong> A classic three-panel editor layout is implemented, featuring a left sidebar (for layers, adding blocks, and theming), a central canvas, and a right-side inspector panel.</li><li><strong>Block System:</strong> The system can render a full webpage from a JSON structure. It includes a library of primitive blocks (Container, Heading, Button, etc.) and pre-composed templates (Hero Section, CTA).</li><li><strong>Drag & Drop:</strong> Full drag-and-drop functionality is implemented for reordering and nesting blocks, both within the "Layers" panel and directly on the visual canvas.</li><li><strong>Dynamic Inspector Panel:</strong> A context-aware inspector sidebar is functional. When a block is selected, its specific settings (e.g., text alignment, colors, spacing) are dynamically displayed and are fully editable.</li><li><strong>Live Theming:</strong> A global theme editor is implemented. Users can adjust CSS variables for colors, typography, and border radius across the entire page in real-time and switch between pre-defined theme presets.</li><li><strong>Content Editing:</strong> Inline, live editing for text-based blocks like `Heading` and `TextBlock` is fully functional.</li><li><strong>Persistence API:</strong> A simulated backend API is in place to save both the page structure (JSON) and the global theme data.</li></ul></section>
+    </main>
+    <footer>&copy; 2025 Aaron Postels @ Ducklin &mdash;<a href="https://github.com/SoldatenEnte" target="--blank" rel="noopener noreferrer">GitHub</a> &mdash;<a href="/imprint.html">Legal Notice</a></footer>
+
+    <!-- Lightbox Modal Structure -->
+    <div class="lightbox-overlay" id="lightbox">
+        <div class="lightbox-content">
+            <img src="" alt="Enlarged gallery image" id="lightbox-img">
+        </div>
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close image viewer">&times;</button>
+    </div>
+
+    <script src="../js/case-study.js" defer></script>
+</body>
+</html>

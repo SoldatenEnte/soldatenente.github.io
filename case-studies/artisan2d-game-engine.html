@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <title>Artisan2D: A Web-Based Game Editor | React & Pixi.js Case Study</title>
+    <meta name="description" content="A case study on Artisan2D, a no-code 2D game editor running in the browser, built with React, Pixi.js for rendering, and Planck.js for physics."/>
+    <link rel="canonical" href="https://ducklin.de/case-studies/artisan2d-game-engine.html" />
+    <meta property="og:title" content="Artisan2D: A Web-Based Game Editor | React & Pixi.js Case Study" />
+    <meta property="og:description" content="A case study on Artisan2D, a no-code 2D game editor running in the browser, built with React, Pixi.js for rendering, and Planck.js for physics." />
+    <meta property="og:type" content="article" /><meta property="og:url" content="https://ducklin.de/case-studies/artisan2d-game-engine.html" />
+    <meta property="og:image" content="https://ducklin.de/images/artisan2d-game-engine_1.webp" />
+    <meta property="og:site_name" content="Ducklin Portfolio" /><meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Artisan2D: A Web-Based Game Editor | React & Pixi.js Case Study" />
+    <meta name="twitter:description" content="A case study on Artisan2D, a no-code 2D game editor running in the browser, built with React, Pixi.js for rendering, and Planck.js for physics." />
+    <meta name="twitter:image" content="https://ducklin.de/images/artisan2d-game-engine_1.webp" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Artisan2D: A Web-Based Game Editor","description":"A case study on Artisan2D, a no-code 2D game editor running in the browser, built with React, Pixi.js for rendering, and Planck.js for physics.","image":"https://ducklin.de/images/artisan2d-game-engine_1.webp","author":{"@type":"Person","name":"Aaron Postels","url":"https://ducklin.de"}}</script>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/case-study.css" />
+</head>
+<body>
+    <header class="case-study-header" style="--bg-image: url('/images/artisan2d-game-engine_1.webp');">
+        <h1>Artisan2D</h1><p>A Web-Based Game Editor</p>
+        <div class="case-study-links"><a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a></div>
+    </header>
+    <main class="case-study-main">
+        <section><h2>Project Overview</h2><p>The vision for Artisan2D is to create an intuitive, no-code 2D game editor that runs entirely in the browser. It follows a block-based, atomic design philosophy where users can build complex game entities by combining pre-built 'Blocks'. This makes game creation accessible to beginners while still allowing for detailed customization through an inspector panel for more advanced users.</p></section>
+        
+        <section class="case-study-gallery">
+            <h2>Gallery</h2>
+            <div class="gallery-grid">
+                <a href="/images/artisan2d-game-engine_1.webp">
+                    <img src="/images/artisan2d-game-engine_1.webp" alt="The Artisan2D editor interface." loading="lazy" width="600">
+                </a>
+            </div>
+        </section>
+
+        <section><h2>Tech Stack</h2><ul class="tech-stack-list"><li>React</li><li>TypeScript</li><li>Pixi.js</li><li>Planck.js</li><li>Zustand</li><li>Tailwind CSS</li><li>Vite</li></ul></section>
+        
+        <section><h2>Key Features</h2><ul><li><strong>Core Engine:</strong> A central engine integrates Pixi.js for rendering and Planck.js for physics, capable of loading, displaying, and updating game objects.</li><li><strong>Three-Panel Editor UI:</strong> The main editor layout provides a professional and organized workspace with a Scene Explorer, Block Palette, and Inspector.</li><li><strong>Interactive Canvas:</strong> Users can select objects directly on the canvas, which displays a selection outline and a draggable gizmo for intuitive movement.</li><li><strong>Dynamic Property Inspector:</strong> The Block Inspector dynamically displays and allows editing of properties for any selected object.</li><li><strong>Simulation Control:</strong> UI controls to Play and Stop the physics simulation are functional, allowing for instant testing.</li><li><strong>History Management:</strong> A robust Undo/Redo system tracks changes to the scene, a crucial feature for any editor.</li></ul></section>
+    </main>
+    <footer>&copy; 2025 Aaron Postels @ Ducklin &mdash;<a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a> &mdash;<a href="/imprint.html">Legal Notice</a></footer>
+
+    <div class="lightbox-overlay" id="lightbox">
+        <div class="lightbox-content">
+            <img src="" alt="Enlarged gallery image" id="lightbox-img">
+        </div>
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close image viewer">&times;</button>
+    </div>
+    <script src="../js/case-study.js" defer></script>
+</body>
+</html>

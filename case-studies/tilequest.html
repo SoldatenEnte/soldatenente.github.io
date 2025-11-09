@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <title>Tile Quest: A Phygital Cooperative RPG | Hardware & Full-Stack Case Study</title>
+    <meta name="description" content="A case study on Tile Quest, a physical-digital board game using custom ESP32/NFC hardware, a Python/Flask backend, and a React frontend."/>
+    <link rel="canonical" href="https://ducklin.de/case-studies/tilequest.html" />
+    <meta property="og:title" content="Tile Quest: A Phygital Cooperative RPG | Hardware & Full-Stack Case Study" />
+    <meta property="og:description" content="A case study on Tile Quest, a physical-digital board game using custom ESP32/NFC hardware, a Python/Flask backend, and a React frontend." />
+    <meta property="og:type" content="article" /><meta property="og:url" content="https://ducklin.de/case-studies/tilequest.html" />
+    <meta property="og:image" content="https://ducklin.de/images/tilequest_1.webp" />
+    <meta property="og:site_name" content="Ducklin Portfolio" /><meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Tile Quest: A Phygital Cooperative RPG | Hardware & Full-Stack Case Study" />
+    <meta name="twitter:description" content="A case study on Tile Quest, a physical-digital board game using custom ESP32/NFC hardware, a Python/Flask backend, and a React frontend." />
+    <meta name="twitter:image" content="https://ducklin.de/images/tilequest_1.webp" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Tile Quest: A Phygital Cooperative RPG","description":"A case study on Tile Quest, a physical-digital board game using custom ESP32/NFC hardware, a Python/Flask backend, and a React frontend.","image":"https://ducklin.de/images/tilequest_1.webp","author":{"@type":"Person","name":"Aaron Postels","url":"https://ducklin.de"}}</script>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/case-study.css" />
+</head>
+<body>
+    <header class="case-study-header" style="--bg-image: url('/images/tilequest_1.webp');">
+        <h1>Tile Quest</h1><p>A Phygital Cooperative RPG</p>
+        <div class="case-study-links"><a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a></div>
+    </header>
+    <main class="case-study-main">
+        <section><h2>Project Overview</h2><p>Tile Quest is a cooperative board game that blends physical interaction with the depth of a digital RPG. By offloading complex rules and state tracking to a mobile web app, the physical gameplay remains fast and tactile. The system is designed to be a self-contained, offline-first experience hosted on a Raspberry Pi, allowing players to connect and play with zero installation or internet access required.</p></section>
+        
+        <section class="case-study-gallery">
+            <h2>Gallery</h2>
+            <div class="gallery-grid">
+                <a href="/images/tilequest_1.webp">
+                    <img src="/images/tilequest_1.webp" alt="A full board of 3D-printed, hand-painted hexagonal tiles and figures for Tile Quest." loading="lazy" width="600">
+                </a>
+                <a href="/images/tilequest_2.webp">
+                    <img src="/images/tilequest_2.webp" alt="Close-up of the custom 3D-printed tiles with magnetic pogo-pin connectors." loading="lazy" width="600">
+                </a>
+                <a href="/images/tilequest_3.webp">
+                    <img src="/images/tilequest_3.webp" alt="The React-based web interface showing player stats and inventory on a smartphone." loading="lazy" width="600">
+                </a>
+                <a href="/images/tilequest_4.webp">
+                    <img src="/images/tilequest_4.webp" alt="The internal electronics of a smart tile, showing the ESP32 and NFC reader." loading="lazy" width="600">
+                </a>
+                 <a href="/images/tilequest_5.webp">
+                    <img src="/images/tilequest_5.webp" alt="A player placing a character figure with an NFC-chipped base onto a smart tile." loading="lazy" width="600">
+                </a>
+            </div>
+        </section>
+
+        <section><h2>Tech Stack</h2><ul class="tech-stack-list"><li>ESP32</li><li>NFC (PN532)</li><li>UART</li><li>Bluetooth</li><li>Python</li><li>Flask</li><li>Flask-SocketIO</li><li>SQLite</li><li>React</li><li>TypeScript</li><li>Zustand</li><li>Tailwind CSS</li><li>Docker</li></ul></section>
+        
+        <section><h2>Key Features</h2><ul><li><strong>Full-Stack Architecture:</strong> A complete, containerized monorepo houses the Python backend and React frontend, with real-time communication established via WebSockets.</li><li><strong>Physical-Digital Sync:</strong> A full hardware-to-software pipeline is functional. The system reads NFC data from all tiles, transmits the board state via Bluetooth, and the backend validates player moves in real time.</li><li><strong>Core RPG Systems:</strong> The Python backend includes robust systems for player progression (levels and skills), character classes with unique abilities, a data-driven economy (items, crafting, shops), and a deep gear upgrade and reforge system.</li><li><strong>Interactive Web App:</strong> The frontend provides a full UI for the game loop, including a lobby, character selection, and an active game view with a HUD, inventory management, and action modals.</li><li><strong>Developer Tooling:</strong> A web-based developer panel allows for debugging, hardware simulation, and live manipulation of the game state.</li></ul></section>
+    </main>
+    <footer>&copy; 2025 Aaron Postels @ Ducklin &mdash;<a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a> &mdash;<a href="/imprint.html">Legal Notice</a></footer>
+
+    <!-- Lightbox Modal Structure -->
+    <div class="lightbox-overlay" id="lightbox">
+        <div class="lightbox-content">
+            <img src="" alt="Enlarged gallery image" id="lightbox-img">
+        </div>
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close image viewer">&times;</button>
+    </div>
+
+    <script src="../js/case-study.js" defer></script>
+</body>
+</html>

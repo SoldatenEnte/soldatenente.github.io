@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <title>Panzer: Real-Time Multiplayer Arena | Full-Stack Game & Discord Activity Case Study</title>
+    <meta name="description" content="A case study on Panzer, a top-down tank arena game with an authoritative Node.js server, React/Pixi.js client, and full Discord Activity integration."/>
+    <link rel="canonical" href="https://ducklin.de/case-studies/panzer.html" />
+    <meta property="og:title" content="Panzer: Real-Time Multiplayer Arena | Full-Stack Game & Discord Activity Case Study" />
+    <meta property="og:description" content="A case study on Panzer, a top-down tank arena game with an authoritative Node.js server, React/Pixi.js client, and full Discord Activity integration." />
+    <meta property="og:type" content="article" /><meta property="og:url" content="https://ducklin.de/case-studies/panzer.html" />
+    <meta property="og:image" content="https://ducklin.de/images/panzer_1.webp" />
+    <meta property="og:site_name" content="Ducklin Portfolio" /><meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Panzer: Real-Time Multiplayer Arena | Full-Stack Game & Discord Activity Case Study" />
+    <meta name="twitter:description" content="A case study on Panzer, a top-down tank arena game with an authoritative Node.js server, React/Pixi.js client, and full Discord Activity integration." />
+    <meta name="twitter:image" content="https://ducklin.de/images/panzer_1.webp" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Panzer: Real-Time Multiplayer Arena","description":"A case study on Panzer, a top-down tank arena game with an authoritative Node.js server, React/Pixi.js client, and full Discord Activity integration.","image":"https://ducklin.de/images/panzer_1.webp","author":{"@type":"Person","name":"Aaron Postels","url":"https://ducklin.de"}}</script>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/case-study.css" />
+</head>
+<body>
+    <header class="case-study-header" style="--bg-image: url('/images/panzer_1.webp');">
+        <h1>Panzer</h1><p>A Real-Time Multiplayer Arena</p>
+        <div class="case-study-links"><a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a></div>
+    </header>
+    <main class="case-study-main">
+        <section><h2>Project Overview</h2><p>The vision is to create a fast-paced, 2D top-down tank arena game that is seamlessly integrated into Discord. Players can easily invite friends and jump into public or private lobbies directly within the social platform. The project goes beyond just the game itself, aiming to provide a complete ecosystem including a robust lobby system, game browser, and a powerful, web-based map editor for creating and sharing custom levels.</p></section>
+        
+        <section class="case-study-gallery">
+            <h2>Gallery</h2>
+            <div class="gallery-grid">
+                <a href="/images/panzer_1.webp">
+                    <img src="/images/panzer_1.webp" alt="Panzer gameplay screenshot showing two tanks in an arena." loading="lazy" width="600">
+                </a>
+            </div>
+        </section>
+
+        <section><h2>Tech Stack</h2><ul class="tech-stack-list"><li>React</li><li>TypeScript</li><li>Pixi.js</li><li>Tailwind CSS</li><li>Socket.IO</li><li>Node.js</li><li>Express.js</li><li>pnpm Monorepo</li><li>Discord SDK</li></ul></section>
+        
+        <section><h2>Key Features</h2><ul><li><strong>Full Discord Integration:</strong> The game fully supports being run as a Discord Activity, handling authentication and invites through the official SDK.</li><li><strong>Complete Lobby System:</strong> Players can create public/private lobbies, browse open games, and join via codes. The host has full control over game settings.</li><li><strong>Authoritative Gameplay Core:</strong> A cheat-resistant server dictates all game logic, synchronizing state to clients in real-time. The client uses state interpolation for smooth rendering.</li><li><strong>In-Browser Map Editor:</strong> A comprehensive, standalone map editor allows users to place objects, use a snapping grid, manage history with undo/redo, and export maps as JSON.</li><li><strong>Admin & Debug Tools:</strong> An admin dashboard provides a real-time overview of active lobbies, and an in-game debug menu allows for live tweaking of physics variables.</li></ul></section>
+    </main>
+    <footer>&copy; 2025 Aaron Postels @ Ducklin &mdash;<a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a> &mdash;<a href="/imprint.html">Legal Notice</a></footer>
+
+    <div class="lightbox-overlay" id="lightbox">
+        <div class="lightbox-content">
+            <img src="" alt="Enlarged gallery image" id="lightbox-img">
+        </div>
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close image viewer">&times;</button>
+    </div>
+    <script src="../js/case-study.js" defer></script>
+</body>
+</html>

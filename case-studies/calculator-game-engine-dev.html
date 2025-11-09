@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <title>TI-83 Game Engine: Hacking an Emulator's Potential | TI-BASIC Case Study</title>
+    <meta name="description" content="A case study on developing a game engine and multiple games in TI-BASIC for an enhanced TI-83 calculator emulator, including the discovery of a system vulnerability."/>
+    <link rel="canonical" href="https://ducklin.de/case-studies/calculator-game-engine-dev.html" />
+    <meta property="og:title" content="TI-83 Game Engine: Hacking an Emulator's Potential | TI-BASIC Case Study" />
+    <meta property="og:description" content="A case study on developing a game engine and multiple games in TI-BASIC for an enhanced TI-83 calculator emulator, including the discovery of a system vulnerability." />
+    <meta property="og:type" content="article" /><meta property="og:url" content="https://ducklin.de/case-studies/calculator-game-engine-dev.html" />
+    <meta property="og:image" content="https://ducklin.de/images/placeholder_bg.webp" />
+    <meta property="og:site_name" content="Ducklin Portfolio" /><meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="TI-83 Game Engine: Hacking an Emulator's Potential | TI-BASIC Case Study" />
+    <meta name="twitter:description" content="A case study on developing a game engine and multiple games in TI-BASIC for an enhanced TI-83 calculator emulator, including the discovery of a system vulnerability." />
+    <meta name="twitter:image" content="https://ducklin.de/images/placeholder_bg.webp" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"TI-83 Game Engine: Hacking an Emulator's Potential","description":"A case study on developing a game engine and multiple games in TI-BASIC for an enhanced TI-83 calculator emulator, including the discovery of a system vulnerability.","image":"https://ducklin.de/images/placeholder_bg.webp","author":{"@type":"Person","name":"Aaron Postels","url":"https://ducklin.de"}}</script>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/case-study.css" />
+</head>
+<body>
+    <header class="case-study-header" style="--bg-image: url('/images/placeholder_bg.webp');">
+        <h1>TI-83 Game Engine</h1><p>Hacking an Emulator's Potential</p>
+        <div class="case-study-links"><a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a></div>
+    </header>
+    <main class="case-study-main">
+        <section><h2>Project Overview</h2><p>This entry chronicles a multi-year personal challenge, born within the locked-down environment of a school-issued iPad: to push an enhanced, emulated TI-83 graphing calculator far beyond its intended purpose. Driven by pure curiosity, I set out to transform this unique tool into a capable game development environment by engineering solutions to problems that most developers take for granted, sparking a deep dive into the emulator's architecture.</p></section>
+
+        <section><h2>Tech Stack</h2><ul class="tech-stack-list"><li>TI-BASIC</li></ul></section>
+        
+        <section><h2>Key Features & Discoveries</h2><ul><li><strong>Custom Game Engine:</strong> Designed and built a rudimentary engine in TI-BASIC capable of running both turn-based and real-time games, achieving real-time action with a processor-bound loop to approximate frame rates.</li><li><strong>A Library of Games:</strong> The engine was used to create a portfolio of fully playable games that became popular among fellow students, including _Chess_, a complete version of _2048_ with a self-playing AI, and a functional clone of _Flappy Bird_.</li><li><strong>System Vulnerability Discovery:</strong> Through deep analysis, I discovered a critical flaw in the emulator's save-state system, leading to an exploit where a controlled crash could bypass all exam security measures undetected.</li></ul></section>
+    </main>
+    <footer>&copy; 2025 Aaron Postels @ Ducklin &mdash;<a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a> &mdash;<a href="/imprint.html">Legal Notice</a></footer>
+
+    <div class="lightbox-overlay" id="lightbox">
+        <div class="lightbox-content">
+            <img src="" alt="Enlarged gallery image" id="lightbox-img">
+        </div>
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close image viewer">&times;</button>
+    </div>
+    <script src="../js/case-study.js" defer></script>
+</body>
+</html>
