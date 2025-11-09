@@ -3,7 +3,7 @@ const projects = [
   {
     name: "Platform Kinematics",
     description:
-      "A real-time 3D web simulator of a 3-axis Stewart platform demonstrating inverse kinematics.",
+      "A real-time 3D web simulator of a 3-axis Stewart platform, created as part of a collaborative hardware project for an electronic systems course.",
     href: "./projects/platform/",
     image: "./images/platform_thumbnail.webp",
     status: "In Development",
@@ -86,7 +86,7 @@ const projects = [
   {
     name: "uSeek",
     description:
-      "A large-scale, pirate-themed interactive puzzle campaign using scroll-based animations and embedded 3D models.",
+      "An award-winning university group project: a pirate-themed puzzle campaign using scroll-based animations and 3D models.",
     href: "./projects/uSeek/",
     image: "./images/useek_thumbnail.webp",
     status: "Completed",
@@ -126,7 +126,7 @@ const projects = [
   {
     name: "RPG Combat Minigame",
     description:
-      "A tech demo for a turn-based combat system featuring skill-based timing and reaction minigames.",
+      "A tech demo for a turn-based combat system, prototyped for the TileQuest project, featuring skill-based minigames.",
     href: "./projects/combat/",
     image: "./images/combat_thumbnail.webp",
     status: "Completed",
@@ -141,7 +141,7 @@ const projects = [
   {
     name: "Lockpicking Minigame",
     description:
-      "A tech demo for a timing-based lockpicking minigame with dynamic difficulty.",
+      "A tech demo for a timing-based lockpicking minigame, prototyped for the TileQuest project, with dynamic difficulty.",
     href: "./projects/lockpick/",
     image: "./images/lockpick_thumbnail.webp",
     status: "Completed",
@@ -175,7 +175,7 @@ const projects = [
   {
     name: "Scrub GSAP Portfolio",
     description:
-      "A portfolio concept using scroll-scrubbed animations for cinematic horizontal parallax and dynamic text effects.",
+      "An HfK university project prototyping a portfolio with scroll-scrubbed animations for cinematic parallax effects.",
     href: "./projects/scrub/",
     image: "./images/scrub_thumbnail.webp",
     status: "Archived",
@@ -190,7 +190,7 @@ const projects = [
   {
     name: "Particles Portfolio",
     description:
-      "A portfolio where scrolling dissolves 3D point cloud models into chaotic particle fields.",
+      "An HfK university project where scrolling dissolves 3D point cloud models into chaotic particle fields.",
     href: "./projects/particles/",
     image: "./images/particles_thumbnail.webp",
     status: "Archived",
@@ -205,7 +205,7 @@ const projects = [
   {
     name: "Portal",
     description:
-      "A UI demo creating a seamless portal transition effect using transparent video (HEVC/WebM with alpha channel).",
+      "A UI demo using transparent video (HEVC with alpha channel), conceptualized for the TileQuest project's figure scanning animation.",
     href: "./projects/portal/",
     image: "./images/portal_thumbnail.webp",
     status: "Completed",
@@ -233,7 +233,7 @@ const projects = [
   {
     name: "TileQuest",
     description:
-      "A physical/digital hybrid co-op board game using RFID figures on a custom-built, modular electronic hexagonal grid.",
+      "A physical/digital co-op board game using RFID figures on a custom electronic grid. A 4th-semester university group project.",
     status: "In Development",
     date: "April 2025",
     relevance: 100,
@@ -244,7 +244,7 @@ const projects = [
   {
     name: "Flashdash",
     description:
-      "An interactive 15-meter LED strip game of 1D ping-pong with dynamic speed, a custom LED matrix display, and spatial audio.",
+      "A 15-meter interactive LED strip game of 1D ping-pong. A collaborative HfK project with a custom display and spatial audio.",
     status: "Completed",
     date: "2024 - 2025",
     relevance: 100,
@@ -255,7 +255,7 @@ const projects = [
   {
     name: "Duckslayer",
     description:
-      "A 3D game where you clean a bathtub by performing tricks on a bar of soap, fighting off enemy rubber ducks. Winner of Global Game Jam 2025 (Bremen).",
+      "A 3D trick-based soap-surfing game developed in a group for Global Game Jam 2025. Winner of the Bremen site.",
     status: "Completed",
     date: "January 2025",
     relevance: 95,
@@ -277,7 +277,7 @@ const projects = [
   {
     name: "HueTogether",
     description:
-      "A two-player co-op puzzle game where players can only interact with obstacles of their own color. (University Project Winner)",
+      "A two-player co-op puzzle game developed as a group project for a university course, which won its project showcase.",
     status: "Completed",
     date: "November 2024",
     relevance: 75,
@@ -321,7 +321,7 @@ const projects = [
   {
     name: "Unity ML-Agents Parkour",
     description:
-      "Trained multiple AI agents using machine learning to navigate a complex parkour, developing different locomotion strategies.",
+      "Trained AI agents using machine learning to navigate a parkour. A solo project for a first-semester HfK university course.",
     status: "Completed",
     date: "November 2023",
     relevance: 70,
@@ -332,7 +332,7 @@ const projects = [
   {
     name: "Unstable Diffusion",
     description:
-      "An art project using Stable Diffusion and depth maps rendered from Blender to generate human-like figures from abstract 3D structures.",
+      "A university group art project using Stable Diffusion to generate figures from abstract 3D depth maps.",
     status: "Completed",
     date: "October 2024",
     relevance: 65,
@@ -343,7 +343,7 @@ const projects = [
   {
     name: "MI2 3D Integration",
     description:
-      "Created, animated, and composited a 3D Blender model into a real-world video, then built a game around it.",
+      "A solo university project for Medieninformatik 2, involving modeling, animating, and compositing a 3D model into a live-action video.",
     status: "Completed",
     date: "August 2024",
     relevance: 73,
@@ -354,7 +354,7 @@ const projects = [
   {
     name: "Gunners Gauntlet",
     description:
-      "A pseudo-3D top-down shooter built with a self-made 3D rendering engine in Java.",
+      "A pseudo-3D shooter built with a self-made rendering engine in Java. A solo project for a first-semester university course.",
     status: "Completed",
     date: "November 2023",
     relevance: 67,
@@ -365,7 +365,7 @@ const projects = [
   {
     name: "Birkenhirten",
     description:
-      "A game where you play as a god protecting moving sheep from preying wolves.",
+      "A game about herding sheep and protecting them from wolves. A group project for a first-semester university course.",
     status: "Completed",
     date: "December 2023",
     relevance: 55,
