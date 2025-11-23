@@ -406,6 +406,17 @@ const projects = [
     image: "./images/webbox_1.webp",
     techStack: ["Nunjucks", "Python", "HTML", "CSS", "JavaScript"],
   },
+  {
+    name: "Reinforcement Learning Racer",
+    description:
+      "A self-driving racing agent trained via PPO. Features procedural track generation, 'GPS' spatial awareness optimization, and a custom 'Draw & Drive' interface.",
+    status: "Completed",
+    date: "November 2025",
+    relevance: 80,
+    docHref: "./case-studies/racing-ai.html",
+    image: "./images/racing-ai_1.webp",
+    techStack: ["Python", "Stable Baselines 3", "Pygame", "Gymnasium"],
+  },
   /*
   {
     name: "Mining Grid Game",

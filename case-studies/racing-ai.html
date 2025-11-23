@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <title>Reinforcement Learning Racer | AI & Machine Learning Case Study</title>
+    <meta name="description" content="A case study on the evolution of a self-driving racing agent using Proximal Policy Optimization (PPO), featuring procedural track generation and spatial awareness optimization."/>
+    <link rel="canonical" href="https://ducklin.de/case-studies/racing-ai.html" />
+    <meta property="og:title" content="Reinforcement Learning Racer | AI & Machine Learning Case Study" />
+    <meta property="og:description" content="A case study on the evolution of a self-driving racing agent using Proximal Policy Optimization (PPO), featuring procedural track generation and spatial awareness optimization." />
+    <meta property="og:type" content="article" /><meta property="og:url" content="https://ducklin.de/case-studies/racing-ai.html" />
+    <meta property="og:image" content="https://ducklin.de/images/racing-ai_1.webp" /> <!-- UPDATED -->
+    <meta property="og:site_name" content="Ducklin Portfolio" /><meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Reinforcement Learning Racer | AI & Machine Learning Case Study" />
+    <meta name="twitter:description" content="A case study on the evolution of a self-driving racing agent using Proximal Policy Optimization (PPO), featuring procedural track generation and spatial awareness optimization." />
+    <meta name="twitter:image" content="https://ducklin.de/images/racing-ai_1.webp" /> <!-- UPDATED -->
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Reinforcement Learning Racer","description":"A case study on the evolution of a self-driving racing agent using Proximal Policy Optimization (PPO), featuring procedural track generation and spatial awareness optimization.","image":"https://ducklin.de/images/racing-ai_1.webp","author":{"@type":"Person","name":"Aaron Postels","url":"https://ducklin.de"}}</script>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/case-study.css" />
+</head>
+<body>
+    <!-- UPDATED HEADER IMAGE BELOW -->
+    <header class="case-study-header" style="--bg-image: url('/images/racing-ai_1.webp');">
+        <h1>Reinforcement Learning Racer</h1><p>Evolution of an Autonomous Agent</p>
+        <div class="case-study-links">
+            <a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a>
+        </div>
+    </header>
+    <main class="case-study-main">
+        <section>
+            <h2>Project Overview</h2>
+            <p>This project demonstrates the development of a Reinforcement Learning agent trained to master 2D racing lines. Built using Python and Stable Baselines 3 (PPO), it documents the AI's evolution from basic obstacle avoidance on procedurally generated tracks to precision time-attack racing.</p> 
+            <p>By upgrading the neural network inputs from simple Raycasts to include relative localization data (Checkpoint Angle/Distance), the agent optimized its lap times by over 9%, breaking the 10-second barrier. The project culminates in a custom "Draw & Drive" interface, allowing real-time testing on user-generated splines.</p>
+        </section>
+        
+        <section class="case-study-video">
+            <h2>Project Showcase</h2>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/bv8AA-LizGc" title="Evolution of a Racing AI" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </section>
+
+        <section class="case-study-gallery">
+            <h2>Gallery</h2>
+            <div class="gallery-grid">
+                <a href="/images/racing-ai_1.webp">
+                    <img src="/images/racing-ai_1.webp" alt="AI visualizing raycast sensors on a procedural track." loading="lazy" width="600">
+                </a>
+                <a href="/images/racing-ai_2.webp">
+                    <img src="/images/racing-ai_2.webp" alt="The Draw & Drive interface showing a user-created spline." loading="lazy" width="600">
+                </a>
+            </div>
+        </section>
+
+        <section><h2>Tech Stack</h2><ul class="tech-stack-list"><li>Python</li><li>Stable Baselines 3 (PPO)</li><li>Gymnasium</li><li>Pygame</li><li>NumPy</li></ul></section>
+        
+        <section><h2>Key Features</h2><ul><li><strong>Reinforcement Learning (PPO):</strong> Utilized Proximal Policy Optimization to train a continuous control agent for steering and throttle.</li><li><strong>Procedural Generation:</strong> Developed a robust map generator creating infinite unique track layouts to prevent the AI from overfitting/memorizing maps.</li><li><strong>Input Optimization:</strong> Improved lap times by ~10% by augmenting LIDAR-style raycasts with "GPS" features (Next Checkpoint Angle, Distance, and Lap Progress).</li><li><strong>Interactive "Draw & Drive":</strong> A custom Pygame interface that processes user-drawn lines into driveable physics meshes, allowing instant simulation of the pre-trained agent on novel geometry.</li></ul></section>
+    </main>
+    <footer>&copy; 2025 Aaron Postels @ Ducklin &mdash;<a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a> &mdash;<a href="/imprint.html">Legal Notice</a></footer>
+
+    <div class="lightbox-overlay" id="lightbox">
+        <div class="lightbox-content">
+            <img src="" alt="Enlarged gallery image" id="lightbox-img">
+        </div>
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close image viewer">&times;</button>
+    </div>
+    <script src="../js/case-study.js" defer></script>
+</body>
+</html>
