@@ -417,6 +417,17 @@ const projects = [
     image: "./images/racing-ai_1.webp",
     techStack: ["Python", "Stable Baselines 3", "Pygame", "Gymnasium"],
   },
+  {
+    name: "NPC Engine",
+    description:
+      "A local AI platform for creating stable, role-playing NPCs. Features custom LoRA training, advanced prompt engineering, and a bespoke Web UI.",
+    status: "Completed",
+    date: "November 2025",
+    relevance: 85,
+    docHref: "./case-studies/npc-engine.html",
+    image: "./images/NPC-engine_1.webp",
+    techStack: ["Python", "PyTorch", "FastAPI", "Transformers", "LoRA"],
+  },
   /*
   {
     name: "Mining Grid Game",

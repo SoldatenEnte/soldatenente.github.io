@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <title>NPC Engine | Local AI & LLM Case Study</title>
+    <meta name="description" content="A local AI platform for creating stable, role-playing NPCs using custom LoRA training, advanced prompt engineering, and a bespoke Web UI."/>
+    <link rel="canonical" href="https://ducklin.de/case-studies/npc-engine.html" />
+    <meta property="og:title" content="NPC Engine | Local AI & LLM Case Study" />
+    <meta property="og:description" content="A local AI platform for creating stable, role-playing NPCs using custom LoRA training, advanced prompt engineering, and a bespoke Web UI." />
+    <meta property="og:type" content="article" /><meta property="og:url" content="https://ducklin.de/case-studies/npc-engine.html" />
+    <meta property="og:image" content="https://ducklin.de/images/NPC-engine_1.webp" />
+    <meta property="og:site_name" content="Ducklin Portfolio" /><meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="NPC Engine | Local AI & LLM Case Study" />
+    <meta name="twitter:description" content="A local AI platform for creating stable, role-playing NPCs using custom LoRA training, advanced prompt engineering, and a bespoke Web UI." />
+    <meta name="twitter:image" content="https://ducklin.de/images/NPC-engine_1.webp" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"NPC Engine","description":"A local AI platform for creating stable, role-playing NPCs using custom LoRA training, advanced prompt engineering, and a bespoke Web UI.","image":"https://ducklin.de/images/NPC-engine_1.webp","author":{"@type":"Person","name":"Aaron Postels","url":"https://ducklin.de"}}</script>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/case-study.css" />
+</head>
+<body>
+    <header class="case-study-header" style="--bg-image: url('/images/NPC-engine_1.webp');">
+        <h1>NPC Engine</h1><p>Local Large Language Model Persona Framework</p>
+        <div class="case-study-links">
+            <a href="/" class="btn btn-secondary">&larr; Back to Portfolio</a>
+        </div>
+    </header>
+    <main class="case-study-main">
+        <section>
+            <h2>Project Overview</h2>
+            <p>The NPC Engine is a sophisticated local AI platform designed to create, manage, and interact with highly stable AI personas. Unlike generic chatbots, this system focuses on <strong>role-playing fidelity</strong>, ensuring characters stay strictly in character even under "interrogation" or complex dialogue scenarios.</p>
+            <p>It features a custom-built Web UI that provides full control over the LLM pipeline, from loading different quantized models (Gemma, Llama, Mistral) to fine-tuning specific character behaviors using <strong>Low-Rank Adaptation (LoRA)</strong> directly within the interface.</p>
+        </section>
+        
+        <section class="case-study-gallery">
+            <h2>Interface Gallery</h2>
+            <div class="gallery-grid">
+                <a href="/images/NPC-engine_1.webp">
+                    <img src="/images/NPC-engine_1.webp" alt="The main chat interface showing a conversation with a custom NPC." loading="lazy" width="600">
+                </a>
+                <a href="/images/NPC-engine_2.webp">
+                    <img src="/images/NPC-engine_2.webp" alt="Character editor allowing definition of traits, bio, and example dialogue." loading="lazy" width="600">
+                </a>
+                <a href="/images/NPC-engine_3.webp">
+                    <img src="/images/NPC-engine_3.webp" alt="Training dashboard for creating custom LoRA adapters." loading="lazy" width="600">
+                </a>
+            </div>
+        </section>
+
+        <section><h2>Tech Stack</h2><ul class="tech-stack-list"><li>Python</li><li>PyTorch</li><li>Hugging Face Transformers</li><li>PEFT (LoRA)</li><li>FastAPI</li><li>Vanilla JavaScript (Frontend)</li><li>BitsAndBytes (Quantization)</li></ul></section>
+        
+        <section><h2>Key Features</h2><ul><li><strong>Stable Personalities:</strong> Utilizes advanced system prompts and context injection to maintain character consistency, preventing the AI from breaking character or reverting to "AI Assistant" mode.</li><li><strong>Integrated LoRA Training:</strong> A "One-Click" training pipeline that generates synthetic datasets based on character definitions and fine-tunes the model locally to adopt specific speech patterns and knowledge.</li><li><strong>Model Agnostic:</strong> Supports hot-swapping between various open-source models (e.g., Gemma 2, Llama 3) with support for 4-bit and 8-bit quantization for efficiency on consumer hardware.</li><li><strong>Full Control:</strong> A bespoke dark-mode UI giving access to all generation parameters (Temperature, Top-P, Repetition Penalty) and system settings in real-time.</li></ul></section>
+    </main>
+    <footer>&copy; 2025 Aaron Postels @ Ducklin &mdash;<a href="https://github.com/SoldatenEnte" target="_blank" rel="noopener noreferrer">GitHub</a> &mdash;<a href="/imprint.html">Legal Notice</a></footer>
+
+    <div class="lightbox-overlay" id="lightbox">
+        <div class="lightbox-content">
+            <img src="" alt="Enlarged gallery image" id="lightbox-img">
+        </div>
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close image viewer">&times;</button>
+    </div>
+    <script src="../js/case-study.js" defer></script>
+</body>
+</html>
