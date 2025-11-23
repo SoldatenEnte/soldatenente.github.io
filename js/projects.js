@@ -225,7 +225,7 @@ const projects = [
       "A web game to build and play speedrun platformer levels with highly tweakable player controls and competitive leaderboards.",
     status: "In Development",
     date: "November 2025",
-    relevance: 30,
+    relevance: 60,
     docHref: "./case-studies/web-platformer.html",
     image: "./images/web-platformer_1.webp",
     techStack: ["Next.js", "Turborepo", "TypeScript", "Docker"],
