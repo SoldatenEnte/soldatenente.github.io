@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kart Engine - Level Editor</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #222; font-family: 'Segoe UI', sans-serif; }
+        canvas { display: block; }
+        
+        /* Toolbar (Top Center) */
+        #toolbar {
+            position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 10px; pointer-events: none;
+            background: rgba(0,0,0,0.8); padding: 8px; border-radius: 8px;
+        }
+        .btn {
+            background: #444; border: 1px solid #666; color: #ddd;
+            padding: 6px 12px; border-radius: 4px; pointer-events: auto; cursor: pointer;
+            font-size: 12px; text-transform: uppercase; font-weight: bold;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: #555; }
+        .btn.active { background: #3498db; border-color: #3498db; color: white; }
+
+        /* Hierarchy (Left) */
+        #hierarchy {
+            position: absolute; top: 0; left: 0; bottom: 0; width: 250px;
+            background: rgba(20, 20, 20, 0.95); border-right: 1px solid #444;
+            display: flex; flex-direction: column;
+            overflow-y: auto;
+        }
+        #hierarchy-header {
+            padding: 10px; background: #333; color: white; font-weight: bold; font-size: 14px;
+            border-bottom: 1px solid #444; text-transform: uppercase; letter-spacing: 1px;
+        }
+        #object-list { flex: 1; padding: 5px; list-style: none; margin: 0; }
+        .obj-item {
+            padding: 8px 10px; margin-bottom: 2px; background: #333; color: #ccc;
+            cursor: pointer; font-size: 13px; border-radius: 3px; display: flex; justify-content: space-between;
+        }
+        .obj-item:hover { background: #444; }
+        .obj-item.selected { background: #3498db; color: white; }
+        .obj-type { opacity: 0.6; font-size: 10px; margin-left: 10px; text-transform: uppercase; }
+
+        /* Help Text */
+        #help {
+            position: absolute; bottom: 10px; left: 260px; color: #888; font-size: 12px;
+            pointer-events: none; background: rgba(0,0,0,0.5); padding: 5px; border-radius: 4px;
+        }
+        #mode-indicator {
+            position: absolute; top: 100px; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 0, 0, 0.8); color: white; padding: 10px 20px;
+            font-weight: bold; border-radius: 5px; pointer-events: none; display: none;
+        }
+    </style>
+  <script type="module" crossorigin src="./assets/editor-CHMi5qvz.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/GLTFLoader-DbBDHowW.js">
+</head>
+<body>
+    <div id="hierarchy">
+        <div id="hierarchy-header">Scene Objects</div>
+        <ul id="object-list"></ul>
+    </div>
+
+    <div id="toolbar">
+        <button class="btn" id="btn-trans" title="Translate (W)">Move</button>
+        <button class="btn" id="btn-rot" title="Rotate (E)">Rotate</button>
+        <button class="btn" id="btn-scale" title="Scale (R)">Scale</button>
+        <div style="width: 10px;"></div>
+        <button class="btn" id="btn-local">Local</button>
+        <button class="btn active" id="btn-world">World</button>
+        <div style="width: 10px;"></div>
+        <button class="btn active" id="btn-persp">Persp</button>
+        <button class="btn" id="btn-ortho">Ortho</button>
+    </div>
+    
+    <div id="mode-indicator">DRAWING WALL - CLICK TO ADD POINT - ENTER TO FINISH</div>
+
+    <div id="help">
+        [W/E/R] Tools | [Del] Delete | [Esc] Deselect | [Enter] Finish Wall
+    </div>
+
+</body>
+</html>
