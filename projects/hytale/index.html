@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SEO / Meta Tags -->
+    <title>Hytale Plugin Generator — Custom Plugin Template Generator</title>
+    <meta
+      name="description"
+      content="Generate a customized Hytale plugin template with your own project data. Download a ready-to-use template including Gradle setup, manifest.json, and Java boilerplate."
+    />
+    <link rel="canonical" href="https://ducklin.de/projects/hytale" />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Aaron Postels" />
+
+    <!-- Open Graph (Discord/Facebook/LinkedIn) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Ducklin" />
+    <meta
+      property="og:title"
+      content="Hytale Plugin Generator — Template Generator"
+    />
+    <meta
+      property="og:description"
+      content="Create a personalized Hytale plugin template with your metadata and download it instantly as a ready-to-use project."
+    />
+    <meta property="og:url" content="https://ducklin.de/projects/hytale" />
+    <meta
+      property="og:image"
+      content="https://ducklin.de/images/hytale-og-image.jpg"
+    />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Hytale Plugin Generator — Template Generator"
+    />
+    <meta
+      name="twitter:description"
+      content="Generate a customized Hytale plugin template with your own project details and download it instantly."
+    />
+    <meta
+      name="twitter:image"
+      content="https://ducklin.de/images/hytale-og-image.jpg"
+    />
+
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Hytale Plugin Generator",
+        "url": "https://ducklin.de/projects/hytale",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "description": "A free web tool that generates customized Hytale plugin templates (Gradle setup, manifest.json, and Java boilerplate) based on your entered project data.",
+        "publisher": {
+          "@type": "Person",
+          "name": "Aaron Postels",
+          "url": "https://ducklin.de"
+        }
+      }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="background-glow"></div>
+    <main class="container">
+      <header>
+        <div class="icon-wrapper">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+            ></path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+        </div>
+        <h1>Hytale Plugin Generator</h1>
+        <p class="subtitle">
+          Generate a customized Hytale plugin template in seconds.
+        </p>
+      </header>
+
+      <div class="form-content">
+        <div class="row">
+          <div class="input-group half">
+            <label for="pluginName">Plugin Name</label>
+            <input
+              type="text"
+              id="pluginName"
+              placeholder="ExamplePlugin"
+              value="ExamplePlugin"
+              autocomplete="off"
+            />
+          </div>
+          <div class="input-group half">
+            <label for="author">Author Name</label>
+            <input
+              type="text"
+              id="author"
+              placeholder="ExamplePublisher"
+              value="ExamplePublisher"
+              autocomplete="off"
+            />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="description">Description (Optional)</label>
+          <input
+            type="text"
+            id="description"
+            placeholder="A template for Hytale modding."
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="input-group">
+          <label>Plugin Icon</label>
+          <div class="file-upload-wrapper">
+            <div class="icon-preview">
+              <img
+                src="pack.png"
+                id="iconPreviewImg"
+                alt="Icon"
+                onerror="this.style.opacity='0.3'"
+              />
+            </div>
+            <div class="file-info">
+              <label for="iconUpload" class="custom-file-btn"
+                >Choose Image</label
+              >
+              <span id="fileName">Using default image</span>
+              <input type="file" id="iconUpload" accept="image/png" />
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-container">
+          <div class="preview-header">Configuration Preview</div>
+          <div class="preview-code" id="previewBox">
+            <div class="line">
+              <span class="key">Maven Group ID:</span>
+              <span class="val" id="prevGroup">com.examplepublisher</span>
+            </div>
+            <div class="line">
+              <span class="key">Project ID:</span>
+              <span class="val" id="prevArtifact">example-plugin</span>
+            </div>
+            <div class="line">
+              <span class="key">Root Package:</span>
+              <span class="val" id="prevPackage"
+                >com.examplepublisher.exampleplugin</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div id="assetWarning" class="warning-box hidden">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+            ></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <span
+            >Custom Icons and GUI require the Asset Pack to be enabled.</span
+          >
+        </div>
+
+        <div class="advanced-section">
+          <button type="button" id="toggleAdvanced" class="toggle-btn">
+            <span>Advanced Options</span>
+            <svg
+              class="chevron"
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+
+          <div id="advancedContent" class="advanced-content hidden">
+            <div class="advanced-group">
+              <div class="group-title">Project Features</div>
+              <div class="input-group checkbox-group spacer-bottom">
+                <input type="checkbox" id="includeAssets" checked />
+                <label for="includeAssets">Include Asset Pack</label>
+              </div>
+
+              <label class="sub-label">Include Example Scripts:</label>
+              <div class="checkbox-grid">
+                <div class="checkbox-group">
+                  <input type="checkbox" id="incCmd" />
+                  <label for="incCmd">Commands</label>
+                </div>
+                <div class="checkbox-group">
+                  <input type="checkbox" id="incConfig" />
+                  <label for="incConfig">Config</label>
+                </div>
+                <div class="checkbox-group">
+                  <input type="checkbox" id="incEvents" />
+                  <label for="incEvents">Events</label>
+                </div>
+                <div class="checkbox-group">
+                  <input type="checkbox" id="incGui" />
+                  <label for="incGui">GUI</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="advanced-group">
+              <div class="group-title">Metadata</div>
+              <div class="input-group">
+                <label for="pluginWebsite">Project Website</label>
+                <input
+                  type="url"
+                  id="pluginWebsite"
+                  placeholder="https://github.com/Example/MyPlugin"
+                />
+              </div>
+
+              <div class="row">
+                <div class="input-group half">
+                  <label for="authorEmail">Author Email</label>
+                  <input
+                    type="email"
+                    id="authorEmail"
+                    placeholder="contact@example.com"
+                  />
+                </div>
+                <div class="input-group half">
+                  <label for="authorUrl">Website</label>
+                  <input
+                    type="url"
+                    id="authorUrl"
+                    placeholder="https://example.com"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button id="generateBtn" type="button" class="action-btn">
+          <span class="btn-text">Generate Plugin (.zip)</span>
+          <div class="loader"></div>
+        </button>
+      </div>
+    </main>
+    <script src="script.js"></script>
+  </body>
+</html>
