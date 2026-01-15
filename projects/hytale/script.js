@@ -449,14 +449,22 @@ $C.@BackButton {}`;
 
   const toKebabCase = (str) =>
     str.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+
+  // Strict sanitizer: remove anything that isn't alphanumeric (removes hyphens for Java Classes)
   const sanitizePascal = (str) => str.replace(/[^a-zA-Z0-9]/g, "");
 
   function updatePreview() {
-    const plugin = sanitizePascal(pluginInput.value) || "ExamplePlugin";
-    const auth = sanitizePascal(authorInput.value) || "ExamplePublisher";
-    prevGroup.textContent = `com.${auth.toLowerCase()}`;
-    prevArtifact.textContent = toKebabCase(plugin);
-    prevPackage.textContent = `com.${auth.toLowerCase()}.${plugin.toLowerCase()}`;
+    const rawPlugin = pluginInput.value || "ExamplePlugin";
+    const rawAuthor = authorInput.value || "ExamplePublisher";
+
+    // Used for Java Class names (No hyphens)
+    const pluginPascal = sanitizePascal(rawPlugin);
+    const authorPascal = sanitizePascal(rawAuthor);
+
+    prevGroup.textContent = `com.${authorPascal.toLowerCase()}`;
+    // Artifact ID preserves hyphens but makes them lowercase (e.g. My-Plugin -> my-plugin)
+    prevArtifact.textContent = toKebabCase(rawPlugin);
+    prevPackage.textContent = `com.${authorPascal.toLowerCase()}.${pluginPascal.toLowerCase()}`;
   }
 
   function checkAssetWarning() {
@@ -470,8 +478,28 @@ $C.@BackButton {}`;
     }
   }
 
-  pluginInput.addEventListener("input", updatePreview);
-  authorInput.addEventListener("input", updatePreview);
+  // --- Strict Input Listeners ---
+  function enforceSafeInput(e) {
+    let val = e.target.value;
+
+    // 1. Auto-convert spaces to hyphens
+    val = val.replace(/\s/g, "-");
+
+    // 2. Remove anything that isn't alphanumeric or hyphen (removes underscore)
+    const clean = val.replace(/[^a-zA-Z0-9\-]/g, "");
+
+    if (val !== clean || e.target.value !== val) {
+      e.target.value = clean;
+    }
+
+    e.target.classList.remove("input-error");
+    updatePreview();
+  }
+
+  pluginInput.addEventListener("input", enforceSafeInput);
+  authorInput.addEventListener("input", enforceSafeInput);
+
+  // --- End Strict Input Listeners ---
 
   iconInput.addEventListener("change", (e) => {
     const file = e.target.files[0];
@@ -501,6 +529,34 @@ $C.@BackButton {}`;
   updatePreview();
 
   generateBtn.addEventListener("click", async () => {
+    // --- Validation Before Generation ---
+    const rawPluginName = pluginInput.value.trim();
+    const rawAuthorName = authorInput.value.trim();
+
+    let hasError = false;
+
+    // Check 1: Empty
+    if (!rawPluginName) {
+      pluginInput.classList.add("input-error");
+      hasError = true;
+    }
+    if (!rawAuthorName) {
+      authorInput.classList.add("input-error");
+      hasError = true;
+    }
+
+    // Check 2: Java Class names cannot start with a number
+    if (/^\d/.test(rawPluginName)) {
+      alert("Plugin name cannot start with a number.");
+      pluginInput.classList.add("input-error");
+      hasError = true;
+    }
+
+    if (hasError) {
+      return; // Stop generation
+    }
+    // --- End Validation ---
+
     generateBtn.classList.add("loading");
     generateBtn.disabled = true;
     const originalBtnText = generateBtn.querySelector(".btn-text").textContent;
@@ -525,8 +581,11 @@ $C.@BackButton {}`;
     try {
       const zip = new JSZip();
 
-      const pluginName = sanitizePascal(pluginInput.value) || "ExamplePlugin";
-      const author = sanitizePascal(authorInput.value) || "ExamplePublisher";
+      // For Java Classes, we MUST remove hyphens (My-Plugin -> MyPlugin)
+      const pluginClassName = sanitizePascal(rawPluginName) || "ExamplePlugin";
+      const authorClassName =
+        sanitizePascal(rawAuthorName) || "ExamplePublisher";
+
       const description =
         descInput.value.trim() || "A template for Hytale modding.";
 
@@ -542,23 +601,24 @@ $C.@BackButton {}`;
       const email = emailInput.value.trim();
       const authorUrl = urlInput.value.trim();
 
-      const settingsName = toKebabCase(pluginName);
-      const packageId = pluginName.toLowerCase();
-      const fullPackage = `com.${author.toLowerCase()}.${packageId}`;
+      const settingsName = toKebabCase(rawPluginName);
+      const packageId = pluginClassName.toLowerCase();
+      const fullPackage = `com.${authorClassName.toLowerCase()}.${packageId}`;
       const dirPath = fullPackage.replace(/\./g, "/");
 
-      const authorObj = { Name: author };
+      const authorObj = { Name: authorClassName };
       if (email) authorObj.Email = email;
       if (authorUrl) authorObj.Url = authorUrl;
 
+      // Manifest uses the raw name (with hyphens if typed), Class uses sanitized
       const manifestObj = {
-        Group: author,
-        Name: pluginName,
+        Group: authorClassName,
+        Name: rawPluginName,
         Version: "1.0.0",
         Description: description,
         Authors: [authorObj],
         ServerVersion: "*",
-        Main: `${fullPackage}.${pluginName}`,
+        Main: `${fullPackage}.${pluginClassName}`,
         IncludesAssetPack: includeAssets,
         Dependencies: {},
         OptionalDependencies: {},
@@ -624,7 +684,7 @@ idea.project.settings.runConfigurations {
       zip.file(
         "gradle.properties",
         `# TECHNICAL METADATA
-group=com.${author.toLowerCase()}
+group=com.${authorClassName.toLowerCase()}
 plugin_version=1.0.0
 
 # BUILD SETTINGS
@@ -643,19 +703,20 @@ hytale_version=latest`
         const uiBasePath = "src/main/resources/Common/UI/Custom";
         const uiPagesPath = `${uiBasePath}/Pages`;
 
-        const pngName = `${author}_${pluginName}.png`;
+        // Filenames should use safe identifiers
+        const pngName = `${authorClassName}_${pluginClassName}.png`;
         zip.file(`${uiBasePath}/${pngName}`, imageBlob);
         zip.folder(uiPagesPath);
 
         if (flags.gui) {
-          const uiFileName = `${author}_${pluginName}_Gui.ui`;
+          const uiFileName = `${authorClassName}_${pluginClassName}_Gui.ui`;
           zip.file(`${uiPagesPath}/${uiFileName}`, getUIFileContent());
         }
       }
 
       zip.file(
-        `src/main/java/${dirPath}/${pluginName}.java`,
-        getMainClassCode(fullPackage, pluginName, flags)
+        `src/main/java/${dirPath}/${pluginClassName}.java`,
+        getMainClassCode(fullPackage, pluginClassName, flags)
       );
 
       if (flags.config) {
@@ -677,7 +738,7 @@ hytale_version=latest`
         );
       }
       if (flags.gui) {
-        const uiFileName = `${author}_${pluginName}_Gui.ui`;
+        const uiFileName = `${authorClassName}_${pluginClassName}_Gui.ui`;
         const uiRelPath = `Pages/${uiFileName}`;
         zip.file(
           `src/main/java/${dirPath}/gui/ExampleGui.java`,
