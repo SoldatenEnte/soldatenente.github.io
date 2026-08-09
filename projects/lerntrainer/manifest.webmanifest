@@ -1,0 +1,13 @@
+{
+  "name": "Lerntrainer",
+  "short_name": "Lernen",
+  "description": "Lerne mit portablen, KI-generierten Lernpaketen.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f3ec",
+  "theme_color": "#5d3fe8",
+  "icons": [
+    { "src": "./app-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
