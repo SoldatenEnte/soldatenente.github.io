@@ -1,0 +1,15 @@
+{
+  "name": "murmuration",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "murmuration_bg.wasm",
+    "murmuration.js",
+    "murmuration.d.ts"
+  ],
+  "main": "murmuration.js",
+  "types": "murmuration.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

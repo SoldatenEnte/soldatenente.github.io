@@ -1,4 +1,10 @@
-import init, { create_swarm_cpu, create_swarm_gpu, mesh_cube } from "./pkg/murmuration.js";
+import init, {
+  create_swarm_cpu,
+  create_swarm_gpu,
+  mesh_cube,
+  initThreadPool,
+  artisan_rayon_threads,
+} from "./pkg/murmuration.js";
 import { ArtisanApp } from "./engine/App.js";
 import { WebGPURenderer } from "./engine/Renderer.js";
 
@@ -451,6 +457,20 @@ function basisToQuat(right, up, forward, roll = 0) {
 
 async function start() {
   const wasm = await init();
+  // The CPU path's simulation is a par_for_each over every entity, so without a
+  // rayon pool it runs on exactly one core no matter how many the machine has.
+  // Needs cross-origin isolation (COOP/COEP) for SharedArrayBuffer; the dev
+  // server sends both. Wrapped because a host that does not send those headers
+  // should fall back to single-threaded rather than fail to start the demo.
+  try {
+    await initThreadPool(navigator.hardwareConcurrency);
+  } catch (e) {
+    console.warn("[murmuration] thread pool unavailable, running serial:", e);
+  }
+
+  // Read once, after the pool has resolved: this is what rayon will actually
+  // use, which is not necessarily what was asked for.
+  const rayonThreads = artisan_rayon_threads();
 
   const canvas = document.getElementById("gameCanvas");
   // `?msaa=1|2|4` — the sample count has to be decided before the renderer
@@ -1081,6 +1101,10 @@ async function start() {
         el("v-cpu").innerText = `${avgCpu.get().toFixed(2)} ms`;
         el("v-gpu").innerText = `${avgGpu.get().toFixed(2)} ms`;
         el("v-frame").innerText = `${avgFrame.get().toFixed(1)} ms`;
+        // Reported by rayon itself rather than from hardwareConcurrency, so a
+        // pool that failed to start reads 1 instead of claiming 20.
+        el("v-threads").innerText =
+          mode === "cpu" ? String(rayonThreads) : `${rayonThreads} (idle)`;
         // What actually reached the rasteriser. With culling off this is the
         // whole swarm; with it on, the gap between this and Entities is the
         // part of the swarm that was off-screen.
