@@ -115,7 +115,57 @@ const FlowComputeWGSL = `
   }
 `;
 
-const FlowRenderWGSL = `
+// Two ways to build each cube, selected by `?faces=`:
+//
+//   6 — the honest cube: all six faces, 12 triangles, three of which are always
+//       back-facing and get thrown away by `cullMode: "back"` *after* the
+//       rasteriser has already set them up.
+//   3 — only the three faces pointing at the camera, 6 triangles. For an opaque
+//       convex solid the other three are occluded by these, so the rendered
+//       image is identical, pixel for pixel — this is not an approximation or
+//       an LOD, it is declining to pay for geometry that was never visible.
+//
+// The 3-face path cannot simply mirror a baked mesh: mirroring an odd number of
+// axes reverses winding, and the back-face cull would then eat the whole cube.
+// Instead each quad is built from scratch around its axis with a deliberately
+// right-handed tangent basis, so winding is correct for all eight sign
+// combinations without the pipeline needing to know anything about it.
+const VS_GEOMETRY = {
+  6: `
+      let r_pos  = rotate_vector(vertex_pos, q);
+      let r_norm = rotate_vector(vertex_normal, q);
+`,
+  3: `
+      // Which side of each local axis the camera is on. Done in the cube's own
+      // frame (hence the conjugate rotation), because that is the frame the
+      // faces are defined in.
+      let q_conj = vec4<f32>(-q.xyz, q.w);
+      let to_cam_local = rotate_vector(scene.camera_pos.xyz - inst_pos, q_conj);
+
+      // 12 vertices = 3 faces x 4 corners; the index buffer fans each quad.
+      let slot   = vert_idx / 4u;
+      let corner = vert_idx % 4u;
+
+      // dot() rather than to_cam_local[slot]: same value, no dynamic vector
+      // indexing.
+      let face_n = axis_vec(slot);
+      let sgn = select(-1.0, 1.0, dot(to_cam_local, face_n) >= 0.0);
+
+      // cross(u, v) == n by construction, which is what keeps the winding
+      // consistent no matter which of the eight corners the camera sits in.
+      let n = face_n * sgn;
+      let u = axis_vec((slot + 1u) % 3u) * sgn;
+      let v = axis_vec((slot + 2u) % 3u);
+      let cu = select(-1.0, 1.0, corner == 1u || corner == 2u);
+      let cv = select(-1.0, 1.0, corner == 2u || corner == 3u);
+
+      // Half-extent 0.5 to match mesh_cube(1.0), which the CPU path draws.
+      let r_pos  = rotate_vector((u * cu + v * cv + n) * 0.5, q);
+      let r_norm = rotate_vector(n, q);
+`,
+};
+
+const makeFlowRenderWGSL = (faces) => `
   // Mirrors the layout the renderer writes into sceneBuffer3D. The trailing
   // two vectors are the first DirectionalLight; reading the real lights here
   // instead of hardcoding constants is what keeps GPU mode looking like CPU
@@ -230,6 +280,11 @@ const FlowRenderWGSL = `
       return v + 2.0 * cross(q.xyz, cross(q.xyz, v) + q.w * v);
   }
 
+  // Unit vector along axis 0/1/2. Branchless so it stays uniform-friendly.
+  fn axis_vec(i: u32) -> vec3<f32> {
+      return vec3<f32>(f32(i == 0u), f32(i == 1u), f32(i == 2u));
+  }
+
   @vertex
   fn vs_main(
       @location(0) vertex_pos: vec3<f32>,
@@ -240,7 +295,15 @@ const FlowRenderWGSL = `
       @location(4) inst_vel: vec3<f32>,
       @location(5) inst_scale: f32,
       @location(7) inst_agility: f32,
-      @builtin(instance_index) instance_idx: u32,
+      @builtin(vertex_index) vert_idx: u32,
+      // NOT @builtin(instance_index). Under frustum culling the engine compacts
+      // the visible instances, so the builtin becomes a position in the visible
+      // list and changes every time the camera moves — which would make every
+      // cube's colour and rotation flicker as the swarm was culled. Location 8
+      // carries the original simulation index through compaction, and is the
+      // identity permutation when culling is off, so this one declaration is
+      // correct in both modes.
+      @location(8) instance_idx: u32,
   ) -> VertexOutput {
       // Fixed per-instance orientation from the hash — same intent as the
       // random-but-never-updated rotation the CPU path bakes in at spawn.
@@ -249,9 +312,7 @@ const FlowRenderWGSL = `
       let c = hash_f32(instance_idx * 13u + 37u) * 2.0 - 1.0;
       let d = hash_f32(instance_idx * 23u + 53u) * 2.0 - 1.0;
       let q = normalize(vec4<f32>(a, b, c, d));
-
-      let r_pos  = rotate_vector(vertex_pos, q);
-      let r_norm = rotate_vector(vertex_normal, q);
+${VS_GEOMETRY[faces]}
       // Mirror of near_fade_scale() in Shaders3D.js — the CPU path gets this
       // from the engine's standard shader, so the GPU path has to apply the
       // identical shrink or the two modes clip differently.
@@ -392,10 +453,21 @@ async function start() {
   const wasm = await init();
 
   const canvas = document.getElementById("gameCanvas");
-  const renderer = new WebGPURenderer(canvas);
+  // `?msaa=1|2|4` — the sample count has to be decided before the renderer
+  // builds its pipelines, so it is a URL parameter rather than a live control.
+  const bootParams = new URLSearchParams(location.search);
+  const msaa = parseInt(bootParams.get("msaa") || "4", 10);
+  // `?faces=6` restores the all-six-faces cube. Only useful for comparing
+  // against the 3-face path — the images are identical, the cost is not.
+  const faces = bootParams.get("faces") === "6" ? 6 : 3;
+  const renderer = new WebGPURenderer(canvas, { msaa });
   await renderer.init();
   renderer.setClearColor(0.0, 0.0, 0.0, 1.0);
-  renderer.registerGPUSimShader(SHADER_TYPE, FlowComputeWGSL, FlowRenderWGSL);
+  renderer.registerGPUSimShader(
+    SHADER_TYPE,
+    FlowComputeWGSL,
+    makeFlowRenderWGSL(faces),
+  );
 
   // Ride mode puts the camera inside the swarm, and the camera is itself a
   // particle in the same flow field — so it does not merely pass by the dense
@@ -414,11 +486,35 @@ async function start() {
   const cubeData = mesh_cube(1.0);
   const cubeMeshId = renderer.assets.createMesh(cubeData.vertices, cubeData.indices);
 
+  // Vertex *buffer* for the 3-face path, whose contents are never read: the
+  // shader builds every corner from `@builtin(vertex_index)` alone. It still
+  // has to exist and match the pipeline's 48-byte stride, because the vertex
+  // layout is shared with the CPU path's real cube. 12 vertices = 3 faces x 4
+  // corners; the index buffer fans each quad as (0,1,2)(2,3,0).
+  const hullIndices = new Uint32Array(18);
+  for (let f = 0; f < 3; f++) {
+    const b = f * 4;
+    hullIndices.set([b, b + 1, b + 2, b + 2, b + 3, b], f * 6);
+  }
+  const hullMeshId = renderer.assets.createMesh(
+    new Float32Array(12 * 12),
+    hullIndices,
+  );
+  // The CPU path draws real cubes through the engine's standard shader, which
+  // knows nothing about face selection — so only the GPU path gets the hull.
+  const gpuMeshId = faces === 3 ? hullMeshId : cubeMeshId;
+
   const params = new URLSearchParams(location.search);
   const touchDefaultCount = matchMedia("(pointer: coarse)").matches ? "25000" : "250000";
   let count = parseInt(params.get("count") || touchDefaultCount, 10);
   if (!Number.isFinite(count) || count < 1) count = Number(touchDefaultCount);
   let mode = params.get("mode") === "gpu" ? "gpu" : "cpu";
+  // Off by default: it is a genuine rendering optimisation rather than a change
+  // to the scene, but the demo's headline number is "how many cubes can this
+  // engine put on screen", and answering that while quietly not drawing most of
+  // them would be measuring the wrong thing. The toggle is there to show what
+  // it costs and what it saves, on purpose.
+  let cullEnabled = params.get("cull") === "1";
   // ?cam=orbit|ride — initial camera mode.
   const camParam = params.get("cam");
   // ?ui=0 (also off/false/hide/none) — start with no chrome at all, for
@@ -486,12 +582,15 @@ async function start() {
         // the same flow field at a completely different phase than the CPU
         // swarm and than the camera riding it.
         renderer.renderer3D.resetSimTime();
+        // Re-applied per build: the culling resources are per-simulation and
+        // were just thrown away with the old scene's GPU state above.
+        renderer.renderer3D.setFrustumCulling(cullEnabled && mode === "gpu");
 
         const t0 = performance.now();
         engine =
           mode === "cpu"
             ? create_swarm_cpu(count, cubeMeshId, CUBE_SCALE)
-            : create_swarm_gpu(count, cubeMeshId, CUBE_SCALE);
+            : create_swarm_gpu(count, gpuMeshId, CUBE_SCALE);
         spawnMs = performance.now() - t0;
 
         app = new ArtisanApp(engine, wasm.memory).registerStandardSchemas();
@@ -840,6 +939,9 @@ async function start() {
     for (const b of document.querySelectorAll("[data-cam]")) {
       b.classList.toggle("active", b.dataset.cam === camMode);
     }
+    for (const b of document.querySelectorAll("[data-cull]")) {
+      b.classList.toggle("active", (b.dataset.cull === "on") === cullEnabled);
+    }
     el("row-cpu-label").innerText =
       mode === "cpu" ? "ECS tick (simulate all)" : "ECS tick (1 entity)";
   }
@@ -886,6 +988,18 @@ async function start() {
     b.addEventListener("click", async () => {
       mode = b.dataset.mode;
       await buildScene();
+    });
+  }
+  // No scene rebuild: culling only changes which instances get submitted, not
+  // what the simulation contains, so it can be flipped mid-flight and the swarm
+  // carries on undisturbed. That is also what makes it easy to see it is
+  // lossless — toggle it while watching and the image does not change, only the
+  // GPU time does.
+  for (const b of document.querySelectorAll("[data-cull]")) {
+    b.addEventListener("click", () => {
+      cullEnabled = b.dataset.cull === "on";
+      renderer.renderer3D.setFrustumCulling(cullEnabled);
+      syncButtons();
     });
   }
   for (const b of document.querySelectorAll("[data-cam]")) {
@@ -967,6 +1081,14 @@ async function start() {
         el("v-cpu").innerText = `${avgCpu.get().toFixed(2)} ms`;
         el("v-gpu").innerText = `${avgGpu.get().toFixed(2)} ms`;
         el("v-frame").innerText = `${avgFrame.get().toFixed(1)} ms`;
+        // What actually reached the rasteriser. With culling off this is the
+        // whole swarm; with it on, the gap between this and Entities is the
+        // part of the swarm that was off-screen.
+        const cs = renderer.renderer3D.lastCullStats;
+        el("v-drawn").innerText =
+          cullEnabled && mode === "gpu"
+            ? `${cs.drawn.toLocaleString()} (${((100 * cs.drawn) / Math.max(count, 1)).toFixed(0)}%)`
+            : count.toLocaleString();
       }
     } catch (err) {
       console.error("[murmuration] frame error (continuing):", err);

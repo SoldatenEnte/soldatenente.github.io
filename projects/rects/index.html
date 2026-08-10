@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Artisan — Bouncing Rects</title>
+    <style>
+      :root {
+        --accent: #7dd3fc;
+        --good: #4ade80;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #000;
+        color: #e2e8f0;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+        width: 100vw;
+        height: 100vh;
+      }
+      #toggle {
+        position: absolute;
+        top: 18px;
+        left: 18px;
+        z-index: 12;
+        padding: 6px 12px;
+        font-size: 0.7rem;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: #64748b;
+        background: rgba(8, 10, 20, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 999px;
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+        transition: color 0.15s, border-color 0.15s;
+      }
+      #toggle:hover {
+        color: var(--accent);
+        border-color: rgba(125, 211, 252, 0.4);
+      }
+      #ui[hidden] {
+        display: none;
+      }
+      #ui {
+        position: absolute;
+        top: 18px;
+        left: 18px;
+        width: 258px;
+        padding: 14px 15px;
+        background: rgba(6, 8, 18, 0.82);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 10px;
+        backdrop-filter: blur(14px);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+        z-index: 10;
+      }
+      .head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 0.88rem;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+      #close {
+        flex: 0 0 auto;
+        width: 22px;
+        height: 22px;
+        min-width: 0;
+        padding: 0;
+        font-size: 0.95rem;
+        line-height: 1;
+        color: #64748b;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      #close:hover {
+        color: #f1f5f9;
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.28);
+      }
+      .section {
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .label {
+        font-size: 0.62rem;
+        letter-spacing: 1.3px;
+        text-transform: uppercase;
+        color: #64748b;
+        margin-bottom: 8px;
+      }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        font-family: ui-monospace, monospace;
+        font-size: 0.71rem;
+        padding: 1px 0;
+      }
+      .row span:last-child {
+        color: var(--accent);
+      }
+      .row.hero span:last-child {
+        color: var(--good);
+        font-weight: 700;
+      }
+      .btns {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      button {
+        flex: 1;
+        min-width: 52px;
+        padding: 5px 3px;
+        font-size: 0.68rem;
+        font-weight: 600;
+        color: #cbd5e1;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.12s;
+      }
+      button:hover {
+        background: rgba(125, 211, 252, 0.18);
+      }
+      button.active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #04050c;
+      }
+      #loading {
+        position: absolute;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+        color: var(--accent);
+        background: rgba(4, 5, 12, 0.75);
+        z-index: 20;
+      }
+      .custom {
+        display: flex;
+        gap: 6px;
+        margin-top: 6px;
+      }
+      .custom input {
+        flex: 1;
+        min-width: 0;
+        padding: 5px 7px;
+        font-family: ui-monospace, monospace;
+        font-size: 0.71rem;
+        color: #e2e8f0;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 5px;
+      }
+      .custom input:focus {
+        outline: none;
+        border-color: rgba(125, 211, 252, 0.55);
+      }
+      .custom button {
+        flex: 0 0 auto;
+        min-width: 58px;
+      }
+      #note {
+        margin-top: 7px;
+        font-size: 0.66rem;
+        line-height: 1.4;
+        color: #94a3b8;
+        min-height: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="gameCanvas"></canvas>
+
+    <button id="toggle">stats</button>
+
+    <div id="ui" hidden>
+      <div class="head">
+        <h1>Bouncing Rects</h1>
+        <button id="close" title="Close (H)" aria-label="Close">×</button>
+      </div>
+
+      <div class="section">
+        <div class="label">Rects</div>
+        <div class="btns">
+          <button data-count="10000">10k</button>
+          <button data-count="100000">100k</button>
+          <button data-count="500000">500k</button>
+          <button data-count="1000000">1M</button>
+          <button data-count="2000000">2M</button>
+          <button data-count="8000000">8M</button>
+          <button data-count="16000000">16M</button>
+          <button data-count="32000000">32M</button>
+        </div>
+        <div class="custom">
+          <input
+            id="count-input"
+            type="number"
+            min="1"
+            step="1"
+            placeholder="custom…"
+          />
+          <button id="count-go">Spawn</button>
+        </div>
+        <div id="note"></div>
+      </div>
+
+      <div class="section">
+        <div class="label">Frame</div>
+        <div class="row hero"><span>Rects</span><span id="v-count">—</span></div>
+        <div class="row hero"><span>FPS</span><span id="v-fps">—</span></div>
+        <div class="row"><span>Frame time</span><span id="v-frame">—</span></div>
+        <div class="row"><span>GPU</span><span id="v-gpu">—</span></div>
+      </div>
+    </div>
+
+    <div id="loading">Loading…</div>
+
+    <script type="module" src="./game.js"></script>
+  </body>
+</html>
