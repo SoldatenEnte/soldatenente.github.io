@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- maximum-scale=1 + user-scalable=no: iOS double-tap-to-zoom otherwise
+         fires on every drag-to-look tap and fights the camera controls. -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Artisan — Murmuration</title>
+    <style>
+      :root {
+        --accent: #7dd3fc;
+        --good: #4ade80;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html, body {
+        margin: 0;
+        background: #000;
+        color: #e2e8f0;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        overflow: hidden;
+        overscroll-behavior: none;
+        height: 100%;
+      }
+      canvas {
+        display: block;
+        width: 100vw;
+        height: 100vh;
+        /* Without this, a drag-to-look touch is also a scroll/pull-to-refresh
+           gesture as far as the browser is concerned — it either fights the
+           camera for the gesture or the page bounces instead of the camera
+           turning. none: the page never needs to pan or zoom here. */
+        touch-action: none;
+      }
+      /* Sits over the canvas, darkens the corners. Cheaper and more controllable
+         than a post pass, and the swarm is the only thing on screen. */
+      #vignette {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 5;
+        background:
+          radial-gradient(
+            ellipse 78% 78% at 50% 50%,
+            rgba(0, 0, 0, 0) 42%,
+            rgba(0, 0, 0, 0.55) 82%,
+            rgba(0, 0, 0, 0.92) 100%
+          );
+      }
+      #toggle {
+        position: absolute;
+        top: max(18px, env(safe-area-inset-top));
+        left: max(18px, env(safe-area-inset-left));
+        z-index: 12;
+        padding: 6px 12px;
+        font-size: 0.7rem;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: #64748b;
+        background: rgba(8, 10, 20, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 999px;
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+        transition: color 0.15s, border-color 0.15s;
+      }
+      #toggle:hover {
+        color: var(--accent);
+        border-color: rgba(125, 211, 252, 0.4);
+      }
+      #fullscreen {
+        position: absolute;
+        top: max(18px, env(safe-area-inset-top));
+        right: max(18px, env(safe-area-inset-right));
+        z-index: 12;
+        width: 34px;
+        height: 34px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        line-height: 1;
+        color: #64748b;
+        background: rgba(8, 10, 20, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 999px;
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+      }
+      /* No F key on a phone, so the button is the only way in — shown only
+         where it's needed, via a JS check for touch support (see game.js). */
+      body.touch #fullscreen {
+        display: flex;
+      }
+      #ui[hidden] {
+        display: none;
+      }
+      #ui {
+        position: absolute;
+        top: max(18px, env(safe-area-inset-top));
+        left: max(18px, env(safe-area-inset-left));
+        width: 258px;
+        max-width: calc(100vw - 2 * max(18px, env(safe-area-inset-left)) - 2px);
+        max-height: calc(100vh - 2 * max(18px, env(safe-area-inset-top)));
+        overflow-y: auto;
+        padding: 14px 15px;
+        background: rgba(6, 8, 18, 0.82);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 10px;
+        backdrop-filter: blur(14px);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+        z-index: 10;
+        /* The panel itself should still scroll normally with a finger; only
+           the canvas behind it opts out of default touch handling. */
+        touch-action: pan-y;
+      }
+      .head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 0.88rem;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+      #close {
+        flex: 0 0 auto;
+        width: 22px;
+        height: 22px;
+        min-width: 0;
+        padding: 0;
+        font-size: 0.95rem;
+        line-height: 1;
+        color: #64748b;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      #close:hover {
+        color: #f1f5f9;
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.28);
+      }
+      .section {
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .label {
+        font-size: 0.62rem;
+        letter-spacing: 1.3px;
+        text-transform: uppercase;
+        color: #64748b;
+        margin-bottom: 8px;
+      }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        font-family: ui-monospace, monospace;
+        font-size: 0.71rem;
+        padding: 1px 0;
+      }
+      .row span:last-child {
+        color: var(--accent);
+      }
+      .row.hero span:last-child {
+        color: var(--good);
+        font-weight: 700;
+      }
+      .btns {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      button {
+        flex: 1;
+        min-width: 52px;
+        padding: 5px 3px;
+        font-size: 0.68rem;
+        font-weight: 600;
+        color: #cbd5e1;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.12s;
+      }
+      button:hover {
+        background: rgba(125, 211, 252, 0.18);
+      }
+      button.active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #04050c;
+      }
+      #count-note {
+        margin-top: 7px;
+        font-size: 0.66rem;
+        line-height: 1.45;
+        color: #fcd34d;
+      }
+      #loading {
+        position: absolute;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+        color: var(--accent);
+        background: rgba(4, 5, 12, 0.75);
+        z-index: 20;
+      }
+      #hint {
+        position: absolute;
+        bottom: max(20px, env(safe-area-inset-bottom));
+        left: max(24px, env(safe-area-inset-left));
+        font-size: 0.72rem;
+        color: #475569;
+        z-index: 10;
+      }
+
+      /* Coarse pointer = finger, not mouse — this is the actual "is this
+         touch" signal, more reliable than screen width (a touch laptop is
+         wide; a mouse-driven tool window can be narrow). Bigger tap targets
+         only, nothing about layout or information density changes. */
+      @media (pointer: coarse) {
+        #toggle,
+        #close,
+        #fullscreen {
+          min-width: 40px;
+          min-height: 40px;
+        }
+        button {
+          padding: 10px 6px;
+          font-size: 0.74rem;
+        }
+        .btns {
+          gap: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="gameCanvas"></canvas>
+    <div id="vignette"></div>
+
+    <button id="toggle">stats</button>
+    <button id="fullscreen" title="Fullscreen" aria-label="Fullscreen">⛶</button>
+
+    <div id="ui" hidden>
+      <div class="head">
+        <h1>Murmuration</h1>
+        <button id="close" title="Close (H)" aria-label="Close">×</button>
+      </div>
+
+      <div class="section">
+        <div class="label">Entities</div>
+        <div class="btns">
+          <button data-count="25000">25k</button>
+          <button data-count="100000">100k</button>
+          <button data-count="250000">250k</button>
+          <button data-count="500000">500k</button>
+          <button data-count="1000000">1M</button>
+          <button data-count="2000000">2M</button>
+          <button data-count="4000000">4M</button>
+          <button data-count="8000000">8M</button>
+        </div>
+        <div id="count-note"></div>
+      </div>
+
+      <div class="section">
+        <div class="label">Mode</div>
+        <div class="btns">
+          <button data-mode="cpu">CPU</button>
+          <button data-mode="gpu">GPU</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="label">Camera</div>
+        <div class="btns">
+          <button data-cam="ride">Ride</button>
+          <button data-cam="orbit">Orbit</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="label">Frame</div>
+        <div class="row hero"><span>Entities</span><span id="v-count">—</span></div>
+        <div class="row hero"><span>FPS</span><span id="v-fps">—</span></div>
+        <div class="row"><span>Frame time</span><span id="v-frame">—</span></div>
+        <div class="row">
+          <span id="row-cpu-label">ECS tick</span><span id="v-cpu">—</span>
+        </div>
+        <div class="row"><span>GPU</span><span id="v-gpu">—</span></div>
+      </div>
+    </div>
+
+    <div id="loading">Loading…</div>
+    <div id="hint">drag to look around · F fullscreen · H stats</div>
+
+    <script type="module" src="./game.js"></script>
+  </body>
+</html>
