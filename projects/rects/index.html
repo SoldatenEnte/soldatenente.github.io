@@ -2,6 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!-- maximum-scale=1 + user-scalable=no: without it iOS double-tap-to-zoom
+         fires on taps meant for the panel buttons, and the page zooms instead
+         of the button pressing. -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
     <title>Artisan — Bouncing Rects</title>
     <style>
       :root {
@@ -11,22 +18,28 @@
       * {
         box-sizing: border-box;
       }
-      body {
+      html, body {
         margin: 0;
         background: #000;
         color: #e2e8f0;
         font-family: "Segoe UI", system-ui, sans-serif;
         overflow: hidden;
+        overscroll-behavior: none;
+        height: 100%;
       }
       canvas {
         display: block;
         width: 100vw;
         height: 100vh;
+        /* Nothing here pans or zooms, so let the browser skip its scroll and
+           pull-to-refresh gestures entirely — otherwise a tap that lands on the
+           canvas can bounce the whole page. */
+        touch-action: none;
       }
       #toggle {
         position: absolute;
-        top: 18px;
-        left: 18px;
+        top: max(18px, env(safe-area-inset-top));
+        left: max(18px, env(safe-area-inset-left));
         z-index: 12;
         padding: 6px 12px;
         font-size: 0.7rem;
@@ -44,14 +57,47 @@
         color: var(--accent);
         border-color: rgba(125, 211, 252, 0.4);
       }
+      #fullscreen {
+        position: absolute;
+        top: max(18px, env(safe-area-inset-top));
+        right: max(18px, env(safe-area-inset-right));
+        z-index: 12;
+        width: 34px;
+        height: 34px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        line-height: 1;
+        color: #64748b;
+        background: rgba(8, 10, 20, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 999px;
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+      }
+      /* No F key on a phone, so the button is the only way in — shown only
+         where it's needed, via a JS check for touch support (see game.js). */
+      body.touch #fullscreen {
+        display: flex;
+      }
       #ui[hidden] {
         display: none;
       }
       #ui {
         position: absolute;
-        top: 18px;
-        left: 18px;
+        top: max(18px, env(safe-area-inset-top));
+        left: max(18px, env(safe-area-inset-left));
         width: 258px;
+        /* On a narrow screen the fixed width would run off the edge, and the
+           tall preset list can outgrow a short one — so cap both against the
+           viewport and let the panel scroll rather than overflow. */
+        max-width: calc(100vw - 2 * max(18px, env(safe-area-inset-left)) - 2px);
+        max-height: calc(100vh - 2 * max(18px, env(safe-area-inset-top)));
+        overflow-y: auto;
+        /* The panel itself should still scroll with a finger; only the canvas
+           behind it opts out of default touch handling. */
+        touch-action: pan-y;
         padding: 14px 15px;
         background: rgba(6, 8, 18, 0.82);
         border: 1px solid rgba(255, 255, 255, 0.09);
@@ -186,12 +232,47 @@
         color: #94a3b8;
         min-height: 0.9rem;
       }
+      #hint {
+        position: absolute;
+        bottom: max(20px, env(safe-area-inset-bottom));
+        left: max(24px, env(safe-area-inset-left));
+        font-size: 0.72rem;
+        color: #475569;
+        z-index: 10;
+      }
+
+      /* Coarse pointer = finger, not mouse — the actual "is this touch" signal,
+         more reliable than screen width (a touch laptop is wide; a mouse-driven
+         tool window can be narrow). Bigger tap targets only; nothing about
+         layout or information density changes. */
+      @media (pointer: coarse) {
+        #toggle,
+        #close,
+        #fullscreen {
+          min-width: 40px;
+          min-height: 40px;
+        }
+        button {
+          padding: 10px 6px;
+          font-size: 0.74rem;
+        }
+        .btns {
+          gap: 8px;
+        }
+        /* 16px is the threshold below which iOS Safari zooms the page on focus,
+           which on this input would yank the view sideways mid-typing. */
+        .custom input {
+          font-size: 16px;
+          padding: 9px 8px;
+        }
+      }
     </style>
   </head>
   <body>
     <canvas id="gameCanvas"></canvas>
 
     <button id="toggle">stats</button>
+    <button id="fullscreen" title="Fullscreen" aria-label="Fullscreen">⛶</button>
 
     <div id="ui" hidden>
       <div class="head">
@@ -234,6 +315,7 @@
     </div>
 
     <div id="loading">Loading…</div>
+    <div id="hint">H stats · F fullscreen</div>
 
     <script type="module" src="./game.js"></script>
   </body>

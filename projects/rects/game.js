@@ -235,6 +235,13 @@ async function start() {
   // Modest by default: the point is that you can see rects on black. Turn it up
   // from the panel — the cost of another zero is one float.
   let count = parseInt(params.get("count") || "10000", 10);
+  // ?ui=0 (also off/false/hide/none) — start with no chrome at all, for
+  // recording or a clean look. H still brings it back, so this is a starting
+  // state rather than a mode you can get stuck in.
+  const uiParam = (params.get("ui") || "").toLowerCase();
+  const startChromeHidden = ["0", "off", "false", "hide", "hidden", "none"].includes(
+    uiParam,
+  );
 
   // 32 bytes of storage per rect, and a storage binding has a hard ceiling.
   // Asking for one byte past it makes the buffer fail to create and the scene
@@ -310,11 +317,18 @@ async function start() {
     if (e.key === "Enter") spawnCustom();
   });
 
+  // "Chrome hidden" (?ui=0) is a stronger state than "panel closed": it also
+  // drops the pill and the hint line, so nothing at all overlays the render.
+  // H lifts it, so a recording session can still get the controls back without
+  // editing the URL.
   const panel = el("ui");
   const toggle = el("toggle");
+  const hint = el("hint");
+  let chromeHidden = startChromeHidden;
   function setPanel(open) {
     panel.hidden = !open;
-    toggle.style.display = open ? "none" : "block";
+    toggle.style.display = open || chromeHidden ? "none" : "block";
+    hint.style.display = chromeHidden ? "none" : "block";
   }
   toggle.addEventListener("click", () => setPanel(true));
   el("close").addEventListener("click", () => setPanel(false));
@@ -322,9 +336,43 @@ async function start() {
     // Not while the count field has focus, or typing "h" into it closes the
     // panel out from under the thing being typed into.
     if (e.target === el("count-input")) return;
-    if (e.key === "h" || e.key === "H") setPanel(panel.hidden);
+    if (e.key !== "h" && e.key !== "H") return;
+    // From fully hidden, H restores the chrome and opens the panel in one
+    // press rather than making the user hit it twice with nothing visible
+    // happening in between.
+    if (chromeHidden) {
+      chromeHidden = false;
+      setPanel(true);
+    } else {
+      setPanel(panel.hidden);
+    }
   });
   setPanel(false);
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen?.().catch(() => {});
+    } else {
+      document.exitFullscreen?.();
+    }
+  }
+  window.addEventListener("keydown", (e) => {
+    if (e.target === el("count-input")) return;
+    if (e.key === "f" || e.key === "F") toggleFullscreen();
+  });
+  // There's no F key on a phone — the on-screen button (shown only on touch,
+  // via the body.touch class below) is the only way in. iOS Safari has no
+  // Fullscreen API at all; requestFullscreen silently rejects there, so this
+  // button quietly does nothing on iPhone rather than pretending to work.
+  el("fullscreen").addEventListener("click", toggleFullscreen);
+
+  // Coarse pointer = finger, not mouse — see the matching CSS media query.
+  // Used to show touch-only controls and swap keyboard-hint text for
+  // finger-hint text; it does not change any control logic.
+  if (matchMedia("(pointer: coarse)").matches) {
+    document.body.classList.add("touch");
+    hint.innerText = "tap stats · ⛶ fullscreen";
+  }
 
   await buildScene();
 
