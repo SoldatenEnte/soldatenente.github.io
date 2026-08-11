@@ -1,0 +1,640 @@
+/* Artisan — site theme.
+ *
+ * Professional technical-product look: a clean grotesk sans throughout (no
+ * serif — on Windows "Iowan Old Style"/Palatino silently fall back to Georgia,
+ * which reads as a stock blog theme, not a systems-engineering site).
+ *
+ * Color now carries real meaning for data: each engine gets a distinct hue.
+ * Shape/texture stay as a *second*, redundant cue (marker shape, dash pattern,
+ * hatching) so the charts still work for a reader who can't distinguish the
+ * hues, printed or in grayscale — color is additive, not the only channel.
+ *
+ * No web fonts: the page renders identically offline and on first paint from
+ * the system sans stack, which is genuinely excellent on every platform. */
+
+:root {
+  color-scheme: light;
+  --paper: #ffffff;
+  --paper-2: #fafafa;
+  --ink: #14161a;
+  --ink-2: #40444c;
+  --ink-3: #6b707a;
+  --ink-4: #9a9fa8;
+  --rule: #e3e5e9;
+  --rule-2: #eef0f3;
+  --wash: #f5f6f8;
+
+  /* Brand accent — warm amber, a quiet nod to Rust without being literal. */
+  --accent: #c1560a;
+  --accent-ink: #7a3607;
+  --accent-soft: #fdf1e6;
+  --accent-soft-rule: #f3d9bb;
+
+  /* Data-series colors. Chosen for contrast against each other in both color
+     vision and grayscale luminance (so a B&W printout still separates them by
+     value), then paired with a marker shape and line style as a second cue. */
+  --s-artisan: #c1560a;   /* amber   — solid fill, circle marker */
+  --s-bevy: #2f6fed;      /* blue    — solid fill, square marker, dashed line */
+  --s-flecs: #7c4dd6;     /* violet  — hatched fill, triangle marker, dotted line */
+  --s-three: #2f6fed;
+
+  --warn: #9a6a00;
+  --warn-soft: #fdf6e3;
+  --error: #b3261e;
+
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --mono: "SF Mono", "Cascadia Mono", "JetBrains Mono", Consolas, ui-monospace, monospace;
+
+  --shadow-1: 0 1px 2px rgba(20, 22, 26, 0.04), 0 1px 1px rgba(20, 22, 26, 0.03);
+  --shadow-2: 0 4px 16px rgba(20, 22, 26, 0.08), 0 1px 3px rgba(20, 22, 26, 0.06);
+}
+
+/* Heller Modus ist der Standard, unabhängig von der Systemeinstellung. Wer
+   dunkel lesen will, schaltet über die Kopfzeile um; die Wahl bleibt im
+   localStorage gespeichert. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #0b0c0f; --paper-2: #101114; --ink: #eef0f3; --ink-2: #c2c6cd;
+  --ink-3: #8c9099; --ink-4: #5c6068; --rule: #24262b; --rule-2: #1a1c20;
+  --wash: #15171b; --accent: #e58a3d; --accent-ink: #f3b978;
+  --accent-soft: #2a1c0e; --accent-soft-rule: #4a3218;
+  --s-artisan: #e58a3d; --s-bevy: #6d9bff; --s-flecs: #a682f0; --s-three: #6d9bff;
+  --warn: #e0b23b; --warn-soft: #241d0a; --error: #e5665f;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.35), 0 1px 1px rgba(0, 0, 0, 0.25);
+  --shadow-2: 0 8px 24px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.65;
+  font-kerning: normal;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 32px 120px; }
+.wrap.narrow { max-width: 760px; }
+
+/* --- Masthead ------------------------------------------------------------- */
+
+.masthead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: saturate(1.4) blur(10px);
+  -webkit-backdrop-filter: saturate(1.4) blur(10px);
+  border-bottom: 1px solid var(--rule);
+  padding: 18px 0;
+  margin: 0 0 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.masthead .wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  color: var(--ink);
+}
+.masthead .wordmark::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  background: var(--accent);
+  flex: none;
+}
+/* Auf schmalen Viewports passen die sechs Kapitel nicht nebeneinander. Statt
+   die Seite horizontal scrollen zu lassen, scrollt nur die Leiste selbst. */
+.masthead nav {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.masthead nav::-webkit-scrollbar { display: none; }
+.masthead nav a { white-space: nowrap; }
+.masthead nav a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-3);
+  text-decoration: none;
+  padding: 7px 12px;
+  border-radius: 7px;
+}
+.masthead nav a:hover { color: var(--ink); background: var(--wash); }
+.masthead nav a[aria-current] { color: var(--ink); background: var(--wash); }
+
+.masthead .right { display: flex; align-items: center; gap: 10px; }
+.theme-toggle {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--ink-3);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 6px 12px;
+  cursor: pointer;
+  box-shadow: none;
+  white-space: nowrap;
+}
+.theme-toggle:hover:not(:disabled) {
+  background: var(--wash);
+  color: var(--ink);
+  border-color: var(--rule);
+  filter: none;
+  box-shadow: none;
+}
+.theme-toggle svg { width: 14px; height: 14px; flex: none; }
+
+/* --- Typography ----------------------------------------------------------- */
+
+h1 {
+  font-size: clamp(32px, 5vw, 50px);
+  line-height: 1.08;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin: 0 0 18px;
+}
+h2 {
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin: 68px 0 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule);
+}
+h3 { font-size: 18px; font-weight: 650; margin: 30px 0 10px; letter-spacing: -0.005em; }
+
+.lede {
+  font-size: 19px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  max-width: 62ch;
+  margin: 0 0 28px;
+  font-weight: 400;
+}
+p { max-width: 68ch; }
+a { color: var(--accent-ink); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+  background: var(--wash);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 1.5px 5px;
+}
+
+.kicker {
+  font-size: 12.5px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+  margin: 0 0 14px;
+}
+.dek {
+  font-size: 13.5px;
+  color: var(--ink-3);
+  line-height: 1.65;
+  max-width: 72ch;
+}
+.rule { border: 0; border-top: 1px solid var(--rule); margin: 52px 0; }
+.rule.thick { border-top: 1.5px solid var(--ink); }
+
+/* --- Notes ---------------------------------------------------------------- */
+
+.note {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--ink-3);
+  background: var(--wash);
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  padding: 13px 16px;
+  margin: 22px 0;
+  max-width: 82ch;
+}
+.note strong { color: var(--ink); font-weight: 650; }
+.note.warn { background: var(--warn-soft); border-color: color-mix(in srgb, var(--warn) 35%, var(--rule)); color: var(--ink-2); }
+.note.warn strong { color: var(--warn); }
+.note.strong { background: var(--accent-soft); border-color: var(--accent-soft-rule); color: var(--ink-2); }
+.note.strong strong { color: var(--accent-ink); }
+
+/* --- Tables --------------------------------------------------------------- */
+
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+caption {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-bottom: 12px;
+}
+th {
+  text-align: right;
+  font-weight: 650;
+  font-size: 10.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding: 0 12px 10px;
+  border-bottom: 1.5px solid var(--ink);
+  white-space: nowrap;
+}
+td {
+  text-align: right;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--rule-2);
+  vertical-align: middle;
+}
+th:first-child, td:first-child { text-align: left; padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 12.5px; }
+/* Kurze Einordnung unter jeder Gruppenüberschrift, damit die Tabelle auch ohne
+   Vorwissen lesbar bleibt. */
+tr.group-intro td {
+  padding: 10px 0 14px;
+  font-size: 13px;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--rule-2);
+  text-align: left;
+  max-width: 0;
+}
+tr.group-intro:hover td { background: transparent; }
+
+tr.group-head td {
+  padding-top: 28px;
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+  border-bottom: 1px solid var(--rule);
+}
+td.best { font-weight: 700; color: var(--ink); }
+td.best::before { content: "●"; color: var(--accent); font-size: 8px; margin-right: 6px; vertical-align: 1.5px; }
+td.muted { color: var(--ink-4); }
+.scroll-x { overflow-x: auto; }
+tbody tr:hover td { background: var(--wash); }
+
+/* --- Engine identity: distinct colors + a second, non-color cue ----------- */
+
+.swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  vertical-align: -1px;
+  margin-right: 7px;
+}
+.swatch.artisan { background: var(--s-artisan); }
+.swatch.bevy { background: var(--s-bevy); }
+.swatch.flecs {
+  background: repeating-linear-gradient(45deg, var(--s-flecs) 0 2px, color-mix(in srgb, var(--s-flecs) 25%, transparent) 2px 4px);
+}
+.swatch.three { background: var(--s-three); }
+
+.legend {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--ink-2);
+  margin: 18px 0 0;
+}
+
+/* --- Bars ----------------------------------------------------------------- */
+
+.bar-track { display: block; width: 100%; height: 10px; background: var(--rule-2); border-radius: 3px; overflow: hidden; }
+.bar { display: block; height: 100%; }
+.bar.artisan { background: var(--s-artisan); }
+.bar.bevy { background: var(--s-bevy); }
+.bar.flecs {
+  background: repeating-linear-gradient(45deg, var(--s-flecs) 0 2.5px, color-mix(in srgb, var(--s-flecs) 35%, var(--paper)) 2.5px 5px);
+}
+
+/* --- Stat display --------------------------------------------------------- */
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 0; border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; background: var(--paper-2); }
+.stat { padding: 22px 24px; border-right: 1px solid var(--rule); }
+.stat:last-child { border-right: 0; }
+.stat .label { font-size: 10.5px; font-weight: 650; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 9px; }
+.stat .value { font-size: 38px; line-height: 1; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: var(--ink); }
+.stat .value .unit { font-size: 16px; font-weight: 600; color: var(--ink-3); margin-left: 3px; }
+.stat .sub { font-size: 11.5px; color: var(--ink-3); margin-top: 8px; }
+
+/* --- Cards ---------------------------------------------------------------- */
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  padding: 24px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper);
+  box-shadow: var(--shadow-1);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+.card:hover { border-color: color-mix(in srgb, var(--accent) 35%, var(--rule)); box-shadow: var(--shadow-2); transform: translateY(-1px); }
+.card .idx { font-size: 11px; font-weight: 650; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: 12px; }
+.card h3 { margin: 0 0 8px; font-size: 19px; }
+.card p { font-size: 13.5px; line-height: 1.6; color: var(--ink-3); margin: 0 0 16px; flex: 1; }
+.card .tags { font-size: 10.5px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-4); }
+/* Flat, no gradient. The flagship card is marked by a left accent rule and its
+   size, not by a colour wash. */
+.card.featured {
+  grid-column: 1 / -1;
+  padding: 30px 30px 30px 34px;
+  border-left: 3px solid var(--accent);
+}
+.card.featured h3 { font-size: 27px; letter-spacing: -0.02em; }
+.card.featured p { font-size: 15px; max-width: 62ch; color: var(--ink-2); }
+.card[aria-disabled] { opacity: 0.45; pointer-events: none; }
+
+/* --- Controls ------------------------------------------------------------- */
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 26px;
+  align-items: flex-end;
+  padding: 20px 22px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--paper-2);
+  margin: 22px 0;
+}
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 10.5px; font-weight: 650; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); }
+.field input, .field select {
+  font-family: var(--mono);
+  font-size: 13px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  border-radius: 7px;
+  padding: 7px 10px;
+  min-width: 96px;
+}
+.field input:focus, .field select:focus { outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 1px; }
+.field.check { flex-direction: row; align-items: center; gap: 8px; }
+.field.check label { text-transform: none; letter-spacing: 0; font-size: 13px; color: var(--ink); font-weight: 500; }
+
+button {
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--accent);
+  color: #fff;
+  border: 1px solid var(--accent);
+  border-radius: 7px;
+  padding: 9px 18px;
+  cursor: pointer;
+  box-shadow: var(--shadow-1);
+}
+button:hover:not(:disabled) { filter: brightness(1.06); box-shadow: var(--shadow-2); }
+button:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+button.ghost, button.secondary { background: var(--paper); color: var(--ink); border-color: var(--rule); }
+button.ghost:hover:not(:disabled), button.secondary:hover:not(:disabled) { border-color: var(--accent); color: var(--accent-ink); box-shadow: var(--shadow-1); }
+
+/* --- Tags ----------------------------------------------------------------- */
+
+.tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2.5px 8px;
+  border-radius: 5px;
+  border: 1px solid var(--rule);
+  color: var(--ink-3);
+  background: var(--wash);
+}
+.tag.ok { border-color: color-mix(in srgb, var(--accent) 40%, var(--rule)); color: var(--accent-ink); background: var(--accent-soft); }
+.tag.warn { border-color: color-mix(in srgb, var(--warn) 40%, var(--rule)); color: var(--warn); background: var(--warn-soft); }
+.tag.bad { border-color: var(--error); color: #fff; background: var(--error); }
+
+/* --- Console -------------------------------------------------------------- */
+
+pre.console {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  background: var(--wash);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 14px 16px;
+  max-height: 260px;
+  overflow: auto;
+  white-space: pre-wrap;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+/* --- Charts --------------------------------------------------------------- */
+
+svg.chart { display: block; width: 100%; height: auto; overflow: visible; }
+svg.chart text { font-family: var(--sans); fill: var(--ink-3); }
+svg.chart .axis line, svg.chart .axis path { stroke: var(--rule); }
+svg.chart .grid line { stroke: var(--rule-2); }
+
+/* --- Footer --------------------------------------------------------------- */
+
+footer {
+  margin-top: 96px;
+  padding-top: 22px;
+  border-top: 1px solid var(--rule);
+  font-size: 11.5px;
+  color: var(--ink-3);
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* --- Dokument-Layout: Seitenleiste plus Lesespalte ------------------------ */
+
+.doc {
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+  gap: 56px;
+  align-items: start;
+}
+
+.doc-nav {
+  position: sticky;
+  top: 92px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  font-size: 13.5px;
+  padding-bottom: 24px;
+}
+.doc-nav .group { margin-bottom: 20px; }
+.doc-nav .group > a {
+  display: block;
+  font-weight: 650;
+  color: var(--ink);
+  text-decoration: none;
+  padding: 4px 0;
+}
+.doc-nav .group > a:hover { color: var(--accent-ink); }
+.doc-nav .group[data-active] > a { color: var(--accent-ink); }
+.doc-nav ul { list-style: none; margin: 4px 0 0; padding: 0 0 0 1px; border-left: 1px solid var(--rule); }
+.doc-nav li a {
+  display: block;
+  color: var(--ink-3);
+  text-decoration: none;
+  padding: 3px 0 3px 13px;
+  margin-left: -1px;
+  border-left: 2px solid transparent;
+  font-size: 13px;
+}
+.doc-nav li a:hover { color: var(--ink); }
+.doc-nav li a[aria-current] {
+  color: var(--accent-ink);
+  border-left-color: var(--accent);
+  font-weight: 600;
+}
+
+/* min-width 0 erlaubt dem Grid-Item, schmaler als sein breitester Inhalt zu
+   werden. Ohne das scrollt die ganze Seite statt der Tabelle. */
+.doc-main { min-width: 0; }
+.doc-main h2:first-of-type { margin-top: 44px; }
+.doc-main section { scroll-margin-top: 96px; }
+
+/* Vor- und Zurueck-Navigation am Seitenende. */
+.pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 72px; }
+.pager a {
+  flex: 1;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 14px 18px;
+  text-decoration: none;
+  color: inherit;
+  background: var(--paper);
+}
+.pager a:hover { border-color: color-mix(in srgb, var(--accent) 35%, var(--rule)); }
+.pager a.next { text-align: right; }
+.pager .dir { display: block; font-size: 10.5px; font-weight: 650; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
+.pager .name { font-weight: 600; font-size: 15px; }
+
+/* Verweis von Fliesstext auf eine Messung oder Demo. */
+.inline-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  text-decoration: none;
+  color: var(--accent-ink);
+  background: var(--paper);
+  white-space: nowrap;
+}
+.inline-link:hover { border-color: var(--accent); background: var(--accent-soft); }
+
+/* Definitionsliste fuer Begriffe. */
+.terms { border-top: 1px solid var(--rule); margin: 20px 0; }
+.terms > div { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 20px; padding: 13px 0; border-bottom: 1px solid var(--rule-2); }
+.terms dt { font-weight: 650; font-size: 14px; }
+.terms dd { margin: 0; color: var(--ink-3); font-size: 14px; }
+
+/* --- Durchgehendes Beispiel (Grundlagen) ----------------------------------- */
+
+/* Komponentenmatrix: welches Entity besitzt welche Komponente. */
+.matrix th, .matrix td { text-align: center; }
+.matrix th:first-child, .matrix td:first-child { text-align: left; }
+.matrix td.yes { color: var(--ink); font-weight: 700; }
+.matrix td.yes::after { content: "✓"; }
+.matrix td.no { color: var(--rule); }
+.matrix td.no::after { content: "–"; }
+
+/* Mehrere kleine Tabellen nebeneinander, je eine pro Archetype. */
+.archetype-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+  margin: 18px 0;
+}
+.archetype-card {
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--paper-2);
+}
+.archetype-card .head {
+  padding: 9px 12px;
+  font-size: 11.5px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  background: var(--wash);
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink);
+}
+.archetype-card .head span { display: block; font-weight: 500; color: var(--ink-3); font-size: 11px; margin-top: 2px; }
+.archetype-card table { font-size: 12.5px; }
+.archetype-card td, .archetype-card th { padding: 6px 10px; }
+.archetype-card th { border-bottom: 1px solid var(--rule); }
+
+/* Dichtes Array + Indextabelle fuer die Sparse-Set-Illustration. */
+.sparse-demo { display: flex; gap: 22px; flex-wrap: wrap; margin: 16px 0; }
+.sparse-demo .block { flex: 1; min-width: 200px; }
+.sparse-demo .block h4 { font-size: 11px; font-weight: 650; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 8px; }
+.sparse-demo .cells { display: flex; gap: 4px; flex-wrap: wrap; }
+.sparse-demo .cell {
+  min-width: 46px;
+  padding: 8px 6px;
+  border: 1px solid var(--rule);
+  border-radius: 7px;
+  background: var(--paper);
+  text-align: center;
+}
+.sparse-demo .cell .k { display: block; font-size: 10px; color: var(--ink-3); }
+.sparse-demo .cell .v { display: block; font-family: var(--mono); font-size: 13px; font-weight: 600; margin-top: 2px; }
+.sparse-demo .cell.empty { background: var(--wash); color: var(--ink-4); border-style: dashed; }
+.sparse-demo .cell.empty .v { color: var(--ink-4); }
+
+@media (max-width: 900px) {
+  /* minmax(0, 1fr), nicht 1fr: ein 1fr-Track hat min-width auto, dadurch
+     können breite Tabellen die Spalte über die Viewportbreite hinaus aufdrücken
+     statt in ihrem eigenen Container zu scrollen. */
+  .doc { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .doc-nav { position: static; max-height: none; border-bottom: 1px solid var(--rule); }
+  .terms > div { grid-template-columns: 1fr; gap: 2px; }
+}
+
+@media (max-width: 640px) {
+  .wrap { padding: 0 20px 80px; }
+  .stat { border-right: 0; border-bottom: 1px solid var(--rule); }
+  .card.featured { padding: 24px; }
+  .pager { flex-direction: column; }
+}

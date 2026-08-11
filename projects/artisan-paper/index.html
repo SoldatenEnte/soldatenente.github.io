@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Artisan · Archetype-ECS mit WebAssembly und WebGPU</title>
+<script>try{if(localStorage.getItem("artisan-theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <a class="wordmark" href="./index.html">Artisan</a>
+    <div class="right"><nav></nav></div>
+  </header>
+
+  <div class="doc">
+    <aside class="doc-nav"></aside>
+    <main class="doc-main">
+
+      <p class="kicker">Projektthema</p>
+      <h1>Entwicklung eines Archetype-ECS und einer WebGPU-Engine zur Echtzeit-Simulation von
+          Millionen Entities einer planetaren Zivilisation im Browser</h1>
+
+      <p class="lede">
+        Kurz gesagt: eine Spiel-Engine, die im Browser läuft und trotzdem sehr viele bewegliche
+        Objekte gleichzeitig verwalten kann. Diese Seite erklärt den Aufbau, misst nach, wie
+        schnell die Engine tatsächlich ist, und macht die Ergebnisse direkt zum Ausprobieren
+        zugänglich.
+      </p>
+
+      <section id="idee">
+        <h2>Die Idee dahinter</h2>
+        <p>
+          Der Browser wird als Plattform gerade deutlich ernster genommen als noch vor wenigen
+          Jahren. Was früher nur nativ ging, läuft zunehmend auch im Web: Bildbearbeitung,
+          Videoschnitt, CAD-Werkzeuge, sogar erste Spiele-Engines. WebAssembly und WebGPU sind ein
+          großer Teil davon, ohne sie wäre rechen- und grafikintensive Software im Browser schlicht
+          nicht schnell genug.
+        </p>
+        <p>
+          Ganz ist dieser Weg noch nicht zu Ende gegangen, und ob er das jemals wird, ist offen.
+          Dieses Projekt setzt genau an dieser Frage an: nicht als fertige Antwort, sondern als
+          Test, wie nah eine Web-Engine heute schon an das herankommt, was native Engines seit
+          Jahren können. Artisan ist der Versuch, ein Archetype-ECS und einen WebGPU-Renderer so
+          eng zu verzahnen, dass am Ende reale Zahlen stehen, keine Vermutungen.
+        </p>
+      </section>
+
+      <section id="einstieg">
+        <h2>Worum es geht</h2>
+        <p>
+          Eine Simulation mit vielen tausend eigenständigen Objekten stellt zwei Anforderungen
+          gleichzeitig. Der Prozessor muss den Zustand aller Objekte in jedem Bild neu berechnen,
+          und die Grafikkarte muss das Ergebnis anzeigen. Beides muss etwa sechzigmal pro Sekunde
+          passieren, sonst ruckelt es.
+        </p>
+        <p>
+          Im Browser ist das ungewöhnlich schwer. JavaScript ist die Sprache der Webplattform, gibt
+          aber wenig Kontrolle darüber, wie Daten im Speicher liegen. Genau diese Kontrolle
+          entscheidet jedoch darüber, ob eine Simulation mit vielen Objekten schnell läuft.
+        </p>
+        <p>
+          Artisan geht deshalb einen anderen Weg. Der rechenintensive Kern ist in Rust geschrieben
+          und wird nach WebAssembly übersetzt, einem Format, das der Browser nahezu wie nativen
+          Code ausführt. Die Daten liegen dort in einer Anordnung, die der Prozessor besonders
+          schnell durchlaufen kann. JavaScript und die Grafikschnittstelle WebGPU greifen direkt
+          auf diesen Speicher zu, statt die Daten vorher zu kopieren.
+        </p>
+        <div class="note strong">
+          <strong>Der Kern in einem Satz.</strong> Statt Objekte einzeln über die Sprachgrenze zu
+          reichen, macht Artisan seine Datenblöcke direkt sichtbar und bereitet daraus fertige
+          Zeichenbefehle für die Grafikkarte vor.
+        </div>
+      </section>
+
+      <section id="thema">
+        <h2>Thema und tatsächlicher Stand</h2>
+        <p>
+          Der Titel nennt die planetare Zivilisationssimulation als Rahmen. Sie existiert als
+          lauffähige Anwendung und ist unter <a href="./demos.html">Demos</a> zu sehen. Sie ist
+          aber nicht der eigentliche Untersuchungsgegenstand.
+        </p>
+        <p>
+          Untersucht wird die darunterliegende Architektur: das Speichermodell des ECS, die
+          Verbindung zwischen WebAssembly und JavaScript und der Weg von den Simulationsdaten zum
+          Zeichenbefehl. Die Zivilisationssimulation dient als Anwendungsbeispiel, an dem sich
+          dieses Zusammenspiel an einer zusammenhängenden Anwendung beobachten lässt.
+        </p>
+        <p>
+          Auch die Zahl im Titel ist einzuordnen. Eine Million Entities werden in den Messungen
+          erreicht, dort allerdings mit wenigen Komponenten je Entity und ohne vollständige
+          Simulationslogik. Die Zivilisationssimulation läuft mit deutlich weniger Siedlern, dafür
+          mit erheblich mehr Logik pro Entity. Die Seite zeigt beide Zahlen getrennt, statt sie zu
+          einer zusammenzufassen.
+        </p>
+      </section>
+
+      <section id="vergleich">
+        <h2>Womit verglichen wird</h2>
+        <p>
+          Eine Engine allein zu messen sagt wenig. Ohne Vergleichswert ist unklar, ob eine
+          Millisekunde für eine Aufgabe viel oder wenig ist. Deshalb laufen dieselben Aufgaben auf
+          zwei etablierten Systemen mit.
+        </p>
+        <div class="cards" style="margin-top:20px">
+          <div class="card" style="cursor:default">
+            <div class="idx"><span class="swatch bevy"></span>Referenz 1</div>
+            <h3>Bevy 0.18.1</h3>
+            <p>
+              Eine bekannte, quelloffene Spiel-Engine, die wie Artisan in Rust geschrieben ist. Sie
+              läuft normalerweise nativ auf dem Rechner, also ohne Browser. Weil dieselbe
+              Programmiersprache und ein verwandtes Speichermodell zum Einsatz kommen, lässt sich
+              ein Unterschied nicht einfach auf die Sprache schieben. Bevy ist damit die
+              aussagekräftigste Referenz.
+            </p>
+          </div>
+          <div class="card" style="cursor:default">
+            <div class="idx"><span class="swatch flecs"></span>Referenz 2</div>
+            <h3>flecs 4.1</h3>
+            <p>
+              Keine vollständige Engine, sondern eine in C geschriebene Bibliothek, die sich auf
+              genau den Teil beschränkt, um den es hier geht: die Verwaltung sehr vieler Objekte.
+              flecs gilt als eine der schnellsten Umsetzungen dieser Idee. Wer behauptet, schnell
+              zu sein, muss sich an ihr messen lassen.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="ergebnis">
+        <h2>Das Ergebnis vorweg</h2>
+        <p>
+          Über alle Messkategorien hinweg liegt Artisan vorn, aber nicht überall. Die folgende Zahl
+          fasst zusammen, wie weit jede Engine im Mittel von der jeweils schnellsten entfernt ist.
+          Kleiner ist besser, 1,00 hieße „in jeder einzelnen Kategorie die schnellste“.
+        </p>
+        <div id="headline"></div>
+        <p class="dek" style="margin-top:16px">
+          Wo Artisan verliert und warum, steht offen in der
+          <a href="./evaluation.html#schwaechen">Evaluation</a>. Eine Messreihe, die nur Siege
+          zeigt, misst nichts.
+        </p>
+      </section>
+
+      <section id="aufbau">
+        <h2>Aufbau der Seiten</h2>
+        <p>
+          Die Kapitel bauen aufeinander auf, lassen sich aber auch einzeln lesen. Wer die
+          Grundbegriffe bereits kennt, kann direkt zur Architektur oder zu den Messungen springen.
+        </p>
+        <div class="cards">
+          <a class="card" href="./grundlagen.html">
+            <div class="idx">Kapitel 1 · Einstieg</div>
+            <h3>Grundlagen</h3>
+            <p>Was ein Entity-Component-System ist, warum die Anordnung im Speicher über die
+               Geschwindigkeit entscheidet, und was WebAssembly und WebGPU dazu beitragen. Ohne
+               Vorwissen lesbar.</p>
+          </a>
+          <a class="card" href="./architektur.html">
+            <div class="idx">Kapitel 2 · Umsetzung</div>
+            <h3>Architektur</h3>
+            <p>Wie Artisan das konkret baut: die Speicherspalten, der direkte Zugriff aus
+               JavaScript und der Weg zum fertigen Zeichenbefehl.</p>
+          </a>
+          <a class="card" href="./evaluation.html">
+            <div class="idx">Kapitel 3 · Zahlen</div>
+            <h3>Evaluation</h3>
+            <p>Die Messreihe gegen Bevy und flecs, die Kosten der Sprachgrenze und ein Vergleich
+               des Renderers mit Three.js.</p>
+          </a>
+          <a class="card" href="./demos.html">
+            <div class="idx">Kapitel 4 · Ausprobieren</div>
+            <h3>Demos</h3>
+            <p>Die Zivilisationssimulation und kleinere Anwendungen, alle direkt im Browser
+               lauffähig.</p>
+          </a>
+          <a class="card" href="./grenzen.html">
+            <div class="idx">Kapitel 5 · Einordnung</div>
+            <h3>Grenzen</h3>
+            <p>Was der Prototyp nicht garantiert und was die Messungen nicht belegen.</p>
+          </a>
+        </div>
+      </section>
+
+      <div class="pager"></div>
+    </main>
+  </div>
+
+  <footer>
+    <span>Artisan · Archetype-ECS · WebAssembly · WebGPU</span>
+    <span id="stamp"></span>
+  </footer>
+</div>
+
+<script type="module" src="./js/nav.js"></script>
+<script type="module">
+// Die Kennzahlen kommen aus derselben Datei wie die Evaluationsseite, damit
+// Startseite und Messtabelle sich nicht widersprechen koennen.
+const LABEL = { artisan: "Artisan", bevy: "Bevy 0.18.1", flecs: "flecs 4.1" };
+const de = (n, d = 2) => n.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
+try {
+  const res = await fetch("./data/fair_summary.json");
+  if (!res.ok) throw new Error("keine Daten");
+  const d = await res.json();
+  document.getElementById("headline").innerHTML =
+    `<div class="stats">` +
+    d.engines
+      .map((e) => {
+        const s = d.summary[e];
+        return `<div class="stat">
+          <div class="label"><span class="swatch ${e}"></span>${LABEL[e] ?? e}</div>
+          <div class="value">${s.geomean_vs_best ? de(s.geomean_vs_best) : "–"}<span class="unit">×</span></div>
+          <div class="sub">in ${s.wins} von ${s.categories} Kategorien die schnellste</div>
+        </div>`;
+      })
+      .join("") +
+    `</div>` +
+    (d.cfg.work_scale !== 1
+      ? `<div class="note warn"><strong>Vorläufiger Lauf.</strong> Diese Werte stammen aus einem
+         verkürzten Durchlauf und sind noch nicht belastbar.</div>`
+      : "");
+  document.getElementById("stamp").textContent =
+    "Messung vom " + new Date(d.generated).toLocaleDateString("de-DE");
+} catch {
+  document.getElementById("headline").innerHTML =
+    `<div class="note warn">Für diese Seite liegen noch keine Messdaten vor.</div>`;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Architektur · Artisan</title>
+<script>try{if(localStorage.getItem("artisan-theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <a class="wordmark" href="./index.html">Artisan</a>
+    <div class="right"><nav></nav></div>
+  </header>
+
+  <div class="doc">
+    <aside class="doc-nav"></aside>
+    <main class="doc-main">
+
+      <h1>Architektur</h1>
+      <p class="lede">
+        Wie die drei Konzepte im Prototyp konkret zusammenhängen, von der Komponentenspalte bis zum
+        instanzierten Draw Call.
+      </p>
+
+      <section id="schichten">
+        <h2>Drei Schichten</h2>
+        <dl class="terms">
+          <div>
+            <dt>Anwendung und API</dt>
+            <dd>In JavaScript. Stellt die Komposition von Entities bereit, verarbeitet Eingaben und
+                ordnet Entities Asset-Kennungen für Meshes, Materialien und Shader zu.</dd>
+          </div>
+          <div>
+            <dt>Engine-Kern</dt>
+            <dd>In Rust, nach WebAssembly übersetzbar. Enthält den ECS-Speicher, die registrierten
+                Systeme und den Scheduler. Spielspezifische Begriffe sind nicht im Speicher
+                verankert.</dd>
+          </div>
+          <div>
+            <dt>Renderer</dt>
+            <dd>In JavaScript. Liest die Batch-Metadaten und die darin referenzierten
+                Komponentenbereiche aus dem WebAssembly-Speicher, lädt sie in WebGPU-Buffer und
+                setzt die Draw Calls ab.</dd>
+          </div>
+        </dl>
+        <p>
+          Die Trennung hält die Zuständigkeiten begrenzt, erzeugt aber bewusste schichtübergreifende
+          Verträge: Die Anwendung muss die vom Renderer verstandenen Asset-Kennungen setzen, und die
+          JavaScript-Seite muss die Speicherregeln des WebAssembly-Moduls beachten.
+        </p>
+      </section>
+
+      <section id="archetype">
+        <h2>Archetype-Speicher</h2>
+        <p>
+          Der Speicher muss Komponententypen aufnehmen, deren Zusammenstellung erst durch die
+          Anwendung entsteht. Eine generische Rust-Collection genügt dafür nicht, weil ihr
+          Elementtyp zur Übersetzungszeit feststeht. Artisan verwendet deshalb mit
+          <code>BlobVec</code> einen typlosen Speicherbereich je Komponentenspalte, der Rohzeiger,
+          Länge, Kapazität, Speicherlayout und Drop-Funktion verwaltet.
+        </p>
+        <p>
+          Eine <code>Column</code> ergänzt den Datenspeicher um Änderungsmetadaten. Zu jeder Zeile
+          existieren Einträge in <code>added_ticks</code> und <code>changed_ticks</code>. Zusätzlich
+          speichert die Spalte atomare Werte für den letzten Einfüge- und Änderungszeitpunkt.
+        </p>
+        <p>
+          Die Spalten eines Archetypes werden getrennt alloziert, mit einer Ausrichtung von
+          mindestens 64 Byte. Dadurch beginnen zwei Spalten nicht in derselben typischen
+          Cache-Line, was eine mögliche Ursache von False Sharing bei parallelen Schreibzugriffen
+          reduziert.
+        </p>
+        <p>
+          Wird eine Komponente hinzugefügt oder entfernt, wechselt das Entity in einen Archetype mit
+          der neuen Typkombination. Für einen bereits ausgeführten Wechsel speichert Artisan Kanten
+          zwischen Archetypes: <code>add_edges</code> und <code>remove_edges</code> ordnen einem
+          Komponententyp den passenden Ziel-Archetype zu. Der Graph verkürzt die wiederholte Suche
+          nach dem Ziel, ändert aber nichts an den Kosten des Datentransfers.
+        </p>
+      </section>
+
+      <section id="bruecke">
+        <h2>Zero-Copy-Brücke</h2>
+        <p>
+          Die WebAssembly-Schnittstelle stellt zwei unterschiedlich granulare Zugriffe bereit.
+          <code>get_component_ptr(entity_id, name)</code> sucht ein konkretes Entity und liefert die
+          Adresse seines Komponentenwerts. <code>get_archetype_memory_layout</code> beschreibt
+          dagegen Speicherbereiche auf Archetype-Ebene und stellt Spaltenanfänge und Kapazitäten für
+          ganze zusammenhängende Spaltenbereiche bereit.
+        </p>
+        <p>
+          JavaScript interpretiert eine solche Adresse relativ zum <code>ArrayBuffer</code> des
+          linearen Speichers. Ein passendes TypedArray liest oder schreibt dann dieselben Bytes, die
+          der Rust-Kern verwaltet. Für diesen Zugriff wird kein zweites JavaScript-Objekt pro
+          Komponente erzeugt. Der Begriff Zero-Copy bezieht sich in Artisan genau auf diese Grenze.
+        </p>
+        <div class="note">
+          <strong>Der Vertrag.</strong> Ein direkter Schreibzugriff über ein TypedArray ist für Rust
+          zunächst nicht als Komponentenänderung erkennbar. JavaScript ruft deshalb
+          <code>wasm_mark_changed</code> auf, nachdem es einen Wert verändert hat. Die Funktion
+          aktualisiert den Änderungs-Tick der betreffenden Zeile und erhöht bei ausgewählten
+          Renderkomponenten zusätzlich <code>structural_gen</code>.
+        </div>
+        <p>
+          Was dieser Vertrag kostet und was die Brücke gegenüber Aufruf-pro-Entity einspart, ist
+          gemessen: sechs Übertragungsstrategien bei identischer Nutzlast.
+          <a class="inline-link" href="./evaluation.html#bruecke">Zur Messung</a>
+        </p>
+      </section>
+
+      <section id="rendering">
+        <h2>Rendering-Pipeline</h2>
+        <p>
+          Artisan extrahiert die Renderbatches aus den Archetypes. Für den 3D-Pfad werden die
+          Archetypes mit den benötigten Renderkomponenten durchsucht. Vor der Extraktion berechnet
+          ein Culling-System die Sichtbarkeit anhand der Kamera; unsichtbare Zeilen werden beim
+          Aufbau der Läufe übersprungen.
+        </p>
+        <p>
+          Innerhalb eines Archetypes bildet die Implementierung zusammenhängende sichtbare Läufe
+          mit derselben Mesh- und Shader-Kennung. Das Ergebnis jedes Batches besteht aus fünf
+          <code>u32</code>-Werten: Zeiger auf die Transform- und Materialbereiche, eine Shader-
+          beziehungsweise Texturkennung, eine Mesh-Kennung und die Länge des Laufs. JavaScript liest
+          die Gesamtliste über ein <code>Uint32Array</code>.
+        </p>
+        <p>
+          Der Renderer nutzt die enthaltenen Zeiger, um die referenzierten Komponentenbereiche zu
+          lesen, und überträgt die Daten mit <code>GPUQueue.writeBuffer</code> in
+          WebGPU-Instanzbuffer. Zwischen CPU- und GPU-Speicher findet damit weiterhin eine Kopie
+          statt. Die Zero-Copy-Eigenschaft der Brücke gilt für diesen Transfer nicht. Pro
+          extrahiertem Batch folgt ein instanzierter Draw Call.
+        </p>
+      </section>
+
+      <section id="fragmentierung">
+        <h2>Batch-Fragmentierung</h2>
+        <p>
+          Die Gruppierung sortiert die Entities nicht global nach ihrem Batch-Schlüssel. Zwei
+          Entities mit derselben Mesh- und Shader-Kombination bilden nur dann denselben Lauf, wenn
+          ihre Zeilen bereits benachbart sind. Die Batch-Anzahl hängt damit neben der Zahl
+          verschiedener Ressourcen auch von der aktuellen Zeilenreihenfolge ab.
+        </p>
+        <p>
+          Der Effekt ist messbar. Die folgende Szene verwendet <em>ein</em> Mesh und <em>einen</em>
+          Shader. Alle Batches entstehen allein dadurch, dass das Culling einzelne Entities aus der
+          Zeilenreihenfolge entfernt und zusammenhängende Läufe aufteilt.
+        </p>
+        <div id="frag-table" class="scroll-x"></div>
+        <div class="note">
+          Ohne Culling wären es bei jeder Zeile genau <strong>ein</strong> Batch. Eine Sortierung
+          der Zeilen nach Batch-Schlüssel oder eine Kompaktierung der sichtbaren Menge würde die
+          Zahl deutlich senken. Beides ist im untersuchten Stand nicht implementiert.
+        </div>
+      </section>
+
+      <div class="pager"></div>
+    </main>
+  </div>
+
+  <footer>
+    <span>Artisan · Archetype-ECS · WebAssembly · WebGPU</span>
+  </footer>
+</div>
+
+<script type="module" src="./js/nav.js"></script>
+<script type="module">
+try {
+  const res = await fetch("./data/batching_results.json");
+  if (!res.ok) throw new Error();
+  const d = await res.json();
+  document.getElementById("frag-table").innerHTML =
+    `<table>
+      <caption>Ein Mesh, ein Shader, statische Kamera</caption>
+      <thead><tr>
+        <th>Instanzen</th><th>sichtbar</th><th>gecullt</th><th>Batches</th><th>Instanzen je Batch</th>
+      </tr></thead>
+      <tbody>${d.rows
+        .map(
+          (r) => `<tr>
+            <td class="num">${r.instances.toLocaleString("de-DE")}</td>
+            <td class="num">${r.visibleInstances.toLocaleString("de-DE")}</td>
+            <td class="num muted">${r.culled.toLocaleString("de-DE")}</td>
+            <td class="num best">${r.batches.toLocaleString("de-DE")}</td>
+            <td class="num">${(r.visibleInstances / r.batches).toFixed(1)}</td>
+          </tr>`,
+        )
+        .join("")}</tbody>
+    </table>`;
+} catch {
+  document.getElementById("frag-table").innerHTML =
+    `<div class="note warn">Für diesen Abschnitt liegen noch keine Messdaten vor.</div>`;
+}
+</script>
+</body>
+</html>

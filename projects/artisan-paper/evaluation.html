@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evaluation · Artisan</title>
+<script>try{if(localStorage.getItem("artisan-theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <a class="wordmark" href="./index.html">Artisan</a>
+    <div class="right"><nav></nav></div>
+  </header>
+
+  <div class="doc">
+    <aside class="doc-nav"></aside>
+    <main class="doc-main">
+
+      <h1>Evaluation</h1>
+      <p class="lede">
+        Drei Entity-Component-Systeme auf einer Arbeitslast, deren Kategorien vor der ersten
+        Messung festgelegt wurden.
+      </p>
+
+      <section id="methodik">
+        <h2>Methodik</h2>
+        <p>
+          Eine ältere Messreihe war intern konsistent, ihre Kategorienauswahl ist aber gemeinsam mit
+          Artisan gewachsen. Eine Kategorie, in der Artisan gut abschneidet, belegt nichts, solange
+          Kategorien fehlen, in denen Artisan schlecht abschneidet. Die hier gezeigte Suite folgt
+          deshalb festen Regeln.
+        </p>
+        <dl class="terms">
+          <div>
+            <dt>Herleitung statt Auswahl</dt>
+            <dd>Die Kategorien stammen aus einer Operationstaxonomie des ECS, nicht aus Ergebnissen.
+                Keine Kategorie wurde nachträglich ergänzt oder entfernt.</dd>
+          </div>
+          <div>
+            <dt>Sweeps statt Einzelwerte</dt>
+            <dd>Entity-Zahl, Archetype-Zahl und Tupelbreite werden durchlaufen und vollständig
+                gezeigt, weil ein einzelner gewählter Wert immer jemanden bevorzugt.</dd>
+          </div>
+          <div>
+            <dt>Schwächen einschließen</dt>
+            <dd>Wahlfreier Zugriff über Entity-Handles und strukturelle Änderungen zählen gleich
+                schwer wie dichte Iteration. Es sind die Operationen, für die Archetype-Speicher am
+                schlechtesten geeignet ist.</dd>
+          </div>
+          <div>
+            <dt>Einzeln, nicht parallel</dt>
+            <dd>Alle drei Engines laufen seriell. Die Threading-Modelle unterscheiden sich stark,
+                ein paralleler Vergleich würde ebenso sehr die Thread-Pools messen.</dd>
+          </div>
+          <div>
+            <dt>Prüfsumme je Kategorie</dt>
+            <dd>Jede Kategorie prüft ihr eigenes Ergebnis. Weichen die Prüfsummen zwischen den
+                Engines ab, gilt die Kategorie als ungültig und nicht als Ergebnis.</dd>
+          </div>
+        </dl>
+        <p>
+          Protokoll: drei verworfene Aufwärmläufe, danach 15 gemessene Wiederholungen mit jeweils
+          frisch aufgebauter World. Berichtet wird der Median mit einem verteilungsfreien
+          95-Prozent-Konfidenzintervall.
+        </p>
+      </section>
+
+      <section id="ergebnisse">
+        <h2>ECS-Messreihe</h2>
+        <div id="headline"></div>
+
+        <h3>Iteration nach Entity-Zahl</h3>
+        <p class="dek">
+          Der Kernanspruch zusammenhängender Speicherung. Beide Achsen sind logarithmisch, weil die
+          Entity-Zahlen drei Größenordnungen umfassen.
+        </p>
+        <div id="sweep-a"></div>
+
+        <h3>Archetype-Fragmentierung</h3>
+        <p class="dek">
+          Dieselben 100.000 Entities, verteilt auf eine steigende Zahl von Archetypes.
+        </p>
+        <div id="sweep-b"></div>
+
+        <h3>Alle Kategorien</h3>
+        <div id="table" class="scroll-x"></div>
+      </section>
+
+      <section id="schwaechen">
+        <h2>Wo Artisan verliert</h2>
+        <p class="dek">
+          Aufgeführt statt weggelassen. Eine Suite, die nur Siege zeigt, misst nichts.
+        </p>
+        <div id="losses"></div>
+      </section>
+
+      <section id="bruecke">
+        <h2>WASM-JavaScript-Grenze</h2>
+        <p>
+          Sechs Wege, dieselbe Nutzlast über die Sprachgrenze zu bewegen, jeweils bei identischem
+          Ergebnis. Alle Strategien erzeugen dieselbe Prüfsumme, sonst wären ihre Zeiten nicht
+          vergleichbar.
+        </p>
+        <div id="bridge-table" class="scroll-x"></div>
+        <div id="bridge-note"></div>
+      </section>
+
+      <section id="renderer">
+        <h2>Renderer gegen Three.js</h2>
+        <p>
+          Dieselbe Zahl Würfel, dieselbe Bewegung, dieselbe Canvas-Größe, beide Seiten mit
+          Instancing und mit der Animation in JavaScript. Nur eine Engine läuft zur Zeit.
+        </p>
+        <div id="renderer-table" class="scroll-x"></div>
+        <div class="note warn">
+          <strong>Kein Vergleich zweier Renderer unter gleichen Bedingungen.</strong> Three.js ist
+          eine ausgereifte, allgemeine Bibliothek auf WebGL mit vollständigem Szenengraph und
+          Materialsystem. Artisans Renderer ist ein schmaler WebGPU-Pfad für eine Art von Szene. Ein
+          Unterschied bildet die API, den Umfang der Abstraktion und den Ort der
+          Transformationsarbeit gleichzeitig ab. Er lässt sich keinem dieser Faktoren zuordnen.
+        </div>
+        <div class="note">
+          Gemessen wurde ohne Compositor, mit fester Bildzahl statt über die Wanduhr. Es gibt daher
+          keine Frame-Präsentation und kein GPU-Pacing. Die Werte beschreiben den CPU-Pfad.
+        </div>
+      </section>
+
+      <section id="umgebung">
+        <h2>Testumgebung</h2>
+        <div id="env" class="scroll-x"></div>
+      </section>
+
+      <div class="pager"></div>
+    </main>
+  </div>
+
+  <footer>
+    <span>Artisan · Archetype-ECS · WebAssembly · WebGPU</span>
+    <span id="stamp"></span>
+  </footer>
+</div>
+
+<script type="module" src="./js/nav.js"></script>
+<script type="module" src="./js/evaluation.js"></script>
+</body>
+</html>

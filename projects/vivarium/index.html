@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Vivarium — Civilization Simulator</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        background-color: #000;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        outline: none;
+      }
+      .screen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 200;
+        pointer-events: none;
+        opacity: 0;
+        visibility: hidden;
+        transition:
+          opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1),
+          visibility 1.2s;
+      }
+      .screen.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      button.sci-btn {
+        background: #3f8fe5;
+        border: 1px solid #59a7f5;
+        color: #fff;
+        padding: 11px 18px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        border-radius: 7px;
+        transition: background 0.2s ease, border-color 0.2s ease;
+        pointer-events: auto;
+      }
+      button.sci-btn:hover {
+        background: #4b9ced;
+        border-color: #79bbff;
+      }
+      #setup-ui {
+        justify-content: flex-end;
+        padding-right: 10vw;
+      }
+      .setup-panel {
+        pointer-events: auto;
+        background: rgba(8, 12, 18, 0.85);
+        border: 1px solid rgba(77, 166, 255, 0.15);
+        padding: 40px;
+        border-radius: 8px;
+        backdrop-filter: blur(12px);
+        width: 400px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9);
+        transform: translateX(50px);
+        transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .screen.active .setup-panel {
+        transform: translateX(0);
+      }
+      .setup-panel h3 {
+        font-size: 1.25rem;
+        color: #fff;
+        margin-bottom: 24px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 14px;
+        letter-spacing: 0;
+      }
+      .setup-brand {
+        margin-bottom: 28px;
+      }
+      .setup-brand h1 {
+        color: #fff;
+        font-size: 2rem;
+        font-weight: 600;
+        letter-spacing: .04em;
+        margin-bottom: 5px;
+      }
+      .setup-brand p {
+        color: #9da8b5;
+        font-size: .92rem;
+        line-height: 1.45;
+      }
+      .input-group {
+        margin-bottom: 25px;
+      }
+      .input-group label {
+        display: block;
+        font-size: 0.85rem;
+        color: #aaa;
+        margin-bottom: 10px;
+        letter-spacing: 0;
+      }
+      .input-group input[type="range"] {
+        width: calc(100% - 40px);
+        display: inline-block;
+        vertical-align: middle;
+        accent-color: #4da6ff;
+        cursor: pointer;
+      }
+      .val-display {
+        display: inline-block;
+        width: 42px;
+        text-align: right;
+        color: #fff;
+        font-weight: 600;
+        vertical-align: middle;
+        font-size: 0.9rem;
+      }
+      .setup-panel .sci-btn {
+        width: 100%;
+      }
+      .ui-container {
+        position: absolute;
+        background: rgba(10, 10, 10, 0.85);
+        color: #eee;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(8px);
+        z-index: 100;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        pointer-events: auto;
+      }
+      .top-bar {
+        top: 20px;
+        left: 20px;
+        right: auto;
+        width: auto;
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        padding: 10px 20px;
+      }
+      .time-display {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #fff;
+        min-width: 80px;
+      }
+      .controls {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+      }
+      .speed-controls {
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        padding: 0 15px;
+        height: 32px;
+        gap: 8px;
+      }
+      .speed-controls input[type="range"] {
+        width: 100px;
+        accent-color: #4da6ff;
+        cursor: pointer;
+      }
+      .tribe-swatch {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+        box-shadow: 0 0 7px currentColor;
+        flex: 0 0 auto;
+      }
+      .colony-item.tribe-selected {
+        background: rgba(255, 255, 255, 0.13);
+        outline: 1px solid rgba(255, 255, 255, 0.3);
+      }
+      #sim-speed-val {
+        font-size: 0.9rem;
+        color: #fff;
+        width: 40px;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      button#btn-play {
+        background: #4da6ff;
+        border: none;
+        color: white;
+        padding: 6px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.2s;
+        height: 32px;
+      }
+      button#btn-play:hover {
+        background: #3d8ddf;
+      }
+      .side-bar {
+        top: 90px;
+        left: 20px;
+        width: 260px;
+        max-height: calc(100vh - 110px);
+        overflow-y: auto;
+      }
+      .colony-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background 0.2s;
+      }
+      .colony-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .c-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .c-name {
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+      .c-pop {
+        font-size: 0.85rem;
+        color: #ccc;
+        font-variant-numeric: tabular-nums;
+      }
+      .tile-box {
+        top: 20px;
+        right: 20px;
+        bottom: auto;
+        width: 320px;
+      }
+      .admin-box {
+        right: 20px;
+        bottom: 20px;
+        width: 260px;
+      }
+      .admin-box h3 { margin: 0 0 10px; font-size: .95rem; letter-spacing: 0; }
+      .admin-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .admin-tool, .admin-secondary {
+        appearance: none;
+        border: 1px solid rgba(255,255,255,.16);
+        border-radius: 5px;
+        background: rgba(4,12,22,.72);
+        color: #c8d6e5;
+        cursor: pointer;
+        font: 500 .72rem/1.15 system-ui, sans-serif;
+        padding: 7px 6px;
+        text-transform: none;
+      }
+      .admin-tool:hover, .admin-secondary:hover { border-color: rgba(77,166,255,.65); color: #fff; }
+      .admin-tool.active { background: rgba(77,166,255,.24); border-color: #4da6ff; color: #dff1ff; box-shadow: inset 0 0 10px rgba(77,166,255,.12); }
+      .admin-tool-wide { grid-column: 1 / -1; }
+      .admin-secondary { grid-column: 1 / -1; padding: 6px; color: #9caabd; }
+      .admin-slider { width: 100%; accent-color: #4da6ff; }
+      #admin-status { min-height: 1.2em; margin-top: 9px; color: #9ccfff; font-size: .78rem; }
+      .control-hint { margin-top: 9px; padding-top: 9px; border-top: 1px solid rgba(255,255,255,.08); color: #7f8b98; font-size: .7rem; line-height: 1.45; }
+      .d-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 15px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .d-header h3 {
+        margin: 0;
+        flex-grow: 1;
+        font-size: 1.1rem;
+        text-transform: none;
+        letter-spacing: 0;
+      }
+      #close-tile {
+        background: none;
+        border: none;
+        color: #888;
+        font-size: 1.8rem;
+        cursor: pointer;
+        padding: 0;
+        line-height: 0.8;
+        transition: color 0.2s;
+      }
+      #close-tile:hover {
+        color: #fff;
+      }
+      .d-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .d-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.95rem;
+        padding: 2px 0;
+      }
+      .d-row span {
+        color: #aaa;
+      }
+      .d-row strong {
+        color: #fff;
+        font-weight: 500;
+      }
+      .seed-row {
+        display: flex;
+        gap: 10px;
+      }
+      .seed-row input[type="text"] {
+        flex-grow: 1;
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #4da6ff;
+        padding: 10px 15px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 1rem;
+        outline: none;
+      }
+      #btn-random-seed {
+        background: rgba(77, 166, 255, 0.1);
+        border: 1px solid rgba(77, 166, 255, 0.3);
+        color: #4da6ff;
+        width: 42px;
+        font-size: 1.2rem;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        line-height: 1;
+      }
+      #btn-random-seed span { display: block; transform: translateY(-1px); }
+      @media (max-width: 760px) {
+        #setup-ui { justify-content: center; padding: 16px; }
+        .setup-panel { width: min(400px, 100%); padding: 28px; }
+        .side-bar { width: 220px; }
+        .admin-box { width: 230px; }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="setup-ui" class="screen active">
+      <div class="setup-panel">
+        <div class="setup-brand">
+          <h1>Vivarium</h1>
+          <p>Watch tribes grow, move, and adapt across a living world.</p>
+        </div>
+        <h3>New world</h3>
+        <div class="setup-scroll">
+          <div class="input-group">
+            <label for="param-colonies">Starting population</label>
+            <input
+              type="range"
+              id="param-colonies"
+              min="10"
+              max="2500"
+              step="10"
+              value="100"
+            />
+            <span id="val-colonies" class="val-display">100</span>
+          </div>
+          <div class="input-group">
+            <label for="param-seed">World seed</label>
+            <div class="seed-row">
+              <input type="text" id="param-seed" value="LYRA-4827-DRACO" />
+              <button id="btn-random-seed" aria-label="Randomize seed"><span aria-hidden="true">↻</span></button>
+            </div>
+          </div>
+        </div>
+        <button id="btn-launch" class="sci-btn">Start world</button>
+      </div>
+    </div>
+
+    <div id="sim-ui" class="screen">
+      <div id="top-bar" class="ui-container top-bar">
+        <div class="time-display"><span id="year-display">Year 1</span></div>
+        <div class="controls">
+          <button id="btn-play">Pause</button>
+          <div class="speed-controls">
+            <label for="sim-speed-slider" style="font-size: 0.85rem; color: #aaa; font-weight: 500">Speed</label>
+            <input
+              type="range"
+              id="sim-speed-slider"
+              min="0"
+              max="100"
+              step="1"
+              value="1"
+            />
+            <span id="sim-speed-val">1×</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="side-bar" class="ui-container side-bar">
+        <h3>Population</h3>
+        <div id="colony-list"></div>
+      </div>
+
+      <div id="tile-box" class="ui-container tile-box" style="display: none">
+        <div class="d-header">
+          <h3 id="tile-title">Tile</h3>
+          <button id="close-tile" aria-label="Close details">×</button>
+        </div>
+        <div class="d-grid">
+          <div
+            id="city-panel"
+            style="
+              display: none;
+              padding: 10px;
+              background: rgba(0, 0, 0, 0.5);
+              border: 1px solid #4da6ff;
+              border-radius: 6px;
+              margin-bottom: 10px;
+            "
+          >
+            <div class="d-row">
+              <span>Hunger</span> <strong id="c-faction"></strong>
+            </div>
+            <div class="d-row">
+              <span>Thirst</span> <strong id="c-tier"></strong>
+            </div>
+            <div class="d-row">
+              <span>Tribe</span> <strong id="c-tribe"></strong>
+            </div>
+            <div class="d-row"><span>Age</span> <strong id="c-age"></strong></div>
+            <div class="d-row"><span>Cooperation</span> <strong id="c-cooperation"></strong></div>
+            <div class="d-row"><span>Aggression</span> <strong id="c-aggression"></strong></div>
+            <div class="d-row"><span>Mobility</span> <strong id="c-mobility"></strong></div>
+            <button
+              id="btn-track-settler"
+              class="sci-btn"
+              style="width: 100%; margin-top: 8px; padding: 6px"
+            >
+              Track settler
+            </button>
+          </div>
+          <div class="d-row">
+            <span>Terrain</span> <strong id="t-terrain"></strong>
+          </div>
+          <div class="d-row" id="t-food-row">
+            <span>Food</span> <strong id="t-food"></strong>
+          </div>
+          <div class="d-row" id="t-fertility-row">
+            <span>Fertility</span> <strong id="t-fertility"></strong>
+          </div>
+          <div class="d-row" id="t-drought-row">
+            <span>Drought</span> <strong id="t-drought"></strong>
+          </div>
+        </div>
+      </div>
+
+      <div id="admin-box" class="ui-container admin-box">
+        <h3>World tools</h3>
+        <div class="d-row"><span>Food growth</span><strong id="admin-food-value">1.0×</strong></div>
+        <input id="admin-food" class="admin-slider" aria-label="Food growth" type="range" min="0" max="4" step="0.1" value="1">
+        <div class="d-row" style="margin-top:8px"><span>Brush size</span><strong id="admin-brush-value">2</strong></div>
+        <input id="admin-brush-size" class="admin-slider" aria-label="Brush size" type="range" min="0" max="4" step="1" value="1">
+        <div class="admin-actions" style="margin-top: 12px">
+          <button class="admin-tool" data-admin-tool="0">Paint drought</button>
+          <button class="admin-tool" data-admin-tool="1">Restore food</button>
+          <button class="admin-tool" data-admin-tool="2">Paint land</button>
+          <button class="admin-tool" data-admin-tool="3">Paint water</button>
+          <button class="admin-tool admin-tool-wide" data-admin-tool="4">Add settlers</button>
+          <button id="admin-clear-drought" class="admin-secondary">Clear droughts</button>
+        </div>
+        <div id="admin-status">Choose a tool to change the world.</div>
+        <div class="control-hint">Left drag paints · Right or middle drag rotates · Wheel zooms · Esc clears</div>
+      </div>
+    </div>
+
+    <script type="module" src="game.js"></script>
+  </body>
+</html>

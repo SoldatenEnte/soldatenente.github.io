@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demos · Artisan</title>
+<script>try{if(localStorage.getItem("artisan-theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <a class="wordmark" href="./index.html">Artisan</a>
+    <div class="right"><nav></nav></div>
+  </header>
+
+  <div class="doc">
+    <aside class="doc-nav"></aside>
+    <main class="doc-main">
+
+      <h1>Demos</h1>
+      <p class="lede">
+        Alle Anwendungen führen denselben nach WebAssembly übersetzten Rust-Kern aus und rendern
+        über WebGPU. Sie starten direkt im Browser, ohne Installation.
+      </p>
+
+      <div id="gpu-hinweis"></div>
+
+      <section id="vivarium">
+        <h2>Vivarium Civ</h2>
+        <div id="featured"></div>
+        <p>
+          Vivarium Civ erzeugt einen Icosphere-Planeten mit Unterteilungsstufe sechs, leitet aus
+          dessen indiziertem Netz die Nachbarschaft der Dreiecksflächen ab und berechnet
+          prozedurale Höhen-, Wasser-, Temperatur- und Feuchtigkeitswerte. Ein Planet-Entity mit
+          indexgleichen Flächenarrays steht dabei neben einzelnen Siedler-Entities.
+        </p>
+        <p>
+          Die Anfangspopulation verteilt sich um mehrere räumlich getrennte Stammeszentren.
+          Siedler besitzen Hunger, Durst, Alter, Stammeskennung sowie Kooperations-, Aggressions-
+          und Mobilitätswerte und bewegen sich anhand von Nahrung, Wasser und sozialen Signalen
+          über den Flächengraphen. Reproduktion erzeugt neue Entities, Merkmale werden verändert
+          weitergegeben, und Tod durch Alter, Hunger oder Durst entfernt Entities aus der World.
+        </p>
+        <p>
+          Die Anwendung macht damit das Zusammenspiel aus anwendungsspezifischen Arrays,
+          ECS-Entities, WASM-Exporten, Render-Schedule und WebGPU-Instancing an einer
+          zusammenhängenden Anwendung sichtbar. Sie ist keine eigenständige Evaluation des
+          Gesellschaftsmodells.
+        </p>
+      </section>
+
+      <section id="weitere">
+        <h2>Weitere Demos</h2>
+        <p class="dek">
+          Kleinere Anwendungen, die jeweils einen Teil der Engine isoliert zeigen.
+        </p>
+        <div id="grid" class="cards"></div>
+      </section>
+
+      <div class="pager"></div>
+    </main>
+  </div>
+
+  <footer>
+    <span>Artisan · Archetype-ECS · WebAssembly · WebGPU</span>
+    <span>Benötigt einen Browser mit WebGPU</span>
+  </footer>
+</div>
+
+<script type="module" src="./js/nav.js"></script>
+<script type="module">
+// WebGPU einmal oben pruefen, statt jede Demo einzeln mit leerem Canvas
+// scheitern zu lassen.
+document.getElementById("gpu-hinweis").innerHTML = "gpu" in navigator
+  ? ""
+  : `<div class="note warn"><strong>Dieser Browser stellt kein WebGPU bereit.</strong>
+     Die Demos starten nicht. Aktuelle Versionen von Chrome, Edge oder Firefox auf dem Desktop
+     führen sie aus.</div>`;
+
+function card(d, idx) {
+  return `<a class="card" href="${d.href}">
+    <div class="idx">${idx}</div>
+    <h3>${d.title}</h3>
+    <p>${d.blurb}</p>
+    <div class="tags">${d.meta}</div>
+  </a>`;
+}
+
+try {
+  const res = await fetch("./demos/manifest.json");
+  const demos = res.ok ? await res.json() : [];
+
+  const flagship = demos.find((d) => d.tier === "featured");
+  document.getElementById("featured").innerHTML = flagship
+    ? `<div class="cards"><a class="card featured" href="${flagship.href}">
+         <div class="idx">Starten</div>
+         <h3>${flagship.title}</h3>
+         <p>${flagship.blurb}</p>
+         <div class="tags">${flagship.meta}</div>
+       </a></div>`
+    : `<div class="note warn">Diese Demo ist im aktuellen Build nicht enthalten.</div>`;
+
+  const rest = demos.filter((d) => d.tier !== "featured");
+  document.getElementById("grid").innerHTML =
+    rest.map((d, i) => card(d, String(i + 1).padStart(2, "0"))).join("") ||
+    `<div class="note warn">Keine weiteren Demos im Build enthalten.</div>`;
+} catch {
+  document.getElementById("featured").innerHTML =
+    `<div class="note warn">Die Demoliste konnte nicht geladen werden.</div>`;
+}
+</script>
+</body>
+</html>

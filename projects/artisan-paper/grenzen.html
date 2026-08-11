@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grenzen · Artisan</title>
+<script>try{if(localStorage.getItem("artisan-theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <a class="wordmark" href="./index.html">Artisan</a>
+    <div class="right"><nav></nav></div>
+  </header>
+
+  <div class="doc">
+    <aside class="doc-nav"></aside>
+    <main class="doc-main">
+
+      <h1>Grenzen</h1>
+      <p class="lede">
+        Was der Prototyp im untersuchten Stand nicht garantiert, und was die Messungen nicht
+        zeigen.
+      </p>
+
+      <section id="handles">
+        <h2>Handles und TypedArrays</h2>
+        <p>
+          Rust-interne Entity-Handles bestehen aus einer numerischen ID und einer Generation.
+          Gelöschte IDs können wiederverwendet werden; die erhöhte Generation unterscheidet das
+          neue Entity von einem alten Handle. Mehrere JavaScript-Schnittstellen übertragen jedoch
+          nur die numerische ID. Ein auf JavaScript-Seite gespeichertes Handle ist nach
+          Wiederverwendung seiner ID daher nicht durch denselben Generationstest geschützt.
+        </p>
+        <p>
+          Direkte Speicherzeiger und die darauf angelegten TypedArrays können außerdem durch das
+          Wachstum einer Komponentenspalte, einen Archetype-Wechsel oder das Wachstum des
+          WebAssembly-Speichers ungültig werden. Der JavaScript-Query-Cache prüft Strukturzähler
+          und Bufferidentität pro Anfrage und baut betroffene Arrays bei einem Cache Miss neu auf.
+          Einzelne außerhalb dieses Caches gespeicherte Zeiger bleiben dennoch an dieselben
+          Lebensdauerregeln gebunden.
+        </p>
+      </section>
+
+      <section id="scheduler">
+        <h2>Scheduler und Änderungserkennung</h2>
+        <p>
+          Die zeilenbezogene Änderungserkennung setzt einen getrackten Schreibpfad voraus. Ein
+          gewöhnlicher Query-Zugriff mit <code>&amp;mut T</code> aktualisiert nur den
+          Änderungswert der gesamten Spalte, er markiert nicht jede tatsächlich geschriebene Zeile.
+          Filter, die eine genaue Aussage pro Entity benötigen, müssen einen der getrackten
+          Schreibpfade verwenden.
+        </p>
+        <p>
+          Die Label-Abhängigkeiten des Schedulers bleiben unvollständig. Sie bestimmen eine
+          topologische Reihenfolge, verhindern bei kompatiblen Datenzugriffen aber nicht, dass zwei
+          geordnete Systeme anschließend in dieselbe parallele Stage gepackt werden. Eine
+          belastbare Ordnung allein durch Labels erfordert eine Korrektur des Schedulers.
+        </p>
+        <p>
+          Behoben ist dagegen die frühere Invalidierungslücke der 3D-Batchliste. Sichtbarkeitswechsel
+          erhöhen einen eigenen <code>VisibilityGen</code>, der gemeinsam mit
+          <code>structural_gen</code> über die erneute Extraktion entscheidet. Ein separates
+          Prüfprogramm kontrolliert, dass eine Kameradrehung die Batchliste aktualisiert, ohne
+          fälschlich als strukturelle Änderung behandelt zu werden.
+        </p>
+      </section>
+
+      <section id="messung">
+        <h2>Grenzen der Messung</h2>
+        <p>
+          Die Messreihe vergleicht drei Implementierungen, nicht drei Speichermodelle. Bevy und
+          Artisan verwenden beide Table- beziehungsweise Archetype-Speicherung, flecs verwendet
+          Archetypes mit optionalen Sparse-Komponenten. Ein Unterschied ist ein Beleg über die
+          Implementierung, nicht über Archetypes als Konzept.
+        </p>
+        <p>
+          Sprache und Compiler unterscheiden sich ebenfalls: rustc für zwei Runner, MSVC für einen.
+          Die Codegenerierung ist damit Teil des Gemessenen und lässt sich hier nicht abtrennen.
+          flecs ist außerdem eine deutlich vollständigere Engine als Artisan; Kosten, die dort
+          Funktionen erkaufen, die Artisan nicht besitzt, erscheinen hier trotzdem als Kosten.
+        </p>
+        <p>
+          Absolute Werte gelten nur für die dokumentierte Maschine. Übertragbar sind allenfalls die
+          Verhältnisse, und auch die nur innerhalb der geprüften Bereiche.
+        </p>
+        <p>
+          Für den Renderingpfad fehlt weiterhin die getrennte Instrumentierung von Batch-Extraktion
+          und Buffer-Upload sowie Sweeps über Ressourcendiversität und Zeilenreihenfolge. Der
+          Vergleich mit Three.js verändert mehrere Faktoren gleichzeitig und ersetzt eine solche
+          Untersuchung nicht.
+        </p>
+      </section>
+
+      <section id="einordnung">
+        <h2>Einordnung</h2>
+        <p>
+          WebAssembly und WebGPU stellen standardisierte Bausteine für rechen- und grafikintensive
+          Webanwendungen bereit. Web Workers und <code>SharedArrayBuffer</code> ermöglichen die für
+          den Rayon-Pfad benötigte Form geteilter Arbeit. Diese Grundlagen erklären, warum eine
+          Architektur wie Artisan technisch realisierbar ist.
+        </p>
+        <p>
+          Aus dem Vorhandensein der Standards folgt jedoch keine Gleichwertigkeit mit nativen
+          Engines. Browserunterstützung, Sicherheitsanforderungen für geteilten Speicher und die
+          Kosten des Datentransfers zur GPU sind für einen konkreten Stand gesondert zu betrachten.
+          Auch die direkte Speicherbrücke ist keine automatische Eigenschaft von WebAssembly. Sie
+          erfordert projektspezifische Layout- und Lebensdauerverträge, die eine stärker
+          gekapselte native API nicht in derselben Form an JavaScript weitergeben würde.
+        </p>
+        <p>
+          Artisan ist daher kein funktionsgleicher Ersatz für Bevy oder flecs. Der Prototyp isoliert
+          eine Architekturidee und prüft ausgewählte Kosten ihrer Umsetzung.
+        </p>
+      </section>
+
+      <div class="pager"></div>
+    </main>
+  </div>
+
+  <footer>
+    <span>Artisan · Archetype-ECS · WebAssembly · WebGPU</span>
+  </footer>
+</div>
+<script type="module" src="./js/nav.js"></script>
+</body>
+</html>

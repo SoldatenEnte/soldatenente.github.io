@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Artisan — Scheduler</title>
+    <style>
+      :root {
+        --accent: #7dd3fc;
+        --good: #4ade80;
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        background: #000;
+        color: #e2e8f0;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        overflow: hidden;
+        overscroll-behavior: none;
+        height: 100%;
+      }
+      canvas#gameCanvas {
+        display: block;
+        width: 100vw;
+        height: 100vh;
+        touch-action: none;
+      }
+      #vignette {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 5;
+        background: radial-gradient(
+          ellipse 82% 82% at 50% 42%,
+          rgba(0, 0, 0, 0) 40%,
+          rgba(0, 0, 0, 0.5) 84%,
+          rgba(0, 0, 0, 0.93) 100%
+        );
+      }
+
+      /* The chart is the point of this demo, so it gets a fixed band across the
+         bottom of the viewport rather than living inside the side panel. */
+      #chart-wrap {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 300px;
+        z-index: 9;
+        padding: 10px 16px calc(6px + env(safe-area-inset-bottom)) 16px;
+        background: linear-gradient(
+          to bottom,
+          rgba(4, 6, 14, 0) 0%,
+          rgba(4, 6, 14, 0.86) 16%,
+          rgba(4, 6, 14, 0.96) 100%
+        );
+        pointer-events: none;
+      }
+      #chart-title {
+        font-size: 0.62rem;
+        letter-spacing: 1.3px;
+        text-transform: uppercase;
+        color: #64748b;
+        margin-bottom: 4px;
+      }
+      #chart-title b { color: var(--accent); font-weight: 600; }
+      #chart {
+        display: block;
+        width: 100%;
+        height: calc(100% - 22px);
+      }
+
+      #toggle {
+        position: absolute;
+        top: max(18px, env(safe-area-inset-top));
+        left: max(18px, env(safe-area-inset-left));
+        z-index: 12;
+        padding: 6px 12px;
+        font-size: 0.7rem;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: #64748b;
+        background: rgba(8, 10, 20, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 999px;
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+      }
+      #toggle:hover { color: var(--accent); }
+      #fullscreen {
+        position: absolute;
+        top: max(18px, env(safe-area-inset-top));
+        right: max(18px, env(safe-area-inset-right));
+        z-index: 12;
+        width: 34px;
+        height: 34px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+        background: rgba(8, 10, 20, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 999px;
+        cursor: pointer;
+      }
+      body.touch #fullscreen { display: flex; }
+
+      #ui[hidden] { display: none; }
+      #ui {
+        position: absolute;
+        top: max(18px, env(safe-area-inset-top));
+        left: max(18px, env(safe-area-inset-left));
+        width: 320px;
+        max-width: calc(100vw - 2 * max(18px, env(safe-area-inset-left)));
+        max-height: calc(100vh - 330px);
+        overflow-y: auto;
+        padding: 14px 15px;
+        background: rgba(6, 8, 18, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 10px;
+        backdrop-filter: blur(14px);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+        z-index: 10;
+        touch-action: pan-y;
+      }
+      .head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 0.88rem;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+      #close {
+        flex: 0 0 auto;
+        width: 22px; height: 22px; padding: 0;
+        font-size: 0.95rem; line-height: 1;
+        color: #64748b;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      #close:hover { color: #f1f5f9; background: rgba(255,255,255,0.1); }
+      .blurb {
+        margin-top: 8px;
+        font-size: 0.68rem;
+        line-height: 1.5;
+        color: #94a3b8;
+      }
+      .blurb b { color: #cbd5e1; font-weight: 600; }
+      .section {
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .label {
+        font-size: 0.62rem;
+        letter-spacing: 1.3px;
+        text-transform: uppercase;
+        color: #64748b;
+        margin-bottom: 8px;
+      }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        font-family: ui-monospace, monospace;
+        font-size: 0.71rem;
+        padding: 1px 0;
+      }
+      .row span:last-child { color: var(--accent); }
+      .row.hero span:last-child { color: var(--good); font-weight: 700; }
+      .btns { display: flex; gap: 6px; flex-wrap: wrap; }
+      button {
+        flex: 1;
+        min-width: 50px;
+        padding: 5px 3px;
+        font-size: 0.68rem;
+        font-weight: 600;
+        color: #cbd5e1;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.12s;
+      }
+      button:hover { background: rgba(125, 211, 252, 0.18); }
+      button.active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #04121c;
+      }
+
+      /* stage / system listing */
+      .stage-head {
+        margin: 9px 0 4px;
+        font-size: 0.6rem;
+        letter-spacing: 1.1px;
+        text-transform: uppercase;
+        color: #f1f5f9;
+      }
+      .leg {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        font-family: ui-monospace, monospace;
+        font-size: 0.65rem;
+        padding: 1px 0 1px 4px;
+      }
+      .dot {
+        flex: 0 0 auto;
+        width: 8px; height: 8px;
+        border-radius: 2px;
+        transform: translateY(-1px);
+      }
+      .nm { flex: 0 0 auto; color: #e2e8f0; }
+      .acc { flex: 1 1 auto; color: #64748b; font-size: 0.6rem; }
+      .acc b { color: #fca5a5; font-weight: 600; }
+      .acc i { color: #86efac; font-style: normal; }
+
+      #warn {
+        display: none;
+        margin-top: 10px;
+        font-size: 0.66rem;
+        line-height: 1.45;
+        color: #fcd34d;
+      }
+      #loading {
+        position: absolute;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+        color: var(--accent);
+        background: rgba(4, 5, 12, 0.75);
+        z-index: 20;
+      }
+
+      @media (pointer: coarse) {
+        #toggle, #close, #fullscreen { min-width: 40px; min-height: 40px; }
+        button { padding: 10px 6px; font-size: 0.74rem; }
+        #chart-wrap { height: 170px; }
+        #ui { max-height: calc(100vh - 200px); }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="gameCanvas"></canvas>
+    <div id="vignette"></div>
+
+    <button id="toggle">stats</button>
+    <button id="fullscreen" title="Fullscreen" aria-label="Fullscreen">⛶</button>
+
+    <div id="ui">
+      <div class="head">
+        <h1>Scheduler</h1>
+        <button id="close" title="Close (H)" aria-label="Close">×</button>
+      </div>
+      <div class="blurb">
+        The chart below is a recording, not a diagram: one lane per rayon
+        worker, one block per system, timed on the worker threads themselves.
+        Systems share a stage only when their declared reads and writes are
+        <b>disjoint</b> — so every dashed barrier is a real data conflict, listed
+        under Stages. Each system iterates serially here, so the only
+        parallelism on screen is <b>between</b> systems.
+      </div>
+      <div id="warn"></div>
+
+      <div class="section">
+        <div class="label">Field</div>
+        <div class="btns">
+          <button data-side="160">160²</button>
+          <button data-side="300">300²</button>
+          <button data-side="450">450²</button>
+          <button data-side="640">640²</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="label">Stage execution</div>
+        <div class="btns">
+          <button data-par="0">One core</button>
+          <button data-par="1">All cores</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="label">Frame</div>
+        <div class="row hero"><span>Cells</span><span id="v-cells">—</span></div>
+        <div class="row hero"><span>FPS</span><span id="v-fps">—</span></div>
+        <div class="row hero"><span>Schedule span</span><span id="v-span">—</span></div>
+        <div class="row"><span>ECS tick</span><span id="v-tick">—</span></div>
+        <div class="row"><span>Worker threads</span><span id="v-threads">—</span></div>
+        <div class="row"><span>Stages</span><span id="v-stages">—</span></div>
+      </div>
+
+      <div class="section">
+        <div class="label">Stages · systems · access</div>
+        <div id="legend"></div>
+      </div>
+    </div>
+
+    <div id="chart-wrap">
+      <div id="chart-title">
+        Update schedule · <b>one row per system</b> · dashed line = stage barrier ·
+        c<i>n</i> = worker it ran on
+      </div>
+      <canvas id="chart"></canvas>
+    </div>
+
+    <div id="loading">Loading…</div>
+
+    <script type="module" src="./game.js"></script>
+  </body>
+</html>

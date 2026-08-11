@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- maximum-scale=1 + user-scalable=no: iOS double-tap-to-zoom otherwise
+         fires on every drag-to-orbit tap and fights the camera controls. -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Artisan — Metamorphosis</title>
+    <style>
+      :root {
+        --accent: #c4b5fd;
+        --good: #4ade80;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html, body {
+        margin: 0;
+        background: #000;
+        color: #e2e8f0;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        overflow: hidden;
+        overscroll-behavior: none;
+        height: 100%;
+      }
+      canvas {
+        display: block;
+        width: 100vw;
+        height: 100vh;
+        /* Without this a drag-to-orbit touch is also a scroll/pull-to-refresh
+           gesture, and the page bounces instead of the camera turning. */
+        touch-action: none;
+      }
+      #vignette {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 5;
+        background: radial-gradient(
+          ellipse 80% 80% at 50% 50%,
+          rgba(0, 0, 0, 0) 44%,
+          rgba(0, 0, 0, 0.5) 84%,
+          rgba(0, 0, 0, 0.9) 100%
+        );
+      }
+      #toggle {
+        position: absolute;
+        top: max(18px, env(safe-area-inset-top));
+        left: max(18px, env(safe-area-inset-left));
+        z-index: 12;
+        padding: 6px 12px;
+        font-size: 0.7rem;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: #64748b;
+        background: rgba(8, 10, 20, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 999px;
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+      }
+      #toggle:hover {
+        color: var(--accent);
+        border-color: rgba(196, 181, 253, 0.4);
+      }
+      #fullscreen {
+        position: absolute;
+        top: max(18px, env(safe-area-inset-top));
+        right: max(18px, env(safe-area-inset-right));
+        z-index: 12;
+        width: 34px;
+        height: 34px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        line-height: 1;
+        color: #64748b;
+        background: rgba(8, 10, 20, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 999px;
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+      }
+      /* No F key on a phone, so the button is the only way in. */
+      body.touch #fullscreen {
+        display: flex;
+      }
+      #ui[hidden] {
+        display: none;
+      }
+      #ui {
+        position: absolute;
+        top: max(18px, env(safe-area-inset-top));
+        left: max(18px, env(safe-area-inset-left));
+        width: 286px;
+        max-width: calc(100vw - 2 * max(18px, env(safe-area-inset-left)) - 2px);
+        max-height: calc(100vh - 2 * max(18px, env(safe-area-inset-top)));
+        overflow-y: auto;
+        padding: 14px 15px;
+        background: rgba(6, 8, 18, 0.84);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 10px;
+        backdrop-filter: blur(14px);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+        z-index: 10;
+        touch-action: pan-y;
+      }
+      .head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 0.88rem;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+      #close {
+        flex: 0 0 auto;
+        width: 22px;
+        height: 22px;
+        padding: 0;
+        font-size: 0.95rem;
+        line-height: 1;
+        color: #64748b;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      #close:hover {
+        color: #f1f5f9;
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .blurb {
+        margin-top: 8px;
+        font-size: 0.68rem;
+        line-height: 1.5;
+        color: #94a3b8;
+      }
+      .blurb b {
+        color: #cbd5e1;
+        font-weight: 600;
+      }
+      .section {
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .label {
+        font-size: 0.62rem;
+        letter-spacing: 1.3px;
+        text-transform: uppercase;
+        color: #64748b;
+        margin-bottom: 8px;
+      }
+      .row {
+        display: flex;
+        justify-content: space-between;
+        font-family: ui-monospace, monospace;
+        font-size: 0.71rem;
+        padding: 1px 0;
+      }
+      .row span:last-child {
+        color: var(--accent);
+      }
+      .row.hero span:last-child {
+        color: var(--good);
+        font-weight: 700;
+      }
+      .btns {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      button {
+        flex: 1;
+        min-width: 46px;
+        padding: 5px 3px;
+        font-size: 0.68rem;
+        font-weight: 600;
+        color: #cbd5e1;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.12s;
+      }
+      button:hover {
+        background: rgba(196, 181, 253, 0.18);
+      }
+      button.active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #100c1c;
+      }
+
+      /* The archetype table: one row per signature, mirroring the eight
+         corners of the lattice on screen. */
+      .arow {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-family: ui-monospace, monospace;
+        font-size: 0.68rem;
+        padding: 2px 0;
+      }
+      .sw {
+        flex: 0 0 auto;
+        width: 9px;
+        height: 9px;
+        border-radius: 2px;
+      }
+      .sig {
+        flex: 0 0 46px;
+        color: #94a3b8;
+        letter-spacing: 0.5px;
+      }
+      .bar {
+        flex: 1 1 auto;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .bar i {
+        display: block;
+        height: 100%;
+        width: 0;
+        border-radius: 3px;
+        transition: width 0.25s ease-out;
+      }
+      .num {
+        flex: 0 0 52px;
+        text-align: right;
+        color: #cbd5e1;
+      }
+
+      #loading {
+        position: absolute;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+        color: var(--accent);
+        background: rgba(4, 5, 12, 0.75);
+        z-index: 20;
+      }
+      #hint {
+        position: absolute;
+        bottom: max(20px, env(safe-area-inset-bottom));
+        left: max(24px, env(safe-area-inset-left));
+        font-size: 0.72rem;
+        color: #475569;
+        z-index: 10;
+      }
+
+      /* Coarse pointer = finger, not mouse. Bigger tap targets only; nothing
+         about layout or information density changes. */
+      @media (pointer: coarse) {
+        #toggle,
+        #close,
+        #fullscreen {
+          min-width: 40px;
+          min-height: 40px;
+        }
+        button {
+          padding: 10px 6px;
+          font-size: 0.74rem;
+        }
+        .btns {
+          gap: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="gameCanvas"></canvas>
+    <div id="vignette"></div>
+
+    <button id="toggle">stats</button>
+    <button id="fullscreen" title="Fullscreen" aria-label="Fullscreen">⛶</button>
+
+    <div id="ui">
+      <div class="head">
+        <h1>Metamorphosis</h1>
+        <button id="close" title="Close (H)" aria-label="Close">×</button>
+      </div>
+      <div class="blurb">
+        Three optional components — <b>E</b>mber, <b>F</b>rost, <b>S</b>park —
+        make exactly eight signatures, so the engine builds exactly eight
+        archetypes. Each is one corner of the cube; each component is one axis.
+        A cube crossing an edge <i>is</i> a row being moved between tables.
+      </div>
+
+      <div class="section">
+        <div class="label">Entities</div>
+        <div class="btns">
+          <button data-count="40000">40k</button>
+          <button data-count="100000">100k</button>
+          <button data-count="200000">200k</button>
+          <button data-count="500000">500k</button>
+          <button data-count="1000000">1M</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="label">Structural churn</div>
+        <div class="btns">
+          <button data-churn="0">Off</button>
+          <button data-churn="1">Low</button>
+          <button data-churn="2">Mid</button>
+          <button data-churn="3">High</button>
+          <button data-churn="4">Max</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="label">Archetype rows</div>
+        <div id="arch-table"></div>
+      </div>
+
+      <div class="section">
+        <div class="label">Frame</div>
+        <div class="row hero"><span>Entities</span><span id="v-count">—</span></div>
+        <div class="row hero"><span>FPS</span><span id="v-fps">—</span></div>
+        <div class="row hero"><span>Migrations</span><span id="v-mig">—</span></div>
+        <div class="row"><span>Frame time</span><span id="v-frame">—</span></div>
+        <div class="row"><span>ECS tick</span><span id="v-cpu">—</span></div>
+        <div class="row"><span>GPU</span><span id="v-gpu">—</span></div>
+        <div class="row"><span>Threads</span><span id="v-threads">—</span></div>
+        <div class="row"><span>Live archetypes</span><span id="v-arch">—</span></div>
+        <div class="row"><span>Spawn</span><span id="v-spawn">—</span></div>
+      </div>
+    </div>
+
+    <div id="loading">Loading…</div>
+    <div id="hint">drag to orbit · scroll to zoom · O auto-orbit · F fullscreen · H stats</div>
+
+    <script type="module" src="./game.js"></script>
+  </body>
+</html>
