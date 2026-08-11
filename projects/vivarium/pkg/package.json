@@ -1,0 +1,15 @@
+{
+  "name": "vivarium_civ",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "vivarium_civ_bg.wasm",
+    "vivarium_civ.js",
+    "vivarium_civ.d.ts"
+  ],
+  "main": "vivarium_civ.js",
+  "types": "vivarium_civ.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

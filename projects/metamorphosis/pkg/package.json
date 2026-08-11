@@ -1,0 +1,15 @@
+{
+  "name": "metamorphosis",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "metamorphosis_bg.wasm",
+    "metamorphosis.js",
+    "metamorphosis.d.ts"
+  ],
+  "main": "metamorphosis.js",
+  "types": "metamorphosis.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

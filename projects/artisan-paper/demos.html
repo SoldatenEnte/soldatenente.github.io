@@ -79,7 +79,7 @@ document.getElementById("gpu-hinweis").innerHTML = "gpu" in navigator
      führen sie aus.</div>`;
 
 function card(d, idx) {
-  return `<a class="card" href="${d.href}">
+  return `<a class="card" href="${d.href}" target="_blank" rel="noopener noreferrer">
     <div class="idx">${idx}</div>
     <h3>${d.title}</h3>
     <p>${d.blurb}</p>
@@ -93,7 +93,7 @@ try {
 
   const flagship = demos.find((d) => d.tier === "featured");
   document.getElementById("featured").innerHTML = flagship
-    ? `<div class="cards"><a class="card featured" href="${flagship.href}">
+    ? `<div class="cards"><a class="card featured" href="${flagship.href}" target="_blank" rel="noopener noreferrer">
          <div class="idx">Starten</div>
          <h3>${flagship.title}</h3>
          <p>${flagship.blurb}</p>
