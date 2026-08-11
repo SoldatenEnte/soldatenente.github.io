@@ -494,6 +494,13 @@
     </div>
 
     <script src="./coi-serviceworker.js"></script>
-    <script type="module" src="game.js"></script>
+    <script type="module">
+      if (window.crossOriginIsolated || !window.isSecureContext || !("serviceWorker" in navigator)) {
+        await import("./game.js");
+      } else {
+        await navigator.serviceWorker.ready;
+        if (navigator.serviceWorker.controller) window.location.reload();
+      }
+    </script>
   </body>
 </html>
