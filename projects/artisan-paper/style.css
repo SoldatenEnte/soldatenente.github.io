@@ -662,8 +662,45 @@ footer {
 }
 
 @media (max-width: 640px) {
-  .wrap { padding: 0 20px 80px; }
+  html, body { overflow-x: hidden; }
+  .wrap { padding: 0 14px 64px; }
+  .masthead {
+    position: relative;
+    position: static;
+    margin-bottom: 24px;
+    padding: 13px 0;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .masthead .right {
+    min-width: 0;
+    width: 100%;
+    order: 2;
+  }
+  .masthead nav {
+    display: flex;
+    width: 100%;
+    gap: 2px;
+    padding-bottom: 2px;
+  }
+  .masthead nav a { padding: 6px 9px; font-size: 12px; }
+  .theme-toggle { position: absolute; top: 9px; right: 0; padding: 6px 9px; }
+  .doc { gap: 18px; }
+  .doc-nav { display: none; }
+  .doc-main h1 { font-size: clamp(28px, 8vw, 34px); line-height: 1.08; }
+  .doc-main h2:first-of-type { margin-top: 34px; }
+  .cards { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .card { padding: 16px; border-radius: 10px; }
+  .card.featured { padding: 16px 16px 18px 19px; }
+  .card.featured h3 { font-size: 22px; }
+  .card.featured p, .card p { font-size: 13px; line-height: 1.52; }
+  .card .idx { margin-bottom: 8px; }
+  .card .tags { line-height: 1.45; }
+  .demo-shot, .card.featured .demo-shot {
+    margin: -6px -6px 14px;
+    border-radius: 7px;
+  }
+  .doc-main section > p { line-height: 1.65; }
   .stat { border-right: 0; border-bottom: 1px solid var(--rule); }
-  .card.featured { padding: 24px; }
   .pager { flex-direction: column; }
 }
