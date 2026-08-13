@@ -1,0 +1,37 @@
+{
+  "kind": "batch-fragmentation",
+  "note": "Ein Mesh, ein Shader, statische Szene. Batches entstehen aus zusammenhaengenden sichtbaren Laeufen im Archetype.",
+  "generated": "2026-08-08T21:36:50.980Z",
+  "rows": [
+    {
+      "instances": 1000,
+      "batches": 99,
+      "visibleInstances": 655,
+      "culled": 345
+    },
+    {
+      "instances": 5000,
+      "batches": 277,
+      "visibleInstances": 3235,
+      "culled": 1765
+    },
+    {
+      "instances": 10000,
+      "batches": 452,
+      "visibleInstances": 6264,
+      "culled": 3736
+    },
+    {
+      "instances": 50000,
+      "batches": 1328,
+      "visibleInstances": 29231,
+      "culled": 20769
+    },
+    {
+      "instances": 100000,
+      "batches": 2096,
+      "visibleInstances": 58663,
+      "culled": 41337
+    }
+  ]
+}

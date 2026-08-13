@@ -1,42 +1,42 @@
 [
   {
-    "dir": "vivarium",
-    "href": "../vivarium/",
+    "dir": "vivarium_civ",
     "tier": "featured",
     "title": "Vivarium Civilisation",
-    "blurb": "The flagship. Thousands of agents on a planetary surface, each with needs, movement, resource use and reproduction, all updated every tick. This is the workload the engine exists for: many entities, small components, nothing sitting idle.",
-    "meta": "ECS at scale · scheduling · 3D rendering"
+    "blurb": "Der zusammenhängende Anwendungsfall: individuelle Siedler bewegen sich über einen prozedural erzeugten Planeten, nutzen lokale Ressourcen und interagieren innerhalb ihrer Stämme.",
+    "meta": "planetare Simulation · ECS · 3D-Rendering",
+    "href": "../vivarium/"
   },
   {
     "dir": "murmuration",
-    "href": "../murmuration/",
     "tier": "showcase",
     "title": "Murmuration",
-    "blurb": "Up to eight million real ECS entities, each with its own component row, steered by a shared flow field and moved on the CPU in Rust/WASM. JavaScript never copies a single instance — the renderer takes a raw pointer into the archetype's transform column and hands it straight to the GPU. A GPU-compute mode runs the identical field for a direct comparison.",
-    "meta": "zero-copy bridge · dense iteration · CPU vs. GPU"
+    "blurb": "Viele gleichartig aufgebaute ECS-Entities folgen einem gemeinsamen Strömungsfeld. Ein umschaltbarer GPU-Modus stellt den CPU- und GPU-Pfad anschaulich gegenüber.",
+    "meta": "dichte Iteration · Speicherbrücke · CPU und GPU",
+    "href": "../murmuration/"
   },
   {
-    "dir": "rects",
-    "href": "../rects/",
+    "dir": "bouncing_rects",
     "tier": "showcase",
     "title": "Bouncing Rects",
-    "blurb": "The smallest possible fully GPU-driven scene: no per-rect ECS entity and no per-rect CPU work at all. Every rect lives in a GPU storage buffer, is spawned by a compute shader from its own instance index, and is drawn in one instanced call. Changing the count changes one float.",
-    "meta": "GPU-driven · compute shaders · zero CPU cost"
+    "blurb": "Rechtecke liegen in einem GPU-Storage-Buffer, werden durch einen Compute Shader bewegt und anschließend instanziert gezeichnet. Die Demo isoliert damit einen GPU-seitigen Simulationspfad.",
+    "meta": "GPU-Compute · Storage-Buffer · Instancing",
+    "href": "../rects/"
   },
   {
     "dir": "scheduler",
-    "href": "../scheduler/",
     "tier": "showcase",
     "title": "Scheduler",
-    "blurb": "A recording of the engine's own update schedule: one row per system, timed on the rayon workers themselves. Systems share a stage only when their declared reads and writes are disjoint, so every barrier is a real data conflict. Flip to one core and watch the stages turn into a staircase.",
-    "meta": "parallel scheduling · system access · rayon"
+    "blurb": "Eine Zeitansicht der ausgeführten Systeme macht parallele Stufen und Zugriffskonflikte sichtbar. Die Ausführung kann zum Vergleich auf einen Thread begrenzt werden.",
+    "meta": "Scheduler · Systemzugriffe · Rayon",
+    "href": "../scheduler/"
   },
   {
     "dir": "metamorphosis",
-    "href": "../metamorphosis/",
     "tier": "showcase",
     "title": "Metamorphosis",
-    "blurb": "Three optional components make eight signatures, so the engine builds eight archetypes — one per corner of a cube, one component per axis. Every cube crossing an edge is a row being physically moved between tables. Turn the churn up and watch what that costs.",
-    "meta": "archetype migration · structural change · query filters"
+    "blurb": "Drei optionale Komponenten erzeugen acht mögliche Signaturen. Jeder Wechsel zeigt eine strukturelle Änderung, bei der ein Entity zwischen Archetype-Tabellen verschoben wird.",
+    "meta": "Archetype-Wechsel · strukturelle Änderung · Query-Filter",
+    "href": "../metamorphosis/"
   }
 ]

@@ -52,6 +52,31 @@
         </p>
       </section>
 
+      <section id="game-engine">
+        <h2>Bausteine der Game Engine</h2>
+        <p>
+          Über den ECS-Speicher hinaus stellt Artisan den wiederkehrenden Rahmen einer
+          Spielanwendung bereit. Eine <code>App</code> verwaltet die World und die registrierten
+          Systeme. Eine Clock liefert die vergangene Zeit für Simulation und Animation. Das
+          Eingabesystem überträgt Tastatur-, Maus- und Zeigerzustände aus dem Browser. Lokale und
+          globale Transformationen bilden Position, Rotation, Skalierung und hierarchische
+          Beziehungen zwischen Entities ab.
+        </p>
+        <p>
+          Für die Darstellung besitzt die Engine 2D- und 3D-Renderer, Kameras, Beleuchtung,
+          Materialien, Meshes und Shader. Die JavaScript-seitige Asset-Verwaltung ordnet diesen
+          Ressourcen numerische Kennungen zu. Räumliche Strukturen und Sichtbarkeitsberechnungen
+          begrenzen, welche Entities für einen Frame vorbereitet werden. Instancing fasst
+          kompatible Objekte anschließend in Batches zusammen.
+        </p>
+        <p>
+          Ein neues Spiel ergänzt diese allgemeinen Teile um eigene Komponenten, Systeme und
+          Assets. Die Engine schreibt weder ein bestimmtes Genre noch eine feste Szenenstruktur
+          vor. Die Demos reichen deshalb von einer planetaren Simulation über Schwarmbewegung und
+          GPU-Compute bis zur isolierten Darstellung von Scheduler und Archetype-Wechseln.
+        </p>
+      </section>
+
       <section id="archetype">
         <h2>Archetype-Speicher</h2>
         <p>

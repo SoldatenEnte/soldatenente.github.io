@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planetare Simulation · Artisan</title><script>try{if(localStorage.getItem("artisan-theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+<link rel="stylesheet" href="./style.css"></head><body><div class="wrap">
+<header class="masthead"><a class="wordmark" href="./index.html">Artisan</a><div class="right"><nav></nav></div></header>
+<div class="doc"><aside class="doc-nav"></aside><main class="doc-main">
+<p class="kicker">Anwendungsfall</p><h1>Eine planetare Zivilisationssimulation</h1>
+<p class="lede">Vivarium Civ verbindet Planetengenerierung, lokale Ressourcen, individuelle Siedler und WebGPU-Rendering in einer laufenden Browseranwendung. Der Planet ist dabei nicht nur eine sichtbare Kugel. Seine Dreiecksflächen bilden zugleich das räumliche Modell der Simulation.</p>
+
+<section id="modell"><h2>Vom Mesh zur Welt</h2>
+<p>Die Erzeugung beginnt mit einer Icosphere mit Radius 10 und Unterteilungsstufe 6. Eine Icosphere entsteht, indem die Dreiecke eines Ikosaeders wiederholt unterteilt und die neuen Punkte auf eine Kugel projiziert werden. Das Ergebnis ist ein indiziertes Netz: Benachbarte Dreiecke teilen sich dieselben Vertex-Indizes.</p>
+<p>Diese gemeinsame Indizierung erfüllt in Vivarium Civ eine zweite Aufgabe. Artisan leitet daraus ab, welche Dreiecksflächen eine Kante teilen. Erst danach wird das Mesh für die Darstellung aufgetrennt. Jede Fläche erhält dadurch eigene Vertices und kann unabhängig eingefärbt werden, während der zuvor berechnete Nachbarschaftsgraph erhalten bleibt.</p>
+<p>Der Planet besitzt somit zwei eng verbundene Darstellungen. Das Mesh beschreibt seine Form und Farbe für den Renderer. Der Graph beschreibt seine Oberfläche für die Simulation. Eine Flächennummer bezeichnet in allen flächenbezogenen Arrays dieselbe Stelle der Welt.</p>
+<div class="note"><strong>Ein Index, mehrere Bedeutungen.</strong> Für eine Fläche mit dem Index <code>f</code> liegen Höhe, Temperatur, Feuchtigkeit, Wasserstatus, Nahrungsvorrat, Dürre und aktuelle Bevölkerung jeweils an Position <code>f</code> ihres Arrays.</div></section>
+
+<section id="klima"><h2>Höhe, Klima und Ressourcen</h2>
+<p>Die Geländeform wird deterministisch aus dem gewählten Seed und mehreren Rauschfunktionen erzeugt. Domänenverzerrung verändert zunächst die Abtastpositionen des Kontinentalrauschens. Weitere Rauschanteile formen Ebenen, Hügel und Gebirge. Werte unterhalb des Wasserniveaus werden als Wasser behandelt; Werte darüber verschieben die Oberfläche nach außen.</p>
+<p>Temperatur und Feuchtigkeit werden getrennt berechnet. Die Temperatur sinkt im Modell mit der Entfernung vom Äquator und zusätzlich mit der Höhe. Die Feuchtigkeit verbindet einen eigenen Rauschwert mit Breitengrad, globaler Feuchtigkeit und Höhe. Aus Wasserstatus, Temperatur und Feuchtigkeit folgt eine Flächenfarbe. Die Farbgebung macht damit berechnete Zustände sichtbar, ist aber kein eigenständiges Klimamodell.</p>
+<p>Landflächen erhalten eine Fruchtbarkeit sowie eine daraus abgeleitete Nahrungskapazität und Regenerationsrate. Der aktuelle Nahrungsvorrat verändert sich während der Simulation: Siedler entnehmen Nahrung, ein periodisches System füllt den Vorrat wieder auf. Zeitlich begrenzte Dürreereignisse breiten sich über eine begrenzte Zahl von Graphkanten aus und verringern die lokale Regeneration. Wasserflächen besitzen in diesem Modell keinen Nahrungsvorrat.</p>
+</section>
+
+<section id="graph"><h2>Die Oberfläche als Graph</h2>
+<p>Bewegung auf einer Kugel könnte über kontinuierliche Richtungsvektoren und Kollisionen umgesetzt werden. Vivarium Civ verwendet stattdessen den bereits vorhandenen Flächengraphen. Jeder Knoten entspricht einer Dreiecksfläche; eine Kante verbindet zwei Flächen mit gemeinsamer Meshkante. Ein Siedler wechselt daher nicht zu einem beliebigen Punkt, sondern von seiner aktuellen Fläche auf eine benachbarte.</p>
+<p>Mehrere vorberechnete Tabellen verkürzen wiederkehrende Abfragen. Für jede Fläche wird ihr Mittelpunkt gespeichert. Eine Breitensuche berechnet außerdem die Zahl der Graphschritte bis zu einer wasserberührenden Landfläche. Wasserstatus, Nachbarschaft und Entfernung müssen dadurch nicht in jedem Simulationsschritt neu aus der Geometrie hergeleitet werden.</p>
+<p>Der Graph verbindet die sichtbare Welt mit der Logik: Auswahl einer Fläche, lokale Suche nach Nahrung, Annäherung an Wasser, Ausbreitung einer Dürre und soziale Nachbarschaft verwenden dieselbe räumliche Grundlage.</p></section>
+
+<section id="siedler"><h2>Siedler und Stämme</h2>
+<p>Beim Start werden Siedler als einzelne ECS-Entities erzeugt. Jeder Siedler besitzt unter anderem eine Flächennummer, Hunger und Durst, Alter, Stammeskennung sowie Werte für Kooperation, Aggression und Mobilität. Die Ausgangspopulation wird um räumlich getrennte Stammeszentren verteilt. Innerhalb eines Stammes variieren die drei Verhaltenswerte leicht um einen gemeinsamen Ausgangswert.</p>
+<p>Die Bedürfnisse werden mit der Simulationszeit verändert. Eine Landfläche kann nur so viel Nahrung abgeben, wie ihr aktueller Vorrat enthält. Wasser ist an Küstenflächen sowie in ausreichend feuchten Gebieten erreichbar; Dürre kann diese Binnenversorgung abschwächen. Bei der Wahl einer Nachbarfläche fließen daher lokale Versorgung, bekannte Ziele und soziale Signale zusammen.</p>
+<p>Siedler desselben Stammes können Nahrung übertragen. Zwischen verschiedenen Stämmen kann ein aggressiver Siedler Nahrung rauben, sofern der erwartete Ertrag im implementierten Modell die festen Energiekosten übersteigt. Fortpflanzung erzeugt ein neues Entity, wenn Alter, Bedürfnisse, Nahrungslage und Abklingzeit die hinterlegten Bedingungen erfüllen. Eigenschaften werden dabei verändert weitergegeben. Tod durch Alter oder aufgebrauchte Bedürfnisse entfernt das Entity aus der World.</p>
+<p>Diese Regeln erzeugen sichtbare Populations- und Stammesverläufe. Sie bilden keine empirisch validierte Gesellschaftssimulation. Kooperation und Aggression sind hier regelbasierte Variablen eines Demonstrators, keine Aussagen über menschliches Verhalten.</p></section>
+
+<section id="ablauf"><h2>Ein Simulationsschritt</h2>
+<ol><li>Dürreereignisse altern; ihre Wirkung auf betroffene Flächen wird aktualisiert.</li><li>Nahrungsvorräte regenerieren in periodischen Teilsschritten.</li><li>Beim ersten laufenden Schritt wird die Ausgangspopulation erzeugt.</li><li>Die Stammesdynamik ermittelt lokale Bevölkerung und Interaktionen.</li><li>Das Siedlersystem aktualisiert Bedürfnisse, Bewegung, Geburt und Tod.</li><li>Veränderte Flächenzustände werden in größeren Abständen wieder in Farben übersetzt.</li><li>Ein separater Render-Schritt setzt die Marker der Siedler auf die aktuelle Planetenoberfläche.</li></ol>
+<p>Die Reihenfolge entspricht den im aktuellen Civ-Modul registrierten Systemen. Ältere Strukturen für Häuser, Kolonien und Territorien sind teilweise noch im Zustandstyp vorhanden, ihre früheren Systeme werden in dieser Variante jedoch nicht registriert.</p></section>
+
+<section id="artisan"><h2>Wie Artisan dafür genutzt wird</h2>
+<p>Artisan stellt die allgemeine Infrastruktur bereit: World, Entities, Komponenten, Queries, Systemausführung, WebAssembly-Schnittstelle und Renderdaten. Vivarium Civ ergänzt die anwendungsspezifischen Komponenten und Systeme. Der Engine-Kern kennt dadurch weder Stämme noch Hunger oder Planetenflächen als fest eingebaute Begriffe.</p>
+<p>Der Planet selbst liegt als Entity mit Konfiguration, Simulationszustand und dynamischem Mesh vor. Die großen flächenbezogenen Arrays bleiben zusammen in diesem Zustand. Siedler sind dagegen einzelne Entities, weil ihre Lebenszyklen und Komponenten unabhängig verarbeitet werden. Diese Mischform vermeidet die Behauptung, jeder Zustand müsse allein deshalb ein Entity sein, weil ein ECS verwendet wird.</p>
+<p>Für die Darstellung teilen alle Siedler dasselbe Markierungs-Mesh. JavaScript registriert dieses Mesh einmal und übergibt seine Kennung an das WebAssembly-Modul. Dadurch können Marker mit gleicher Ressourcenkombination instanziert werden. Die Simulation läuft im Rust-Kern; JavaScript übernimmt Kamera, Bedienoberfläche und den Aufruf des WebGPU-Renderers.</p></section>
+
+<section id="aussage"><h2>Was die Simulation zeigt</h2>
+<p>Vivarium Civ zeigt, dass die getrennten Teile von Artisan in einer Anwendung zusammenarbeiten: prozedurale Geometrie, flächenbezogene Daten, individuelle ECS-Entities, zeitlich geordnete Systeme, eine WebAssembly-Schnittstelle und instanziertes Rendering. Die kleineren Demos isolieren einzelne Mechanismen; der Planet zeigt ihre Integration unter einer fortlaufenden Arbeitslast.</p>
+<p>Aus der lauffähigen Simulation folgt kein allgemeiner Nachweis, dass Artisan einer vollständigen Engine überlegen ist. Ebenso darf die Zahl gleichzeitig verwalteter Siedler nicht mit den einfacheren Entity-Arbeitslasten der Benchmarks gleichgesetzt werden. Aussagekräftig ist der Demonstrator für den realisierten Datenfluss und das Verhalten der implementierten Regeln.</p>
+<p class="next"><a href="./evaluation.html">Weiter zu den Messungen →</a></p></section>
+<div class="pager"></div></main></div><footer><span>Artisan · Planetare Simulation</span></footer></div>
+<script type="module" src="./js/nav.js"></script></body></html>

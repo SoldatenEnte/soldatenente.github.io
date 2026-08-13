@@ -22,33 +22,34 @@
       <h1>Entwicklung eines Archetype-ECS und einer WebGPU-Engine zur Echtzeit-Simulation von
           Millionen Entities einer planetaren Zivilisation im Browser</h1>
 
-      <p class="lede">
-        Kurz gesagt: eine Spiel-Engine, die im Browser läuft und trotzdem sehr viele bewegliche
-        Objekte gleichzeitig verwalten kann. Diese Seite erklärt den Aufbau, misst nach, wie
-        schnell die Engine tatsächlich ist, und macht die Ergebnisse direkt zum Ausprobieren
-        zugänglich.
-      </p>
-
       <section id="idee">
-        <h2>Die Idee dahinter</h2>
+        <h2>Kurzfassung</h2>
         <p>
-          Der Browser wird als Plattform gerade deutlich ernster genommen als noch vor wenigen
-          Jahren. Was früher nur nativ ging, läuft zunehmend auch im Web: Bildbearbeitung,
-          Videoschnitt, CAD-Werkzeuge, sogar erste Spiele-Engines. WebAssembly und WebGPU sind ein
-          großer Teil davon, ohne sie wäre rechen- und grafikintensive Software im Browser schlicht
-          nicht schnell genug.
+          Das Projekt untersucht, wie sich eine planetare Zivilisationssimulation mit modernen
+          Webtechnologien direkt im Browser umsetzen lässt. Die Simulation verbindet viele
+          unabhängig aktualisierte Siedler mit einer prozedural erzeugten Planetenoberfläche. Dafür
+          werden ein Entity-Component-System, WebAssembly und WebGPU zu einem durchgängigen
+          Daten- und Renderingpfad kombiniert.
         </p>
         <p>
-          Ganz ist dieser Weg noch nicht zu Ende gegangen, und ob er das jemals wird, ist offen.
-          Dieses Projekt setzt genau an dieser Frage an: nicht als fertige Antwort, sondern als
-          Test, wie nah eine Web-Engine heute schon an das herankommt, was native Engines seit
-          Jahren können. Artisan ist der Versuch, ein Archetype-ECS und einen WebGPU-Renderer so
-          eng zu verzahnen, dass am Ende reale Zahlen stehen, keine Vermutungen.
+          Als technische Grundlage wurde dafür die Game Engine <strong>Artisan</strong> entwickelt.
+          Ihr in Rust geschriebener Kern wird als WebAssembly-Modul ausgeführt und organisiert den
+          Simulationszustand in einem Archetype-basierten Entity-Component-System. JavaScript
+          bindet den Kern in die Webanwendung ein und übergibt sichtbare Daten an einen
+          WebGPU-Renderer. Die planetare Anwendung trägt den Namen <strong>Vivarium Civ</strong>.
+          Aus einer Icosphere entsteht darin eine Welt aus verbundenen Dreiecksflächen mit
+          prozedural berechneten Höhen-, Klima- und Ressourcendaten. Einzelne Siedler suchen Nahrung
+          und Wasser, altern, vermehren sich und interagieren innerhalb ihrer Stämme.
+        </p>
+        <p>
+          Vier kleinere Demos isolieren dichte ECS-Iteration, GPU-Compute, parallele
+          Systemausführung und Archetype-Wechsel. Messungen ergänzen diese Anschauung, ohne aus dem
+          Prototyp einen allgemeinen Leistungsvergleich vollständiger Engines abzuleiten.
         </p>
       </section>
 
       <section id="einstieg">
-        <h2>Worum es geht</h2>
+        <h2>Motivation und Ziel</h2>
         <p>
           Eine Simulation mit vielen tausend eigenständigen Objekten stellt zwei Anforderungen
           gleichzeitig. Der Prozessor muss den Zustand aller Objekte in jedem Bild neu berechnen,
@@ -62,10 +63,10 @@
         </p>
         <p>
           Artisan geht deshalb einen anderen Weg. Der rechenintensive Kern ist in Rust geschrieben
-          und wird nach WebAssembly übersetzt, einem Format, das der Browser nahezu wie nativen
-          Code ausführt. Die Daten liegen dort in einer Anordnung, die der Prozessor besonders
-          schnell durchlaufen kann. JavaScript und die Grafikschnittstelle WebGPU greifen direkt
-          auf diesen Speicher zu, statt die Daten vorher zu kopieren.
+          und wird nach WebAssembly übersetzt, einem portablen binären Ausführungsformat. Die
+          Daten liegen dort in zusammenhängenden Spalten. JavaScript kann ausgewählte Bereiche
+          über typisierte Sichten lesen. Vor der Darstellung überträgt der Renderer die benötigten
+          Werte in eigene WebGPU-Buffer.
         </p>
         <div class="note strong">
           <strong>Der Kern in einem Satz.</strong> Statt Objekte einzeln über die Sprachgrenze zu
@@ -74,18 +75,36 @@
         </div>
       </section>
 
-      <section id="thema">
-        <h2>Thema und tatsächlicher Stand</h2>
+      <section id="engine">
+        <h2>Die dafür entwickelte Engine</h2>
         <p>
-          Der Titel nennt die planetare Zivilisationssimulation als Rahmen. Sie existiert als
-          lauffähige Anwendung und ist unter <a href="./demos.html">Demos</a> zu sehen. Sie ist
-          aber nicht der eigentliche Untersuchungsgegenstand.
+          Artisan entstand als technische Grundlage für Vivarium Civ, ist aber nicht fest an diese
+          Simulation gebunden. Die Engine stellt allgemeine Bausteine für browserbasierte Spiele
+          bereit. Dazu gehören Entities und Komponenten, Queries und Systeme, Zeitsteuerung,
+          Eingaben, Transformationen, Assets sowie 2D- und 3D-Rendering.
         </p>
         <p>
-          Untersucht wird die darunterliegende Architektur: das Speichermodell des ECS, die
+          Spielspezifische Komponenten und Systeme werden in Rust ergänzt und gemeinsam mit dem
+          Engine-Kern nach WebAssembly übersetzt. JavaScript bindet die Anwendung in den Browser
+          ein und steuert den WebGPU-Renderer. Vivarium Civ definiert darauf aufbauend eigene
+          Begriffe wie Siedler, Hunger und Stämme. Die weiteren Demos verwenden dieselbe Engine für
+          andere Arbeitslasten. Wie schnell die dabei untersuchten Datenpfade arbeiten, wird in der
+          Evaluation getrennt betrachtet.
+        </p>
+      </section>
+
+      <section id="thema">
+        <h2>Gegenstand und Abgrenzung</h2>
+        <p>
+          Die planetare Zivilisationssimulation ist der Gegenstand und zentrale Anwendungsfall des Projekts. Sie
+          wird im Kapitel <a href="./planet.html">Planet</a> als vollständige Anwendung untersucht.
+        </p>
+        <p>
+          Im Mittelpunkt steht, wie Artisan die dafür benötigte Simulation, Datenverwaltung und
+          Darstellung im Browser ermöglicht. Dazu gehören das Speichermodell des ECS, die
           Verbindung zwischen WebAssembly und JavaScript und der Weg von den Simulationsdaten zum
-          Zeichenbefehl. Die Zivilisationssimulation dient als Anwendungsbeispiel, an dem sich
-          dieses Zusammenspiel an einer zusammenhängenden Anwendung beobachten lässt.
+          Zeichenbefehl. Vivarium Civ verbindet diese Bereiche in einer zusammenhängenden
+          Spielanwendung.
         </p>
         <p>
           Auch die Zahl im Titel ist einzuordnen. Eine Million Entities werden in den Messungen
@@ -97,7 +116,7 @@
       </section>
 
       <section id="vergleich">
-        <h2>Womit verglichen wird</h2>
+        <h2>Vergleich und Messungen</h2>
         <p>
           Eine Engine allein zu messen sagt wenig. Ohne Vergleichswert ist unklar, ob eine
           Millisekunde für eine Aufgabe viel oder wenig ist. Deshalb laufen dieselben Aufgaben auf
@@ -117,12 +136,11 @@
           </div>
           <div class="card" style="cursor:default">
             <div class="idx"><span class="swatch flecs"></span>Referenz 2</div>
-            <h3>flecs 4.1</h3>
+            <h3>flecs</h3>
             <p>
               Keine vollständige Engine, sondern eine in C geschriebene Bibliothek, die sich auf
               genau den Teil beschränkt, um den es hier geht: die Verwaltung sehr vieler Objekte.
-              flecs gilt als eine der schnellsten Umsetzungen dieser Idee. Wer behauptet, schnell
-              zu sein, muss sich an ihr messen lassen.
+              Die Bibliothek ergänzt Bevy als zweite Referenz für die Verwaltung vieler Entities.
             </p>
           </div>
         </div>
@@ -144,7 +162,7 @@
       </section>
 
       <section id="aufbau">
-        <h2>Aufbau der Seiten</h2>
+        <h2>Inhalt</h2>
         <p>
           Die Kapitel bauen aufeinander auf, lassen sich aber auch einzeln lesen. Wer die
           Grundbegriffe bereits kennt, kann direkt zur Architektur oder zu den Messungen springen.
@@ -163,22 +181,36 @@
             <p>Wie Artisan das konkret baut: die Speicherspalten, der direkte Zugriff aus
                JavaScript und der Weg zum fertigen Zeichenbefehl.</p>
           </a>
+          <a class="card" href="./planet.html">
+            <div class="idx">Kapitel 3 · Anwendung</div>
+            <h3>Planet</h3>
+            <p>Wie aus einer Icosphere eine simulierte Welt wird und wie Artisan Flächenzustand,
+               Siedler, Systeme und Rendering miteinander verbindet.</p>
+          </a>
           <a class="card" href="./evaluation.html">
-            <div class="idx">Kapitel 3 · Zahlen</div>
+            <div class="idx">Kapitel 4 · Zahlen</div>
             <h3>Evaluation</h3>
             <p>Die Messreihe gegen Bevy und flecs, die Kosten der Sprachgrenze und ein Vergleich
                des Renderers mit Three.js.</p>
           </a>
           <a class="card" href="./demos.html">
-            <div class="idx">Kapitel 4 · Ausprobieren</div>
+            <div class="idx">Kapitel 5 · Ausprobieren</div>
             <h3>Demos</h3>
             <p>Die Zivilisationssimulation und kleinere Anwendungen, alle direkt im Browser
                lauffähig.</p>
           </a>
           <a class="card" href="./grenzen.html">
-            <div class="idx">Kapitel 5 · Einordnung</div>
+            <div class="idx">Kapitel 6 · Einordnung</div>
             <h3>Grenzen</h3>
             <p>Was der Prototyp nicht garantiert und was die Messungen nicht belegen.</p>
+          </a>
+          <a class="card" href="./quellen.html">
+            <div class="idx">Nachweise</div><h3>Quellen</h3>
+            <p>Technische Standards und Fachliteratur zu den verwendeten Grundlagen.</p>
+          </a>
+          <a class="card" href="./ki-nutzung.html">
+            <div class="idx">Anhang A</div><h3>KI-Nutzung</h3>
+            <p>Verwendete Werkzeuge, Art der Unterstützung und Abgrenzung des Eigenanteils.</p>
           </a>
         </div>
       </section>

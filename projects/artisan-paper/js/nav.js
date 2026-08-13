@@ -12,12 +12,13 @@ export const PAGES = [
     file: "index.html",
     title: "Überblick",
     sections: [
-      ["idee", "Die Idee dahinter"],
-      ["einstieg", "Worum es geht"],
-      ["thema", "Thema und Stand"],
-      ["vergleich", "Womit verglichen wird"],
+      ["idee", "Kurzfassung"],
+      ["einstieg", "Motivation und Ziel"],
+      ["engine", "Die entwickelte Engine"],
+      ["thema", "Gegenstand und Abgrenzung"],
+      ["vergleich", "Vergleich und Messungen"],
       ["ergebnis", "Ergebnis vorweg"],
-      ["aufbau", "Aufbau der Seiten"],
+      ["aufbau", "Inhalt"],
     ],
   },
   {
@@ -40,10 +41,21 @@ export const PAGES = [
     title: "Architektur",
     sections: [
       ["schichten", "Drei Schichten"],
+      ["game-engine", "Bausteine der Game Engine"],
       ["archetype", "Archetype-Speicher"],
       ["bruecke", "Zero-Copy-Brücke"],
       ["rendering", "Rendering-Pipeline"],
       ["fragmentierung", "Batch-Fragmentierung"],
+    ],
+  },
+  {
+    file: "planet.html",
+    title: "Planet",
+    sections: [
+      ["modell", "Vom Mesh zur Welt"], ["klima", "Klima und Ressourcen"],
+      ["graph", "Oberfläche als Graph"], ["siedler", "Siedler und Stämme"],
+      ["ablauf", "Simulationsschritt"], ["artisan", "Artisans Aufgabe"],
+      ["aussage", "Aussage der Demo"],
     ],
   },
   {
@@ -74,6 +86,20 @@ export const PAGES = [
       ["scheduler", "Scheduler"],
       ["messung", "Grenzen der Messung"],
       ["einordnung", "Einordnung"],
+    ],
+  },
+  {
+    file: "quellen.html",
+    title: "Quellen",
+    sections: [["literatur", "Literatur und Standards"]],
+  },
+  {
+    file: "ki-nutzung.html",
+    title: "KI-Nutzung",
+    sections: [
+      ["werkzeuge", "Verwendete Werkzeuge"],
+      ["unterstuetzung", "Art der Unterstützung"],
+      ["verantwortung", "Eigenanteil und Verantwortung"],
     ],
   },
 ];

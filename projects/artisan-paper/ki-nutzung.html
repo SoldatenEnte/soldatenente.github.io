@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KI-Nutzung · Artisan</title><script>try{if(localStorage.getItem("artisan-theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+<link rel="stylesheet" href="./style.css"></head><body><div class="wrap">
+<header class="masthead"><a class="wordmark" href="./index.html">Artisan</a><div class="right"><nav></nav></div></header>
+<div class="doc"><aside class="doc-nav"></aside><main class="doc-main">
+<p class="kicker">Anhang A</p><h1>Nutzung KI-basierter Anwendungen</h1>
+<p class="lede">Bei der Entwicklung von Artisan und beim Schreiben dieser Dokumentation wurden generative KI-Werkzeuge als Assistenz eingesetzt. Sie unterstützten die Analyse und Überarbeitung von Code, die Fehlersuche, die Recherche sowie die sprachliche und strukturelle Überarbeitung von Texten.</p>
+
+<section id="werkzeuge"><h2>A.1 Verwendete Werkzeuge</h2>
+<div class="table-wrap"><table><thead><tr><th>Anbieter oder Dienst</th><th>Verwendete Modelle</th><th>Schwerpunkt der Nutzung</th></tr></thead><tbody>
+<tr><td>OpenAI</td><td>GPT-5.6-sol</td><td>Sprachliche und strukturelle Überarbeitung, Verständlichkeitsprüfung, Programmierung, Codeanalyse und Fehlersuche</td></tr>
+<tr><td>Anthropic</td><td>Claude Sonnet 5 und Fable 5</td><td>Programmierung, Codeanalyse, Fehlersuche und Optimierung</td></tr>
+<tr><td>Google</td><td>Gemini 3.1 Pro und Gemini 3.5 Flash</td><td>Programmierung, Codeanalyse und Fehlersuche</td></tr>
+<tr><td>Perplexity</td><td>Perplexity</td><td>Recherche und Auffinden möglicher Quellen</td></tr>
+</tbody></table></div></section>
+
+<section id="unterstuetzung"><h2>A.2 Art der Unterstützung</h2>
+<p>Bei der Softwareentwicklung halfen die Werkzeuge dabei, vorhandene Quelltexte und Schnittstellen schneller zu verstehen, Fehlermeldungen einzuordnen und Implementierungen zu überarbeiten. Dies betraf insbesondere das Entity-Component-System, die Verbindung zwischen Rust, WebAssembly und JavaScript, den WebGPU-Renderer, die planetare Simulation sowie die zugehörigen Demonstratoren und Messwerkzeuge. Vorschläge der KI-Systeme wurden an die bestehende Architektur angepasst und anhand des ausgeführten Programms, des Quellcodes und der Messdaten geprüft.</p>
+<p>Beim Schreiben dienten die Werkzeuge dazu, unklare Formulierungen, Widersprüche, Wiederholungen und fehlende Erklärungen zu erkennen. Sie unterstützten außerdem die Neuordnung der Dokumentation und die Anpassung der technischen Erklärungen an Leser mit Grundkenntnissen in Web- und Spieleentwicklung. Perplexity wurde ergänzend zur Recherche eingesetzt. KI-Ausgaben wurden nicht als fachliche Quellen verwendet. Übernommene technische Aussagen wurden anhand der jeweiligen Originalquellen oder der tatsächlich vorhandenen Implementierung geprüft.</p>
+</section>
+
+<section id="verantwortung"><h2>A.3 Eigenanteil und Verantwortung</h2>
+<p>Grundidee, Zielsetzung und Aufbau von Artisan sowie die zentralen Architekturentscheidungen wurden vom Verfasser entwickelt. Dazu gehören die Aufteilung zwischen Rust, WebAssembly, JavaScript und WebGPU, das Entity-Component-System, der Renderingpfad, die planetare Simulation, die Auswahl und Umsetzung der fünf Demonstratoren sowie die Planung und Durchführung der Messungen.</p>
+<p>Die KI-Werkzeuge hatten eine unterstützende Funktion. Code- und Formulierungsvorschläge wurden geprüft, angepasst oder verworfen. Die fachlichen Entscheidungen sowie die Verantwortung für die endgültige Software, die dargestellten Messwerte und den Inhalt der Dokumentation blieben beim Verfasser.</p>
+</section>
+<div class="pager"></div></main></div><footer><span>Artisan · Anhang zur KI-Nutzung</span></footer></div>
+<script type="module" src="./js/nav.js"></script></body></html>

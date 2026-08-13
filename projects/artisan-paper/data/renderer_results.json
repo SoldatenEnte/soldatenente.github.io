@@ -1,0 +1,93 @@
+{
+  "kind": "renderer-sweep",
+  "mode": "headless-cpu-path",
+  "generated": "2026-08-08T21:33:04.302Z",
+  "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Claude/1.26832.0 Chrome/148.0.7778.280 Electron/42.7.0 Safari/537.36 MSIX",
+  "runs": [
+    {
+      "kind": "renderer-comparison",
+      "cfg": {
+        "n": 10000,
+        "seconds": 10,
+        "animate": true
+      },
+      "artisan": {
+        "frames": 150,
+        "median": 1.1149999983608723,
+        "p95": 1.6400000005960464,
+        "min": 0.5099999997764826,
+        "max": 98.29999999888241,
+        "fps": 896.8609878655334,
+        "instances": 10000
+      },
+      "three": {
+        "frames": 150,
+        "median": 1.300000000745058,
+        "p95": 1.875,
+        "min": 0.7149999998509884,
+        "max": 5.299999998882413,
+        "fps": 769.2307687899065,
+        "instances": 10000
+      },
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Claude/1.26832.0 Chrome/148.0.7778.280 Electron/42.7.0 Safari/537.36 MSIX",
+      "generated": "2026-08-08T21:32:36.317Z"
+    },
+    {
+      "kind": "renderer-comparison",
+      "cfg": {
+        "n": 50000,
+        "seconds": 10,
+        "animate": true
+      },
+      "artisan": {
+        "frames": 150,
+        "median": 5.575000001117587,
+        "p95": 6.724999999627471,
+        "min": 3.044999999925494,
+        "max": 16.91000000014901,
+        "fps": 179.37219727345936,
+        "instances": 50000
+      },
+      "three": {
+        "frames": 150,
+        "median": 8.834999999031425,
+        "p95": 15.875,
+        "min": 3.6650000009685755,
+        "max": 24.850000001490116,
+        "fps": 113.1861912970718,
+        "instances": 50000
+      },
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Claude/1.26832.0 Chrome/148.0.7778.280 Electron/42.7.0 Safari/537.36 MSIX",
+      "generated": "2026-08-08T21:32:49.497Z"
+    },
+    {
+      "kind": "renderer-comparison",
+      "cfg": {
+        "n": 100000,
+        "seconds": 10,
+        "animate": true
+      },
+      "artisan": {
+        "frames": 150,
+        "median": 9.730000000447035,
+        "p95": 12.009999999776483,
+        "min": 8.294999999925494,
+        "max": 19.1100000012666,
+        "fps": 102.77492291408592,
+        "instances": 100000
+      },
+      "three": {
+        "frames": 150,
+        "median": 18.665000000968575,
+        "p95": 23.21499999985099,
+        "min": 7.769999999552965,
+        "max": 161.0750000011176,
+        "fps": 53.57621215901995,
+        "instances": 100000
+      },
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Claude/1.26832.0 Chrome/148.0.7778.280 Electron/42.7.0 Safari/537.36 MSIX",
+      "generated": "2026-08-08T21:33:03.690Z"
+    }
+  ],
+  "note": "Headless gemessen: Frames laufen ohne Compositor, daher ohne Frame-Praesentation und GPU-Pacing. Die Werte beschreiben den CPU-Pfad."
+}

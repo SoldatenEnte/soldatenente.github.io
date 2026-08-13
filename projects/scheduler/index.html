@@ -48,7 +48,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        height: 300px;
+        height: 250px;
         z-index: 9;
         padding: 10px 16px calc(6px + env(safe-area-inset-bottom)) 16px;
         background: linear-gradient(
@@ -67,10 +67,28 @@
         margin-bottom: 4px;
       }
       #chart-title b { color: var(--accent); font-weight: 600; }
+      #chart-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        min-height: 28px;
+      }
+      #chart-pause {
+        flex: 0 0 auto;
+        min-width: 74px;
+        padding: 4px 10px;
+        color: #cbd5e1;
+        background: rgba(15, 23, 42, 0.92);
+        border: 1px solid rgba(125, 211, 252, 0.35);
+        border-radius: 999px;
+        pointer-events: auto;
+      }
+      #chart-pause:hover { color: #04121c; background: var(--accent); }
       #chart {
         display: block;
         width: 100%;
-        height: calc(100% - 22px);
+        height: calc(100% - 34px);
       }
 
       #toggle {
@@ -113,7 +131,7 @@
         position: absolute;
         top: max(18px, env(safe-area-inset-top));
         left: max(18px, env(safe-area-inset-left));
-        width: 320px;
+        width: 290px;
         max-width: calc(100vw - 2 * max(18px, env(safe-area-inset-left)));
         max-height: calc(100vh - 330px);
         overflow-y: auto;
@@ -222,9 +240,7 @@
         transform: translateY(-1px);
       }
       .nm { flex: 0 0 auto; color: #e2e8f0; }
-      .acc { flex: 1 1 auto; color: #64748b; font-size: 0.6rem; }
-      .acc b { color: #fca5a5; font-weight: 600; }
-      .acc i { color: #86efac; font-style: normal; }
+      .stage-note { color: #64748b; font-weight: 400; }
 
       #warn {
         display: none;
@@ -266,12 +282,9 @@
         <button id="close" title="Close (H)" aria-label="Close">×</button>
       </div>
       <div class="blurb">
-        The chart below is a recording, not a diagram: one lane per rayon
-        worker, one block per system, timed on the worker threads themselves.
-        Systems share a stage only when their declared reads and writes are
-        <b>disjoint</b> — so every dashed barrier is a real data conflict, listed
-        under Stages. Each system iterates serially here, so the only
-        parallelism on screen is <b>between</b> systems.
+        Each row is one task. Tasks in the same stage can run <b>together</b>.
+        The next stage waits until every task above it has finished. Switch
+        between one and all cores to see the difference.
       </div>
       <div id="warn"></div>
 
@@ -281,7 +294,6 @@
           <button data-side="160">160²</button>
           <button data-side="300">300²</button>
           <button data-side="450">450²</button>
-          <button data-side="640">640²</button>
         </div>
       </div>
 
@@ -296,23 +308,22 @@
       <div class="section">
         <div class="label">Frame</div>
         <div class="row hero"><span>Cells</span><span id="v-cells">—</span></div>
-        <div class="row hero"><span>FPS</span><span id="v-fps">—</span></div>
         <div class="row hero"><span>Schedule span</span><span id="v-span">—</span></div>
-        <div class="row"><span>ECS tick</span><span id="v-tick">—</span></div>
-        <div class="row"><span>Worker threads</span><span id="v-threads">—</span></div>
         <div class="row"><span>Stages</span><span id="v-stages">—</span></div>
       </div>
 
       <div class="section">
-        <div class="label">Stages · systems · access</div>
+        <div class="label">The three steps</div>
         <div id="legend"></div>
       </div>
     </div>
 
     <div id="chart-wrap">
-      <div id="chart-title">
-        Update schedule · <b>one row per system</b> · dashed line = stage barrier ·
-        c<i>n</i> = worker it ran on
+      <div id="chart-head">
+        <div id="chart-title">
+          Live schedule · <b>same-stage tasks run together</b> · dashed line = wait
+        </div>
+        <button id="chart-pause" type="button">Pause</button>
       </div>
       <canvas id="chart"></canvas>
     </div>
@@ -320,13 +331,6 @@
     <div id="loading">Loading…</div>
 
     <script src="./coi-serviceworker.js"></script>
-    <script type="module">
-      if (window.crossOriginIsolated || !window.isSecureContext || !("serviceWorker" in navigator)) {
-        await import("./game.js");
-      } else {
-        await navigator.serviceWorker.ready;
-        if (navigator.serviceWorker.controller) window.location.reload();
-      }
-    </script>
+    <script type="module">await import("./game.js");</script>
   </body>
 </html>

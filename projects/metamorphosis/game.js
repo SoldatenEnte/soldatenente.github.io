@@ -3,10 +3,8 @@ import init, {
   set_churn,
   take_migrations,
   corner_counts,
-  live_archetypes,
   mesh_cube,
   initThreadPool,
-  artisan_rayon_threads,
 } from "./pkg/metamorphosis.js";
 import { ArtisanApp } from "./engine/App.js";
 import { WebGPURenderer } from "./engine/Renderer.js";
@@ -79,7 +77,6 @@ async function start() {
   } catch (e) {
     console.warn("[metamorphosis] thread pool unavailable, running serial:", e);
   }
-  const rayonThreads = artisan_rayon_threads();
 
   const canvas = document.getElementById("gameCanvas");
   const params = new URLSearchParams(location.search);
@@ -140,7 +137,7 @@ async function start() {
 
   function buildScene() {
     el("loading").style.display = "flex";
-    el("loading").innerText = `Spawning ${count.toLocaleString()} entities…`;
+    el("loading").innerText = `Creating ${count.toLocaleString()} cubes…`;
 
     // A timer rather than rAF: rAF never fires in a background tab, so a
     // rebuild triggered just before switching away would hang forever.
@@ -261,7 +258,6 @@ async function start() {
     for (const b of document.querySelectorAll("[data-churn]")) {
       b.classList.toggle("active", parseInt(b.dataset.churn, 10) === churnIdx);
     }
-    el("v-spawn").innerText = `${spawnMs.toFixed(0)} ms`;
   }
 
   const panel = el("ui");
@@ -378,8 +374,6 @@ async function start() {
         el("v-frame").innerText = `${avgFrame.get().toFixed(1)} ms`;
         el("v-cpu").innerText = `${avgCpu.get().toFixed(2)} ms`;
         el("v-gpu").innerText = `${avgGpu.get().toFixed(2)} ms`;
-        el("v-threads").innerText = String(rayonThreads);
-        el("v-arch").innerText = String(live_archetypes(engine));
 
         const counts = corner_counts(engine);
         let max = 1;

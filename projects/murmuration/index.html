@@ -289,7 +289,7 @@
         <div class="label">Camera</div>
         <div class="btns">
           <button data-cam="ride">Ride</button>
-          <button data-cam="orbit">Orbit</button>
+          <button data-cam="orbit">Fixed</button>
         </div>
       </div>
 
@@ -319,13 +319,6 @@
     <div id="hint">drag to look around · F fullscreen · H stats</div>
 
     <script src="./coi-serviceworker.js"></script>
-    <script type="module">
-      if (window.crossOriginIsolated || !window.isSecureContext || !("serviceWorker" in navigator)) {
-        await import("./game.js");
-      } else {
-        await navigator.serviceWorker.ready;
-        if (navigator.serviceWorker.controller) window.location.reload();
-      }
-    </script>
+    <script type="module">await import("./game.js");</script>
   </body>
 </html>

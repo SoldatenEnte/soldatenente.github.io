@@ -664,7 +664,8 @@ async function start() {
   // impressive.
   //
   // Two modes:
-  //   orbit — fixed ellipse around the swarm, always looking at the centre.
+  //   orbit — a fixed overview of the swarm. The old moving orbit was so slow
+  //           that it read as broken; the static composition looks better.
   //   ride  — the camera IS a particle: it moves through the exact same flow
   //           field the cubes do, so it drifts, banks and folds with the
   //           swarm instead of flying through it. No WASD: the ride is always
@@ -845,30 +846,11 @@ async function start() {
     return basisToQuat(curRight, curUp, curFwd, 0);
   }
 
-  // -- orbit mode -------------------------------------------------------------
-  // An ellipse in a plane tilted slightly off horizontal, so the "oval" reads
-  // as a 3D loop rather than a flat circle. On top of that, the whole ellipse
-  // breathes in and out on its own, slower and out of phase with the angular
-  // orbit — so distance from the swarm keeps changing (wide establishing shot,
-  // then a close pass, then wide again) rather than sitting at one radius.
-  // Off-phase on purpose: a breathing period that divided evenly into the
-  // orbit period would revisit the same near/far point at the same angle
-  // every lap; this drifts instead, so the shot doesn't obviously repeat.
-  const ORBIT_PERIOD = 42;
-  const ORBIT_RX = 46;
-  const ORBIT_RZ = 30;
-  const ORBIT_TILT = 0.5;
-  const BREATHE_PERIOD = 71;
-  const BREATHE_DEPTH = 0.55; // radius swings to (1 ± depth) x the base ellipse
+  // -- fixed overview ---------------------------------------------------------
+  const FIXED_EYE = [42, 15, 30];
 
-  function orbitEye(t) {
-    const a = (t / ORBIT_PERIOD) * Math.PI * 2;
-    const breathe = 1 + BREATHE_DEPTH * Math.sin((t / BREATHE_PERIOD) * Math.PI * 2);
-    const x = Math.cos(a) * ORBIT_RX * breathe;
-    const z0 = Math.sin(a) * ORBIT_RZ * breathe;
-    const y = z0 * Math.sin(ORBIT_TILT);
-    const z = z0 * Math.cos(ORBIT_TILT);
-    return [x, y, z];
+  function orbitEye() {
+    return FIXED_EYE;
   }
 
   // -- ride mode ----------------------------------------------------------

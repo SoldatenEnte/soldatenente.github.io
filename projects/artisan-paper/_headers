@@ -1,0 +1,18 @@
+# Cross-origin isolation headers.
+#
+# The rayon thread pool runs on SharedArrayBuffer, which browsers only expose to
+# cross-origin isolated documents. Without these headers every lab falls back to
+# a single thread and `performance.now()` stays coarsely clamped — the pages
+# detect that and label their results, but the threaded measurements are simply
+# unavailable.
+#
+# This file is read by Cloudflare Pages and Netlify. For other hosts see
+# `coi-serviceworker.js`, which achieves the same from inside the page.
+
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+
+# WebAssembly must be served with its own MIME type for streaming instantiation.
+/*.wasm
+  Content-Type: application/wasm

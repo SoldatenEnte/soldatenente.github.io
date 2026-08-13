@@ -295,10 +295,9 @@
         <button id="close" title="Close (H)" aria-label="Close">×</button>
       </div>
       <div class="blurb">
-        Three optional components — <b>E</b>mber, <b>F</b>rost, <b>S</b>park —
-        make exactly eight signatures, so the engine builds exactly eight
-        archetypes. Each is one corner of the cube; each component is one axis.
-        A cube crossing an edge <i>is</i> a row being moved between tables.
+        Each cube can have <b>E</b>mber, <b>F</b>rost and <b>S</b>park. Their eight
+        combinations form eight groups. When a cube gains or loses one, the
+        engine moves it to a new group.
       </div>
 
       <div class="section">
@@ -313,7 +312,7 @@
       </div>
 
       <div class="section">
-        <div class="label">Structural churn</div>
+        <div class="label">Changes per frame</div>
         <div class="btns">
           <button data-churn="0">Off</button>
           <button data-churn="1">Low</button>
@@ -324,7 +323,7 @@
       </div>
 
       <div class="section">
-        <div class="label">Archetype rows</div>
+        <div class="label">Entity groups</div>
         <div id="arch-table"></div>
       </div>
 
@@ -332,27 +331,17 @@
         <div class="label">Frame</div>
         <div class="row hero"><span>Entities</span><span id="v-count">—</span></div>
         <div class="row hero"><span>FPS</span><span id="v-fps">—</span></div>
-        <div class="row hero"><span>Migrations</span><span id="v-mig">—</span></div>
+        <div class="row hero"><span>Group moves</span><span id="v-mig">—</span></div>
         <div class="row"><span>Frame time</span><span id="v-frame">—</span></div>
         <div class="row"><span>ECS tick</span><span id="v-cpu">—</span></div>
         <div class="row"><span>GPU</span><span id="v-gpu">—</span></div>
-        <div class="row"><span>Threads</span><span id="v-threads">—</span></div>
-        <div class="row"><span>Live archetypes</span><span id="v-arch">—</span></div>
-        <div class="row"><span>Spawn</span><span id="v-spawn">—</span></div>
       </div>
     </div>
 
     <div id="loading">Loading…</div>
-    <div id="hint">drag to orbit · scroll to zoom · O auto-orbit · F fullscreen · H stats</div>
+    <div id="hint">drag to orbit · scroll to zoom · H stats</div>
 
     <script src="./coi-serviceworker.js"></script>
-    <script type="module">
-      if (window.crossOriginIsolated || !window.isSecureContext || !("serviceWorker" in navigator)) {
-        await import("./game.js");
-      } else {
-        await navigator.serviceWorker.ready;
-        if (navigator.serviceWorker.controller) window.location.reload();
-      }
-    </script>
+    <script type="module">await import("./game.js");</script>
   </body>
 </html>

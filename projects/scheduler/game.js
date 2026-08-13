@@ -19,6 +19,17 @@ const SYS_COLORS = [
   "#94a3b8", "#fb7185", "#60a5fa", "#a3e635",
 ];
 
+const SHORT_NAMES = {
+  sys_gravity: "motion",
+  sys_heat: "heat",
+  sys_charge: "charge",
+  sys_wave: "wave",
+  sys_integrate: "apply motion",
+  sys_shade: "colour",
+  sys_ripple: "shape",
+  sys_recolor: "glow",
+};
+
 class RollingAverage {
   constructor(n = 30) {
     this.n = n;
@@ -93,6 +104,20 @@ async function start() {
   const avgSpan = new RollingAverage();
   const el = (id) => document.getElementById(id);
 
+  // The engine also schedules camera, hierarchy and culling maintenance. They
+  // are real work, but they obscure this demo's deliberately small example.
+  // Keep the recording honest while showing only the eight lesson tasks.
+  function visibleStages() {
+    return schedule.stages
+      .map((systems, stageIndex) => ({
+        stageIndex,
+        systems: systems
+          .map((system, systemIndex) => ({ system, systemIndex }))
+          .filter(({ system }) => SHORT_NAMES[system.name]),
+      }))
+      .filter(({ systems }) => systems.length);
+  }
+
   function buildScene() {
     el("loading").style.display = "flex";
     el("loading").innerText = `Building ${(side * side).toLocaleString()} cells…`;
@@ -151,38 +176,32 @@ async function start() {
   /// a barrier in the chart is explained by a shared component here.
   function renderLegend() {
     const parts = [];
-    schedule.stages.forEach((stage, si) => {
-      parts.push(
-        `<div class="stage-head">Stage ${si} · ${stage.length} system${stage.length === 1 ? "" : "s"}${
-          stage.length > 1 ? " in parallel" : ""
-        }</div>`,
-      );
-      for (const s of stage) {
+    const shown = visibleStages();
+    shown.forEach(({ systems }, visibleIndex) => {
+      parts.push(`<div class="stage-head">Stage ${visibleIndex + 1} <span class="stage-note">${
+        systems.length > 1 ? `· ${systems.length} tasks together` : "· one task"
+      }</span></div>`);
+      for (const { system: s } of systems) {
         const c = SYS_COLORS[sysColor.get(s.name) % SYS_COLORS.length];
-        const w = s.writes.filter((x) => x !== "·");
-        const r = s.reads.filter((x) => x !== "·");
         parts.push(
           `<div class="leg">
              <span class="dot" style="background:${c}"></span>
-             <span class="nm">${s.name}</span>
-             <span class="acc">${w.length ? `<b>w</b> ${w.join(" ")}` : ""}${
-               r.length ? ` <i>r</i> ${r.join(" ")}` : ""
-             }</span>
+             <span class="nm">${SHORT_NAMES[s.name] ?? s.name.replace(/^sys_/, "")}</span>
            </div>`,
         );
       }
     });
     el("legend").innerHTML = parts.join("");
-    el("v-stages").innerText = String(schedule.stages.length);
+    el("v-stages").innerText = String(shown.length);
 
     // The chart needs a row per system, and how many systems there are is only
     // known once the schedule is built — so the band is sized here rather than
     // in CSS. A fixed height was silently unusable on any viewport that took
     // the coarse-pointer branch: 22 rows in 170px is 6px per row, too small
     // for the labels to render at all.
-    const rows = schedule.stages.reduce((n, s) => n + s.length, 0);
-    const wanted = rows * 13 + 46;
-    const h = Math.max(140, Math.min(wanted, Math.round(innerHeight * 0.52)));
+    const rows = shown.reduce((n, stage) => n + stage.systems.length, 0);
+    const wanted = rows * 21 + 58;
+    const h = Math.max(220, Math.min(wanted, Math.round(innerHeight * 0.46)));
     el("chart-wrap").style.height = `${h}px`;
     el("ui").style.maxHeight = `calc(100vh - ${h + 34}px)`;
   }
@@ -225,35 +244,36 @@ async function start() {
     // row means the same system every frame.
     const rowOf = new Map();
     let rows = 0;
-    schedule.stages.forEach((stage, si) => {
-      stage.forEach((_, i) => rowOf.set(`${si}:${i}`, rows++));
+    const shown = visibleStages();
+    shown.forEach(({ stageIndex, systems }) => {
+      systems.forEach(({ systemIndex }) => rowOf.set(`${stageIndex}:${systemIndex}`, rows++));
     });
     if (!rows) return;
 
-    const padL = 128, padR = 34, padT = 15, padB = 15;
+    const padL = 110, padR = 28, padT = 16, padB = 18;
     const plotW = Math.max(cssW - padL - padR, 10);
     const plotH = Math.max(cssH - padT - padB, 10);
     const rowH = plotH / rows;
     const x = (ms) => padL + (ms / axis) * plotW;
 
-    ctx.font = `${Math.min(10, Math.max(7, rowH - 2))}px ui-monospace, monospace`;
+    ctx.font = `${Math.min(13, Math.max(9, rowH - 5))}px ui-monospace, monospace`;
     ctx.textBaseline = "middle";
 
     // stage banding + names in the gutter
-    schedule.stages.forEach((stage, si) => {
-      const r0 = rowOf.get(`${si}:0`);
+    shown.forEach(({ stageIndex, systems }, visibleIndex) => {
+      const r0 = rowOf.get(`${stageIndex}:${systems[0].systemIndex}`);
       const y0 = padT + r0 * rowH;
-      const h = stage.length * rowH;
-      ctx.fillStyle = si % 2 ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.022)";
+      const h = systems.length * rowH;
+      ctx.fillStyle = visibleIndex % 2 ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.022)";
       ctx.fillRect(0, y0, cssW, h);
 
-      stage.forEach((s, i) => {
-        const y = padT + rowOf.get(`${si}:${i}`) * rowH;
+      systems.forEach(({ system: s, systemIndex }) => {
+        const y = padT + rowOf.get(`${stageIndex}:${systemIndex}`) * rowH;
         ctx.fillStyle = SYS_COLORS[(sysColor.get(s.name) ?? 0) % SYS_COLORS.length];
         ctx.fillRect(6, y + rowH / 2 - 3, 6, 6);
         ctx.fillStyle = "#cbd5e1";
         ctx.textAlign = "left";
-        ctx.fillText(s.name.replace(/^sys_/, ""), 17, y + rowH / 2);
+        ctx.fillText(SHORT_NAMES[s.name] ?? s.name.replace(/^sys_/, ""), 17, y + rowH / 2);
       });
 
       // stage label on the divider
@@ -265,7 +285,7 @@ async function start() {
       ctx.stroke();
       ctx.fillStyle = "#64748b";
       ctx.textAlign = "right";
-      ctx.fillText(`S${si}`, padL - 6, y0 + h / 2);
+      ctx.fillText(`S${visibleIndex + 1}`, padL - 6, y0 + h / 2);
     });
 
     // stage barriers: the last block in each stage has to finish before the
@@ -273,6 +293,8 @@ async function start() {
     const stageEnd = new Map();
     for (let i = 0; i < n; i++) {
       const st = trace[i * 5];
+      const idx = trace[i * 5 + 1];
+      if (!rowOf.has(`${st}:${idx}`)) continue;
       stageEnd.set(st, Math.max(stageEnd.get(st) ?? 0, trace[i * 5 + 4]));
     }
     ctx.strokeStyle = "rgba(248,250,252,0.34)";
@@ -303,11 +325,6 @@ async function start() {
       ctx.roundRect(x0, y, w, h, 2);
       ctx.fill();
 
-      // Which worker it actually landed on. In serial mode this is 0 for
-      // everything, which is itself the point.
-      ctx.fillStyle = "#475569";
-      ctx.textAlign = "left";
-      ctx.fillText(`c${trace[i * 5 + 2]}`, Math.min(x0 + w + 4, cssW - padR + 4), y + h / 2);
     }
 
     // time axis
@@ -381,9 +398,6 @@ async function start() {
     for (const b of document.querySelectorAll("[data-par]")) {
       b.classList.toggle("active", (b.dataset.par === "1") === parallel);
     }
-    el("v-threads").innerText = parallel
-      ? String(rayonThreads)
-      : `1 (of ${rayonThreads})`;
   }
 
   const panel = el("ui");
@@ -400,6 +414,11 @@ async function start() {
     else document.exitFullscreen?.();
   }
   el("fullscreen").addEventListener("click", toggleFullscreen);
+  let chartPaused = false;
+  el("chart-pause").addEventListener("click", () => {
+    chartPaused = !chartPaused;
+    el("chart-pause").innerText = chartPaused ? "Resume" : "Pause";
+  });
   window.addEventListener("keydown", (e) => {
     if (e.key === "f" || e.key === "F") toggleFullscreen();
     if (e.key === "o" || e.key === "O") autoOrbit = !autoOrbit;
@@ -441,6 +460,7 @@ async function start() {
 
   // -- loop -----------------------------------------------------------------
   let last = performance.now();
+  let lastChartUpdate = 0;
   let fpsLast = last;
   let frames = 0;
   let fps = 0;
@@ -471,12 +491,15 @@ async function start() {
       renderer.render3D(app.world, dt);
 
       const trace = trace_data(engine);
-      if (el("chart-wrap").style.display !== "none") drawChart(trace);
+      // Hold each trace long enough to read it. The schedule still runs every
+      // frame; only its visual snapshot updates at a calm pace.
+      if (!chartPaused && el("chart-wrap").style.display !== "none" && now - lastChartUpdate >= 200) {
+        drawChart(trace);
+        lastChartUpdate = now;
+      }
 
       if (!panel.hidden) {
         el("v-cells").innerText = (side * side).toLocaleString();
-        el("v-fps").innerText = fps.toFixed(0);
-        el("v-tick").innerText = `${avgTick.get().toFixed(2)} ms`;
         el("v-span").innerText = `${avgSpan.get().toFixed(2)} ms`;
       }
     } catch (err) {

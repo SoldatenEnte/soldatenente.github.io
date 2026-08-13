@@ -53,16 +53,10 @@ if (typeof window === "undefined") {
       return;
     }
 
-    let reloading = false;
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
-      if (reloading) return;
-      reloading = true;
-      window.location.reload();
-    });
-
     navigator.serviceWorker
       .register(window.document.currentScript.src)
       .then((registration) => {
+        registration.addEventListener("updatefound", () => window.location.reload());
         // A controller means the worker is already intercepting; a fresh
         // registration needs one reload before its headers take effect.
         if (registration.active && !navigator.serviceWorker.controller) {

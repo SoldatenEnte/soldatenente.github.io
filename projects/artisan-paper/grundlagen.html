@@ -38,7 +38,8 @@
           sind. Ein fliegender, angreifbarer Gegner besitzt zum Beispiel die Bausteine
           <code>Position</code>, <code>Velocity</code>, <code>Health</code> und
           <code>Flying</code>. Verliert er die Flugfähigkeit, verschwindet nur der Baustein
-          <code>Flying</code>, ohne dass irgendeine Klassenhierarchie angepasst werden müsste.
+          <code>Flying</code>, ohne dass irgendeine Klassenhierarchie angepasst werden müsste
+          <a class="cite" href="./quellen.html#literatur">[8]</a>.
         </p>
         <dl class="terms">
           <div><dt>Entity</dt><dd>Eine bloße Kennung, meist eine Zahl mit Generation. Sie trägt selbst keine Daten.</dd></div>
@@ -207,13 +208,15 @@
           Maschine. Sprachen wie Rust, C oder C++ übersetzen dorthin. Der Browser validiert ein
           geladenes Modul und führt es anschließend interpretiert oder in echten Maschinencode
           übersetzt aus. Ein WebAssembly-Modul ist also kein fertiges natives Programm für eine
-          bestimmte CPU, sondern ein Zwischenformat, das der Browser selbst weiterverarbeitet.
+          bestimmte CPU, sondern ein Zwischenformat, das der Browser selbst weiterverarbeitet
+          <a class="cite" href="./quellen.html#literatur">[1–2]</a>.
         </p>
         <p>
           Ausgeführt wird das Modul in einer Sandbox. Es hat keinen freien Zugriff auf das
           Betriebssystem, das DOM oder andere Browserobjekte, sondern nur auf das, was die
           Umgebung ausdrücklich als Funktion importiert oder exportiert bereitstellt. WebAssembly
-          ersetzt JavaScript damit nicht, es arbeitet mit ihm zusammen.
+          ersetzt JavaScript damit nicht, es arbeitet mit ihm zusammen
+          <a class="cite" href="./quellen.html#literatur">[2]</a>.
         </p>
       </section>
 
@@ -232,7 +235,8 @@
           TypedArray, etwa ein <code>Float32Array</code>, das jeweils vier aufeinanderfolgende
           Bytes als Kommazahl liest. Kennt die Anwendung Adresse, Elementtyp und Länge einer
           ECS-Spalte, kann sie diese Werte direkt darüber lesen, ohne für jeden einzelnen ein
-          eigenes JavaScript-Objekt zu erzeugen.
+          eigenes JavaScript-Objekt zu erzeugen
+          <a class="cite" href="./quellen.html#literatur">[3]</a>.
         </p>
         <p>
           Kostenlos ist der Übergang zwischen den beiden Welten trotzdem nicht. Einzelne Zahlen
@@ -251,6 +255,7 @@
           verschoben werden, und ein Entity kann durch einen Archetype-Wechsel eine neue
           Zeilenposition erhalten. Zeiger und TypedArrays sind deshalb keine dauerhaft stabile
           Identität, sondern müssen bei Bedarf neu erzeugt werden.
+          <a class="cite" href="./quellen.html#literatur">[3]</a>
         </div>
         <p>
           Genau an diesem Punkt setzt Artisans Speicherbrücke an: Komponentendaten bleiben im
@@ -327,7 +332,7 @@
           <strong>WebGPU</strong> wurde deshalb nicht als nächste WebGL-Version entworfen, sondern
           als eigenständiges Modell für moderne Grafikkarten. Zustände werden nicht mehr implizit
           gesetzt und stillschweigend vorausgesetzt, sondern in expliziten Objekten gebündelt und
-          einmal erzeugt.
+          einmal erzeugt <a class="cite" href="./quellen.html#literatur">[4]</a>.
         </p>
         <p>
           Zentral dafür ist die <code>GPURenderPipeline</code>: Sie bündelt Shader, Vertex-Layout
@@ -345,7 +350,8 @@
           Neben Renderpipelines kennt WebGPU auch <em>Compute Pipelines</em> für allgemeine
           parallele Berechnungen, unabhängig von der festen Abfolge aus Vertex- und
           Fragmentverarbeitung. Beide Pipelinearten werden in WGSL beschrieben, der zu WebGPU
-          gehörenden Shading-Sprache. Artisans reguläre Batch-Pipeline nutzt für die hier betrachtete
+          gehörenden Shading-Sprache <a class="cite" href="./quellen.html#literatur">[4–5]</a>.
+          Artisans reguläre Batch-Pipeline nutzt für die hier betrachtete
           Darstellung vor allem Renderpipelines mit Instancing; aus der vorhandenen
           Compute-Unterstützung von WebGPU folgt keine konkrete Nutzung in jedem Renderpfad.
         </p>
