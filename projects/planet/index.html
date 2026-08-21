@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Artisan - Planet</title>
+    <style>
+      :root { color-scheme: dark; font-family: Inter, "Segoe UI", sans-serif; }
+      * { box-sizing: border-box; }
+      html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #00040a; }
+      canvas { display: block; width: 100%; height: 100%; outline: none; cursor: grab; touch-action: none; }
+      canvas.dragging { cursor: grabbing; }
+      .panel {
+        position: fixed; top: 20px; left: 20px; z-index: 10;
+        width: min(360px, calc(100vw - 40px)); padding: 18px;
+        border: 1px solid rgba(130, 184, 255, 0.2); border-radius: 10px;
+        background: rgba(5, 12, 23, 0.78); box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(14px);
+      }
+      .eyebrow { margin: 0 0 5px; color: #72adf4; font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; }
+      h1 { margin: 0 0 15px; color: #fff; font-size: 21px; font-weight: 520; }
+      label { display: block; margin-bottom: 7px; color: #aebed0; font-size: 12px; }
+      .seed-controls { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; }
+      input, select, button { height: 38px; border-radius: 6px; font: inherit; }
+      input {
+        min-width: 0; padding: 0 11px; border: 1px solid rgba(255, 255, 255, 0.14);
+        outline: none; background: rgba(0, 0, 0, 0.35); color: #fff;
+        font-family: "Cascadia Mono", Consolas, monospace; font-size: 13px;
+      }
+      input:focus { border-color: #4c9df5; }
+      select {
+        width: 100%; padding: 0 10px; border: 1px solid rgba(255, 255, 255, 0.14);
+        outline: none; background: #0b1624; color: #fff; cursor: pointer;
+      }
+      select:focus { border-color: #4c9df5; }
+      .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 13px; }
+      button {
+        padding: 0 13px; border: 1px solid rgba(101, 169, 244, 0.3);
+        background: rgba(44, 116, 194, 0.2); color: #ddecff; cursor: pointer; font-size: 13px;
+      }
+      button:hover { border-color: rgba(118, 184, 255, 0.65); background: rgba(52, 132, 220, 0.32); }
+      button.primary { border-color: #388ce7; background: #2879d1; color: #fff; }
+      button.primary:hover { background: #348be8; }
+      .status { min-height: 16px; margin: 10px 0 0; color: #8397ac; font-size: 11px; }
+      .hint {
+        position: fixed; bottom: 20px; left: 50%; z-index: 10; margin: 0; padding: 8px 12px;
+        border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px;
+        background: rgba(3, 8, 15, 0.62); color: rgba(222, 234, 248, 0.66);
+        font-size: 12px; transform: translateX(-50%); backdrop-filter: blur(8px);
+        white-space: nowrap; pointer-events: none;
+      }
+      .fps {
+        position: fixed; top: 20px; right: 20px; z-index: 10; margin: 0; padding: 8px 11px;
+        border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px;
+        background: rgba(3, 8, 15, 0.62); color: #b8cce2;
+        font-family: "Cascadia Mono", Consolas, monospace; font-size: 12px;
+        backdrop-filter: blur(8px); pointer-events: none;
+      }
+      @media (max-width: 520px) {
+        .panel { top: 12px; left: 12px; width: calc(100vw - 24px); padding: 14px; }
+        h1 { margin-bottom: 11px; font-size: 18px; }
+        .seed-controls { grid-template-columns: minmax(0, 1fr) auto; }
+        .primary { grid-column: 1 / -1; }
+        .options { grid-template-columns: 1fr; }
+        .hint { bottom: 12px; }
+        .fps { top: auto; right: 12px; bottom: 56px; }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="gameCanvas"></canvas>
+    <section class="panel" aria-label="Planet generieren">
+      <p class="eyebrow">Artisan Demo</p>
+      <h1>Procedural Planet</h1>
+      <label for="seed">Seed</label>
+      <div class="seed-controls">
+        <input id="seed" type="text" value="ARTISAN-2048" spellcheck="false" />
+        <button id="random-seed" type="button">Random</button>
+        <button id="generate" class="primary" type="button">Generate</button>
+      </div>
+      <div class="options">
+        <div>
+          <label for="layer">Layer</label>
+          <select id="layer">
+            <option value="0">Biomes</option>
+            <option value="1">Elevation</option>
+            <option value="2">Temperature</option>
+            <option value="3">Moisture</option>
+            <option value="4">Land and water</option>
+            <option value="5">Arability</option>
+            <option value="6">Minerals</option>
+          </select>
+        </div>
+        <div>
+          <label for="subdivisions">Subdivision Level</label>
+          <select id="subdivisions">
+            <option value="0">0 - 20 triangles</option>
+            <option value="1">1 - 80 triangles</option>
+            <option value="2">2 - 320 triangles</option>
+            <option value="3">3 - 1,280 triangles</option>
+            <option value="4">4 - 5,120 triangles</option>
+            <option value="5">5 - 20,480 triangles</option>
+            <option value="6" selected>6 - 81,920 triangles</option>
+            <option value="7">7 - 327,680 triangles</option>
+            <option value="8">8 - 1,310,720 triangles</option>
+          </select>
+        </div>
+      </div>
+      <p id="status" class="status">Ready</p>
+    </section>
+    <p id="fps" class="fps">FPS 0</p>
+    <p class="hint">Drag to orbit, scroll or pinch to zoom</p>
+    <script src="./coi-serviceworker.js"></script>
+    <script type="module">await import("./game.js");</script>
+  </body>
+</html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Artisan · Archetype-ECS mit WebAssembly und WebGPU</title>
+<title>Artisan - Archetype-ECS mit WebAssembly und WebGPU</title>
 <script>try{if(localStorage.getItem("artisan-theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
 <link rel="stylesheet" href="./style.css">
 </head>
@@ -22,88 +22,111 @@
       <h1>Entwicklung eines Archetype-ECS und einer WebGPU-Engine zur Echtzeit-Simulation von
           Millionen Entities einer planetaren Zivilisation im Browser</h1>
 
-      <section id="idee">
-        <h2>Kurzfassung</h2>
+      <p class="lede">
+        Diese Arbeit untersucht, wie sich rechen- und grafikintensive Spiele und
+        Echtzeitsimulationen effizient im Browser umsetzen lassen. Dafür werden ein datenorientiertes
+        Entity-Component-System, Rust, WebAssembly und WebGPU zu einer gemeinsamen Architektur
+        verbunden. Eine planetare Zivilisationssimulation dient als Anwendungsbeispiel; gezielte
+        Benchmarks bewerten die zentralen Datenpfade.
+      </p>
+
+      <section id="motivation">
+        <h2>Warum Spiele im Browser?</h2>
         <p>
-          Das Projekt untersucht, wie sich eine planetare Zivilisationssimulation mit modernen
-          Webtechnologien direkt im Browser umsetzen lässt. Die Simulation verbindet viele
-          unabhängig aktualisierte Siedler mit einer prozedural erzeugten Planetenoberfläche. Dafür
-          werden ein Entity-Component-System, WebAssembly und WebGPU zu einem durchgängigen
-          Daten- und Renderingpfad kombiniert.
+          Das Web bietet heute leistungsfähige Schnittstellen für komplexe Anwendungen.
+          WebAssembly führt Rust-Code effizient im Browser aus. WebGPU ermöglicht einen modernen,
+          direkten Zugriff auf die Grafikkarte.
         </p>
         <p>
-          Als technische Grundlage wurde dafür die Game Engine <strong>Artisan</strong> entwickelt.
-          Ihr in Rust geschriebener Kern wird als WebAssembly-Modul ausgeführt und organisiert den
-          Simulationszustand in einem Archetype-basierten Entity-Component-System. JavaScript
-          bindet den Kern in die Webanwendung ein und übergibt sichtbare Daten an einen
-          WebGPU-Renderer. Die planetare Anwendung trägt den Namen <strong>Vivarium Civ</strong>.
-          Aus einer Icosphere entsteht darin eine Welt aus verbundenen Dreiecksflächen mit
-          prozedural berechneten Höhen-, Klima- und Ressourcendaten. Einzelne Siedler suchen Nahrung
-          und Wasser, altern, vermehren sich und interagieren innerhalb ihrer Stämme.
+          Anwendungen im Web starten ohne Installation über eine URL, lassen sich zentral
+          aktualisieren und auf unterschiedlichen Systemen nutzen. Game Engines behandeln den
+          Browser jedoch meist nur als zusätzliches Exportziel. Dadurch bleiben die Möglichkeiten
+          moderner Webtechnologien oft ungenutzt.
         </p>
         <p>
-          Vier kleinere Demos isolieren dichte ECS-Iteration, GPU-Compute, parallele
-          Systemausführung und Archetype-Wechsel. Messungen ergänzen diese Anschauung, ohne aus dem
-          Prototyp einen allgemeinen Leistungsvergleich vollständiger Engines abzuleiten.
+          Artisan ist die dafür entwickelte browsernative Engine-Architektur. Der Prototyp
+          verbindet die derzeit leistungsfähigsten verfügbaren Techniken und untersucht, wie
+          Spiele und Simulationen im Browser künftig aufgebaut sein könnten. Ziel ist eine
+          Leistung nahe an nativen, installierten Anwendungen statt eines nachträglichen
+          Browserexports mit technischen Altlasten.
         </p>
       </section>
 
-      <section id="einstieg">
-        <h2>Motivation und Ziel</h2>
+      <section id="frage">
+        <h2>Die zentrale Frage</h2>
         <p>
-          Eine Simulation mit vielen tausend eigenständigen Objekten stellt zwei Anforderungen
-          gleichzeitig. Der Prozessor muss den Zustand aller Objekte in jedem Bild neu berechnen,
-          und die Grafikkarte muss das Ergebnis anzeigen. Beides muss etwa sechzigmal pro Sekunde
-          passieren, sonst ruckelt es.
+          Wie weit lässt sich die Leistung datenintensiver Spiele und Echtzeitsimulationen im
+          Browser treiben, wenn sie von Beginn an auf moderne Webtechnologien und eine
+          datenorientierte Architektur ausgelegt werden? Untersucht wird, wie schnell der Browser
+          große Mengen gleichartig strukturierter Daten verarbeiten, zwischen WebAssembly und
+          JavaScript bereitstellen und über WebGPU darstellen kann.
         </p>
         <p>
-          Im Browser ist das ungewöhnlich schwer. JavaScript ist die Sprache der Webplattform, gibt
-          aber wenig Kontrolle darüber, wie Daten im Speicher liegen. Genau diese Kontrolle
-          entscheidet jedoch darüber, ob eine Simulation mit vielen Objekten schnell läuft.
+          Die planetare Zivilisationssimulation bildet dafür einen zusammenhängenden
+          Anwendungsfall. Sie verbindet prozedurale Geometrie, lokale Ressourcen, individuelle
+          Siedler und Rendering in einer laufenden Anwendung. Die Grenzen der einzelnen
+          Datenpfade werden davon getrennt in gezielten ECS-, Brücken- und Renderingtests
+          untersucht.
+        </p>
+      </section>
+
+      <section id="ansatz">
+        <h2>Warum ein datengetriebener Ansatz?</h2>
+        <p>
+          Viele klassische Engines modellieren eine Spielwelt durch objektorientierte Strukturen.
+          Das ist vertraut, verteilt die Daten einer großen Simulation jedoch häufig über den
+          Speicher. Für dieses Projekt wurde deshalb ein Entity-Component-System gewählt, das
+          Identität, Daten und Verhalten voneinander trennt. Gleichartige Daten liegen
+          zusammenhängend im Speicher und lassen sich in dichten Schleifen verarbeiten.
         </p>
         <p>
-          Artisan geht deshalb einen anderen Weg. Der rechenintensive Kern ist in Rust geschrieben
-          und wird nach WebAssembly übersetzt, einem portablen binären Ausführungsformat. Die
-          Daten liegen dort in zusammenhängenden Spalten. JavaScript kann ausgewählte Bereiche
-          über typisierte Sichten lesen. Vor der Darstellung überträgt der Renderer die benötigten
-          Werte in eigene WebGPU-Buffer.
+          Dieser Aufbau passt nicht nur zu großen Simulationen. Er schafft auch eine klare,
+          maschinenlesbare Beschreibung der Welt. Systeme arbeiten auf fest definierten
+          Datenmengen, Abhängigkeiten werden sichtbar und Arbeit kann gezielter parallelisiert
+          werden. Mit der zunehmenden Nutzung generativer KI erscheint eine solche Trennung von
+          Daten und Verhalten zusätzlich sinnvoll: Werkzeuge können strukturierte Bausteine leichter
+          zusammensetzen und prüfen als tiefe, projektspezifische Klassenhierarchien.
         </p>
-        <div class="note strong">
-          <strong>Der Kern in einem Satz.</strong> Statt Objekte einzeln über die Sprachgrenze zu
-          reichen, macht Artisan seine Datenblöcke direkt sichtbar und bereitet daraus fertige
-          Zeichenbefehle für die Grafikkarte vor.
-        </div>
       </section>
 
       <section id="engine">
-        <h2>Die dafür entwickelte Engine</h2>
+        <h2>Artisan: der Kern des Projekts</h2>
         <p>
-          Artisan entstand als technische Grundlage für Vivarium Civ, ist aber nicht fest an diese
-          Simulation gebunden. Die Engine stellt allgemeine Bausteine für browserbasierte Spiele
-          bereit. Dazu gehören Entities und Komponenten, Queries und Systeme, Zeitsteuerung,
-          Eingaben, Transformationen, Assets sowie 2D- und 3D-Rendering.
+          <strong>Artisan</strong> ist eine von Grund auf für den Browser entwickelte Game Engine.
+          Im Fokus stehen ihre Architektur, die Datenverarbeitung und der Weg bis zur Darstellung.
+          Die Engine stellt Entities und Komponenten, Queries und Systeme, Zeitsteuerung, Eingaben,
+          Transformationen, Assets sowie 2D- und 3D-Rendering bereit.
         </p>
         <p>
           Spielspezifische Komponenten und Systeme werden in Rust ergänzt und gemeinsam mit dem
           Engine-Kern nach WebAssembly übersetzt. JavaScript bindet die Anwendung in den Browser
-          ein und steuert den WebGPU-Renderer. Vivarium Civ definiert darauf aufbauend eigene
-          Begriffe wie Siedler, Hunger und Stämme. Die weiteren Demos verwenden dieselbe Engine für
-          andere Arbeitslasten. Wie schnell die dabei untersuchten Datenpfade arbeiten, wird in der
+          ein und steuert den WebGPU-Renderer. Die planetare Zivilisationssimulation
+          <strong>Vivarium</strong> ergänzt darauf aufbauend eigene Komponenten und Systeme für
+          Siedler, Bedürfnisse und Stämme. Die weiteren Demos verwenden dieselbe Engine für andere
+          Arbeitslasten. Wie schnell die dabei untersuchten Datenpfade arbeiten, wird in der
           Evaluation getrennt betrachtet.
         </p>
+        <div class="note">
+          <strong>Der Datenweg.</strong> Rust und WebAssembly aktualisieren zusammenhängende
+          Komponentenspalten. JavaScript liest ausgewählte Bereiche direkt aus diesem Speicher.
+          Der WebGPU-Renderer überträgt die sichtbaren Instanzen anschließend in GPU-Buffer und
+          zeichnet sie in möglichst wenigen Batches.
+        </div>
       </section>
 
       <section id="thema">
-        <h2>Gegenstand und Abgrenzung</h2>
+        <h2>Der konkrete Prüfstein</h2>
         <p>
-          Die planetare Zivilisationssimulation ist der Gegenstand und zentrale Anwendungsfall des Projekts. Sie
-          wird im Kapitel <a href="./planet.html">Planet</a> als vollständige Anwendung untersucht.
+          <strong>Vivarium</strong> ist das Anwendungsbeispiel für die eingesetzten Technologien.
+          Die Demo setzt die im Titel genannte planetare Zivilisationssimulation um und führt die
+          zentralen Teile von Artisan in einer vollständigen Anwendung zusammen. Sie wird im
+          Kapitel <a href="./planet.html">Planet</a> beschrieben.
         </p>
         <p>
           Im Mittelpunkt steht, wie Artisan die dafür benötigte Simulation, Datenverwaltung und
           Darstellung im Browser ermöglicht. Dazu gehören das Speichermodell des ECS, die
           Verbindung zwischen WebAssembly und JavaScript und der Weg von den Simulationsdaten zum
-          Zeichenbefehl. Vivarium Civ verbindet diese Bereiche in einer zusammenhängenden
+          Zeichenbefehl. Vivarium verbindet diese Bereiche in einer zusammenhängenden
           Spielanwendung.
         </p>
         <p>
@@ -116,7 +139,7 @@
       </section>
 
       <section id="vergleich">
-        <h2>Vergleich und Messungen</h2>
+        <h2>Wie der Ansatz geprüft wird</h2>
         <p>
           Eine Engine allein zu messen sagt wenig. Ohne Vergleichswert ist unklar, ob eine
           Millisekunde für eine Aufgabe viel oder wenig ist. Deshalb laufen dieselben Aufgaben auf
@@ -127,7 +150,7 @@
             <div class="idx"><span class="swatch bevy"></span>Referenz 1</div>
             <h3>Bevy 0.18.1</h3>
             <p>
-              Eine bekannte, quelloffene Spiel-Engine, die wie Artisan in Rust geschrieben ist. Sie
+              Eine bekannte Open-Source-Game-Engine, die wie Artisan in Rust geschrieben ist. Sie
               läuft normalerweise nativ auf dem Rechner, also ohne Browser. Weil dieselbe
               Programmiersprache und ein verwandtes Speichermodell zum Einsatz kommen, lässt sich
               ein Unterschied nicht einfach auf die Sprache schieben. Bevy ist damit die
@@ -138,16 +161,16 @@
             <div class="idx"><span class="swatch flecs"></span>Referenz 2</div>
             <h3>flecs</h3>
             <p>
-              Keine vollständige Engine, sondern eine in C geschriebene Bibliothek, die sich auf
-              genau den Teil beschränkt, um den es hier geht: die Verwaltung sehr vieler Objekte.
-              Die Bibliothek ergänzt Bevy als zweite Referenz für die Verwaltung vieler Entities.
+              Flecs ist ein in C geschriebenes Open-Source-ECS und gilt als eines der schnellsten
+              ECS-Frameworks. Es konzentriert sich auf die effiziente Verwaltung großer Mengen von
+              Entities und ergänzt Bevy damit als spezialisierte zweite Referenz.
             </p>
           </div>
         </div>
       </section>
 
       <section id="ergebnis">
-        <h2>Das Ergebnis vorweg</h2>
+        <h2>Ergebnis in Kürze</h2>
         <p>
           Über alle Messkategorien hinweg liegt Artisan vorn, aber nicht überall. Die folgende Zahl
           fasst zusammen, wie weit jede Engine im Mittel von der jeweils schnellsten entfernt ist.
@@ -156,8 +179,8 @@
         <div id="headline"></div>
         <p class="dek" style="margin-top:16px">
           Wo Artisan verliert und warum, steht offen in der
-          <a href="./evaluation.html#schwaechen">Evaluation</a>. Eine Messreihe, die nur Siege
-          zeigt, misst nichts.
+          <a href="./evaluation.html#schwaechen">Evaluation</a>. Dort werden auch die Kategorien
+          ausgewiesen, in denen Bevy oder flecs schneller sind.
         </p>
       </section>
 
@@ -169,40 +192,46 @@
         </p>
         <div class="cards">
           <a class="card" href="./grundlagen.html">
-            <div class="idx">Kapitel 1 · Einstieg</div>
+            <div class="idx">Kapitel 1 - Einstieg</div>
             <h3>Grundlagen</h3>
             <p>Was ein Entity-Component-System ist, warum die Anordnung im Speicher über die
                Geschwindigkeit entscheidet, und was WebAssembly und WebGPU dazu beitragen. Ohne
                Vorwissen lesbar.</p>
           </a>
           <a class="card" href="./architektur.html">
-            <div class="idx">Kapitel 2 · Umsetzung</div>
+            <div class="idx">Kapitel 2 - Umsetzung</div>
             <h3>Architektur</h3>
             <p>Wie Artisan das konkret baut: die Speicherspalten, der direkte Zugriff aus
                JavaScript und der Weg zum fertigen Zeichenbefehl.</p>
           </a>
           <a class="card" href="./planet.html">
-            <div class="idx">Kapitel 3 · Anwendung</div>
+            <div class="idx">Kapitel 3 - Anwendung</div>
             <h3>Planet</h3>
             <p>Wie aus einer Icosphere eine simulierte Welt wird und wie Artisan Flächenzustand,
                Siedler, Systeme und Rendering miteinander verbindet.</p>
           </a>
           <a class="card" href="./evaluation.html">
-            <div class="idx">Kapitel 4 · Zahlen</div>
+            <div class="idx">Kapitel 4 - Zahlen</div>
             <h3>Evaluation</h3>
             <p>Die Messreihe gegen Bevy und flecs, die Kosten der Sprachgrenze und ein Vergleich
                des Renderers mit Three.js.</p>
           </a>
           <a class="card" href="./demos.html">
-            <div class="idx">Kapitel 5 · Ausprobieren</div>
+            <div class="idx">Kapitel 5 - Ausprobieren</div>
             <h3>Demos</h3>
             <p>Die Zivilisationssimulation und kleinere Anwendungen, alle direkt im Browser
                lauffähig.</p>
           </a>
           <a class="card" href="./grenzen.html">
-            <div class="idx">Kapitel 6 · Einordnung</div>
+            <div class="idx">Kapitel 6 - Einordnung</div>
             <h3>Grenzen</h3>
             <p>Was der Prototyp nicht garantiert und was die Messungen nicht belegen.</p>
+          </a>
+          <a class="card" href="./fazit.html">
+            <div class="idx">Kapitel 7 - Schluss</div>
+            <h3>Fazit</h3>
+            <p>Was das Projekt erreicht hat, wie die Ergebnisse einzuordnen sind und welche
+               Arbeit auf dem Weg zu einer produktionsreifen Engine bleibt.</p>
           </a>
           <a class="card" href="./quellen.html">
             <div class="idx">Nachweise</div><h3>Quellen</h3>
@@ -220,7 +249,7 @@
   </div>
 
   <footer>
-    <span>Artisan · Archetype-ECS · WebAssembly · WebGPU</span>
+    <span>Artisan - Archetype-ECS - WebAssembly - WebGPU</span>
     <span id="stamp"></span>
   </footer>
 </div>

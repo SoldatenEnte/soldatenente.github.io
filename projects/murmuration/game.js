@@ -734,7 +734,7 @@ async function start() {
   const isTouch = matchMedia("(pointer: coarse)").matches;
   if (isTouch) {
     document.body.classList.add("touch");
-    el("hint").innerText = "drag to look around · ⛶ fullscreen";
+    el("hint").innerText = "drag to look around - ⛶ fullscreen";
   }
 
   function dot3(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }

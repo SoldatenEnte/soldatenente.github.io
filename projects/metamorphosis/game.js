@@ -69,6 +69,7 @@ function quatMul(a, b) {
 
 async function start() {
   const wasm = await init();
+  const isMobile = matchMedia("(pointer: coarse), (max-width: 700px)").matches;
   // The eight placement systems are each a par_for_each. Without a rayon pool
   // they collapse to one core; needs COOP/COEP for SharedArrayBuffer, which the
   // dev server sends. Failing softly beats failing to start.
@@ -94,7 +95,7 @@ async function start() {
   const cubeData = mesh_cube(1.0);
   const cubeMeshId = renderer.assets.createMesh(cubeData.vertices, cubeData.indices);
 
-  const touchDefault = matchMedia("(pointer: coarse)").matches ? "40000" : "200000";
+  const touchDefault = isMobile ? "40000" : "200000";
   let count = parseInt(params.get("count") || touchDefault, 10);
   if (!Number.isFinite(count) || count < 8) count = Number(touchDefault);
   let churnIdx = Math.min(
@@ -298,11 +299,11 @@ async function start() {
 
   // The panel is open by default here, unlike murmuration: the archetype table
   // is not decoration over the scene, it is half of what the demo is showing.
-  setPanel(!startChromeHidden);
+  setPanel(!startChromeHidden && !isMobile);
 
-  if (matchMedia("(pointer: coarse)").matches) {
+  if (isMobile) {
     document.body.classList.add("touch");
-    hint.innerText = "drag to orbit · ⛶ fullscreen";
+    hint.innerText = "drag to orbit - tap stats for details";
   }
 
   for (const b of document.querySelectorAll("[data-count]")) {

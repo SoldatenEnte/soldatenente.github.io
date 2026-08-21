@@ -522,10 +522,12 @@ footer {
   top: 92px;
   max-height: calc(100vh - 120px);
   overflow-y: auto;
+  scrollbar-gutter: stable;
   font-size: 13.5px;
-  padding-bottom: 24px;
+  padding: 0 18px 24px 0;
+  box-sizing: border-box;
 }
-.doc-nav .group { margin-bottom: 20px; }
+.doc-nav .group { margin-bottom: 24px; }
 .doc-nav .group > a {
   display: block;
   font-weight: 650;
@@ -540,16 +542,17 @@ footer {
   display: block;
   color: var(--ink-3);
   text-decoration: none;
-  padding: 3px 0 3px 13px;
+  padding: 6px 0 6px 13px;
   margin-left: -1px;
   border-left: 2px solid transparent;
   font-size: 13px;
+  font-weight: 500;
+  line-height: 1.35;
 }
 .doc-nav li a:hover { color: var(--ink); }
 .doc-nav li a[aria-current] {
   color: var(--accent-ink);
   border-left-color: var(--accent);
-  font-weight: 600;
 }
 
 /* min-width 0 erlaubt dem Grid-Item, schmaler als sein breitester Inhalt zu
@@ -611,6 +614,7 @@ footer {
 .archetype-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  align-items: start;
   gap: 14px;
   margin: 18px 0;
 }

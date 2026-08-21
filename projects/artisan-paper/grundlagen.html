@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Grundlagen · Artisan</title>
+<title>Grundlagen - Artisan</title>
 <script>try{if(localStorage.getItem("artisan-theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
 <link rel="stylesheet" href="./style.css">
 </head>
@@ -20,12 +20,24 @@
 
       <h1>Grundlagen</h1>
       <p class="lede">
-        Drei Bausteine, jeweils von der Grundidee bis zu dem Detail, das später für Artisan
-        entscheidend wird: das Entity-Component-System, WebAssembly und WebGPU.
+        Artisan verbindet drei Ideen. Ein Entity-Component-System ordnet die Spielwelt als Daten.
+        WebAssembly verarbeitet diese Daten im Browser. WebGPU stellt sie dar. Dieses Kapitel baut
+        die drei Teile nacheinander auf.
       </p>
 
       <section id="ecs">
-        <h2>Entity-Component-System</h2>
+        <h2>Von Spielobjekten zu Daten</h2>
+        <p>
+          Bevor es um WebAssembly oder Grafikkarten geht, beginnt das Problem bei der Form der
+          Spielwelt. Bei vielen unabhängig aktualisierten Einheiten beeinflusst die Organisation
+          ihrer Daten unmittelbar, wie effizient der Prozessor sie verarbeiten kann.
+        </p>
+        <p>
+          Zur Erklärung dient im Folgenden bewusst ein vereinfachtes, fiktives Spielbeispiel mit
+          Drachen, Fledermäusen und Goblins. Es gehört nicht zum Datenmodell von Vivarium, macht
+          unterschiedliche Komponentenkombinationen aber deutlicher sichtbar als die dort relativ
+          ähnlich aufgebauten Siedler.
+        </p>
         <p>
           Ein klassisches Objekt in einem Spiel wird häufig über Vererbung modelliert: ein Gegner
           erbt von einer Basisklasse, ein fliegender Gegner erbt zusätzlich von einer
@@ -42,7 +54,7 @@
           <a class="cite" href="./quellen.html#literatur">[8]</a>.
         </p>
         <dl class="terms">
-          <div><dt>Entity</dt><dd>Eine bloße Kennung, meist eine Zahl mit Generation. Sie trägt selbst keine Daten.</dd></div>
+          <div><dt>Entity</dt><dd>Eine Kennung aus ID und Versionsnummer. Die Versionsnummer verhindert, dass eine wiederverwendete ID mit einem gelöschten Entity verwechselt wird. Das Entity selbst trägt keine Daten.</dd></div>
           <div><dt>Component</dt><dd>Ein reiner Datencontainer, zum Beispiel <code>Position { x, y }</code>. Kein Verhalten, nur Werte.</dd></div>
           <div><dt>System</dt><dd>Eine Funktion, die über alle Entities mit passenden Komponenten läuft, zum Beispiel: Geschwindigkeit lesen, Position schreiben.</dd></div>
           <div><dt>Query</dt><dd>Die Anfrage eines Systems: welche Komponenten müssen vorhanden sein, welche fehlen, und wird gelesen oder geschrieben.</dd></div>
@@ -56,26 +68,26 @@
         </p>
         <p>
           Ein kleines Beispiel macht das greifbar und wird im Folgenden für Sparse Set und
-          Archetype weiterverwendet: fünf Entities aus einer einfachen Szene, jedes mit einer
-          anderen Kombination aus vier Komponenten.
+          Archetype weiterverwendet: fünf Entities aus einer einfachen Szene, verteilt auf vier
+          unterschiedliche Kombinationen von Komponenten.
         </p>
         <div class="scroll-x">
           <table class="matrix">
             <caption>Fünf Beispiel-Entities und ihre Komponenten</caption>
             <thead><tr><th>Entity</th><th>Position</th><th>Velocity</th><th>Health</th><th>Flying</th></tr></thead>
             <tbody>
-              <tr><td>E1 · Drache</td><td class="yes"></td><td class="yes"></td><td class="yes"></td><td class="yes"></td></tr>
-              <tr><td>E2 · Fledermaus</td><td class="yes"></td><td class="yes"></td><td class="yes"></td><td class="yes"></td></tr>
-              <tr><td>E3 · Goblin</td><td class="yes"></td><td class="yes"></td><td class="yes"></td><td class="no"></td></tr>
-              <tr><td>E4 · Pfeil</td><td class="yes"></td><td class="yes"></td><td class="no"></td><td class="no"></td></tr>
-              <tr><td>E5 · Wegpunkt</td><td class="yes"></td><td class="no"></td><td class="no"></td><td class="no"></td></tr>
+              <tr><td>E1 - Drache</td><td class="yes"></td><td class="yes"></td><td class="yes"></td><td class="yes"></td></tr>
+              <tr><td>E2 - Fledermaus</td><td class="yes"></td><td class="yes"></td><td class="yes"></td><td class="yes"></td></tr>
+              <tr><td>E3 - Goblin</td><td class="yes"></td><td class="yes"></td><td class="yes"></td><td class="no"></td></tr>
+              <tr><td>E4 - Pfeil</td><td class="yes"></td><td class="yes"></td><td class="no"></td><td class="no"></td></tr>
+              <tr><td>E5 - Wegpunkt</td><td class="yes"></td><td class="no"></td><td class="no"></td><td class="no"></td></tr>
             </tbody>
           </table>
         </div>
       </section>
 
       <section id="speichermodelle">
-        <h2>Sparse Set und Archetype</h2>
+        <h2>Wie Komponenten im Speicher liegen</h2>
         <p>
           Die bisherige Beschreibung legt noch nicht fest, wo die Werte einer Komponente
           tatsächlich im Speicher liegen. Genau das entscheidet aber darüber, wie schnell ein
@@ -96,7 +108,7 @@
         </p>
         <div class="sparse-demo">
           <div class="block">
-            <h4>Dichtes Array · Health</h4>
+            <h4>Dichtes Array - Health</h4>
             <div class="cells">
               <div class="cell"><span class="k">Index 0</span><span class="v">80</span></div>
               <div class="cell"><span class="k">Index 1</span><span class="v">45</span></div>
@@ -126,19 +138,19 @@
         <div class="archetype-grid">
           <div class="archetype-card">
             <div class="head">Archetype A<span>Position, Velocity, Health, Flying</span></div>
-            <table><tbody><tr><td>E1 · Drache</td></tr><tr><td>E2 · Fledermaus</td></tr></tbody></table>
+            <table><tbody><tr><td>E1 - Drache</td></tr><tr><td>E2 - Fledermaus</td></tr></tbody></table>
           </div>
           <div class="archetype-card">
             <div class="head">Archetype B<span>Position, Velocity, Health</span></div>
-            <table><tbody><tr><td>E3 · Goblin</td></tr></tbody></table>
+            <table><tbody><tr><td>E3 - Goblin</td></tr></tbody></table>
           </div>
           <div class="archetype-card">
             <div class="head">Archetype C<span>Position, Velocity</span></div>
-            <table><tbody><tr><td>E4 · Pfeil</td></tr></tbody></table>
+            <table><tbody><tr><td>E4 - Pfeil</td></tr></tbody></table>
           </div>
           <div class="archetype-card">
             <div class="head">Archetype D<span>Position</span></div>
-            <table><tbody><tr><td>E5 · Wegpunkt</td></tr></tbody></table>
+            <table><tbody><tr><td>E5 - Wegpunkt</td></tr></tbody></table>
           </div>
         </div>
         <div class="note">
@@ -164,7 +176,7 @@
       </section>
 
       <section id="caches">
-        <h2>CPU-Caches</h2>
+        <h2>Warum zusammenhängende Daten schneller sind</h2>
         <p>
           Der Prozessor liest Werte nicht einzeln aus dem Arbeitsspeicher, sondern in Blöcken
           benachbarter Bytes, den Cache Lines. Werden Werte nacheinander im Speicher gelesen,
@@ -186,7 +198,7 @@
       </section>
 
       <section id="wasm">
-        <h2>WebAssembly: das Problem und das Format</h2>
+        <h2>Wie Rust in den Browser kommt</h2>
         <p>
           JavaScript ist dynamisch typisiert, verwaltet Speicher automatisch und lässt kaum
           Kontrolle darüber, wo genau ein Wert im Speicher landet. Moderne JavaScript-Engines
@@ -205,10 +217,13 @@
         <p>
           <strong>WebAssembly</strong> ist ein sicheres, portables Low-Level-Format. Es definiert ein
           Binärformat, ein lesbares Textformat und die Semantik einer stackbasierten virtuellen
-          Maschine. Sprachen wie Rust, C oder C++ übersetzen dorthin. Der Browser validiert ein
-          geladenes Modul und führt es anschließend interpretiert oder in echten Maschinencode
-          übersetzt aus. Ein WebAssembly-Modul ist also kein fertiges natives Programm für eine
-          bestimmte CPU, sondern ein Zwischenformat, das der Browser selbst weiterverarbeitet
+          Maschine. Das Prinzip ähnelt Java-Bytecode in der JVM: Beide laufen in einer
+          kontrollierten Umgebung und werden dort in Maschinencode übersetzt. WebAssembly ist
+          jedoch schlanker und schreibt weder ein Klassenmodell noch Garbage Collection vor.
+          Programme in Rust, C oder C++ lassen sich in dieses WebAssembly-Format übersetzen. Der
+          Browser validiert das erzeugte Modul und führt es anschließend interpretiert oder in
+          echten Maschinencode übersetzt aus. Ein WebAssembly-Modul ist also kein fertiges natives
+          Programm für eine bestimmte CPU, sondern ein Zwischenformat, das der Browser selbst weiterverarbeitet
           <a class="cite" href="./quellen.html#literatur">[1–2]</a>.
         </p>
         <p>
@@ -221,53 +236,46 @@
       </section>
 
       <section id="wasm-speicher">
-        <h2>Linearer Speicher und die Sprachgrenze</h2>
+        <h2>Die Grenze zwischen Rust und JavaScript</h2>
         <p>
-          Ein WebAssembly-Modul erhält einen linearen Speicherbereich: einen zusammenhängenden,
-          byteadressierten Block, in dem auch die Heap-Allokationen der übersetzten Sprache liegen.
-          Rusts eigene Typen kennt WebAssembly dabei nicht, für die Laufzeit ist alles nur rohe
-          Bytes an einer Adresse.
+          Rust und JavaScript arbeiten in unterschiedlichen Umgebungen. Über den Speicher des
+          WebAssembly-Moduls können sie trotzdem dieselben Daten nutzen. Vereinfacht ist dieser
+          Speicher eine lange Reihe von Bytes. Rust legt dort zum Beispiel die Positionen aller
+          Entities ab.
         </p>
         <p>
-          Genau dieser Speicher lässt sich von JavaScript aus erreichen. Die Laufzeitumgebung macht
-          ihn als <code>ArrayBuffer</code> sichtbar, bei geteiltem Speicher als
-          <code>SharedArrayBuffer</code>. Darauf lässt sich ein typisiertes Array legen, kurz
-          TypedArray, etwa ein <code>Float32Array</code>, das jeweils vier aufeinanderfolgende
-          Bytes als Kommazahl liest. Kennt die Anwendung Adresse, Elementtyp und Länge einer
-          ECS-Spalte, kann sie diese Werte direkt darüber lesen, ohne für jeden einzelnen ein
-          eigenes JavaScript-Objekt zu erzeugen
+          JavaScript kann diesen Speicher als <code>ArrayBuffer</code> lesen. Ein TypedArray legt
+          fest, wie die Bytes zu verstehen sind. Ein <code>Float32Array</code> behandelt sie zum
+          Beispiel als Kommazahlen. Kennt JavaScript Startadresse, Datentyp und Länge einer
+          Komponentenspalte, kann es deren Werte direkt lesen. Es muss dafür weder jedes Entity
+          einzeln abfragen noch Kopien als JavaScript-Objekte anlegen
           <a class="cite" href="./quellen.html#literatur">[3]</a>.
         </p>
         <p>
-          Kostenlos ist der Übergang zwischen den beiden Welten trotzdem nicht. Einzelne Zahlen
-          lassen sich verlustfrei als Funktionsparameter übergeben. Strings, verschachtelte Objekte
-          oder anders aufgebaute Daten brauchen dagegen Umwandlungscode oder eigene
-          Speicheroperationen. Viele kleine Aufrufe über die Grenze hinweg können deshalb in Summe
-          teurer sein als ein einziger gebündelter Zugriff auf denselben Speicherbereich.
-          Werkzeuge wie <code>wasm-bindgen</code> erzeugen zwar die nötigen Bindungen für exportierte
-          Rust-Funktionen, entfernen dabei aber nicht automatisch jede Kopie.
+          Der Austausch ist dennoch nicht kostenlos. Einzelne Zahlen lassen sich einfach
+          übergeben. Strings und komplexe Objekte müssen dagegen umgewandelt oder kopiert werden.
+          Auch viele kleine Aufrufe zwischen Rust und JavaScript kosten Zeit. Ein gebündelter
+          Zugriff auf einen größeren Speicherbereich ist deshalb meist effizienter.
         </p>
         <div class="note warn">
-          <strong>Begrenzte Gültigkeit.</strong> Wächst der lineare Speicher, kann die Laufzeit den
-          zugrunde liegenden Buffer austauschen. Ein bereits in JavaScript angelegtes TypedArray
-          zeigt dann weiterhin auf den alten, jetzt ungültigen Buffer und muss neu erzeugt werden.
-          Unabhängig davon kann eine interne Allokation beim Wachsen an eine neue Adresse
-          verschoben werden, und ein Entity kann durch einen Archetype-Wechsel eine neue
-          Zeilenposition erhalten. Zeiger und TypedArrays sind deshalb keine dauerhaft stabile
-          Identität, sondern müssen bei Bedarf neu erzeugt werden.
+          <strong>Adressen können sich ändern.</strong> Wenn der WebAssembly-Speicher oder eine
+          Komponentenspalte wächst, können die Daten an eine neue Stelle verschoben werden. Auch
+          ein Archetype-Wechsel kann die Position eines Entity verändern. JavaScript darf alte
+          Speicherverweise deshalb nicht dauerhaft behalten, sondern muss sie bei Änderungen
+          erneuern.
           <a class="cite" href="./quellen.html#literatur">[3]</a>
         </div>
         <p>
-          Genau an diesem Punkt setzt Artisans Speicherbrücke an: Komponentendaten bleiben im
-          linearen WebAssembly-Speicher liegen, JavaScript erhält nur Adresse und Layout, keine
-          Kopie. <a class="inline-link" href="./architektur.html#bruecke">Zur Brücke</a>
+          Artisans Speicherbrücke nutzt genau dieses Prinzip: Die Komponentendaten bleiben im
+          WebAssembly-Speicher. JavaScript erhält nur die nötigen Informationen, um sie dort direkt
+          zu lesen. <a class="inline-link" href="./architektur.html#bruecke">Zur Brücke</a>
         </p>
       </section>
 
       <section id="nebenlaeufigkeit">
-        <h2>Nebenläufigkeit im Browser</h2>
+        <h2>Arbeit auf mehrere Threads verteilen</h2>
         <p>
-          JavaScript läuft im Hauptkontext einer Seite über eine einzige Event Loop. Web Workers
+          JavaScript läuft im Hauptkontext einer Seite über einen einzigen Event Loop. Web Workers
           eröffnen zusätzliche Ausführungskontexte auf Hintergrundthreads, tauschen mit dem
           Hauptthread aber normalerweise kopierte Nachrichten aus, keine gemeinsamen Daten.
         </p>
@@ -276,8 +284,9 @@
           Speicherblock gleichzeitig lesen und schreiben. Sicher wird der Zugriff dadurch allein
           noch nicht, gleichzeitige Schreibzugriffe können weiterhin Data Races erzeugen. Die
           Anwendung muss Arbeit konfliktfrei aufteilen oder auf atomare Operationen zurückgreifen.
-          Aus Sicherheitsgründen setzt der Browser dafür außerdem einen cross-origin-isolierten
-          Dokumentkontext voraus, erkennbar an den beiden Headern
+          Aus Sicherheitsgründen muss die Seite außerdem von Inhalten anderer Websites abgeschottet
+          sein. So kann der geteilte Speicher nicht zum Auslesen fremder Daten missbraucht werden.
+          Der Server aktiviert diesen Modus mit den beiden Headern
           <code>Cross-Origin-Opener-Policy</code> und <code>Cross-Origin-Embedder-Policy</code>.
         </p>
         <p>
@@ -285,12 +294,12 @@
           <code>wasm-bindgen-rayon</code> verbindet dieses Modell mit Web Workers und einem
           geteilten WebAssembly-Speicher. Artisan exportiert die Initialisierung dieses Thread-Pools
           und nutzt Rayon sowohl für parallele Query-Iteration als auch für die parallele Ausführung
-          verträglicher Systeme.
+          verträglicher Systeme <a class="cite" href="./quellen.html#literatur">[11–12]</a>.
         </p>
       </section>
 
       <section id="webgpu">
-        <h2>Die GPU-Rendering-Pipeline</h2>
+        <h2>Wie aus Daten ein Bild wird</h2>
         <p>
           Eine Grafikkarte ist auf die gleichzeitige Verarbeitung vieler gleichartiger Operationen
           ausgelegt. Beim klassischen Rasterisierungs-Rendering verarbeitet sie zuerst geometrische
@@ -318,7 +327,7 @@
       </section>
 
       <section id="webgl">
-        <h2>WebGPU im Vergleich zu WebGL</h2>
+        <h2>Warum WebGPU statt WebGL?</h2>
         <p>
           <strong>WebGL</strong> bildet die ältere OpenGL-ES-API für den Browser ab und arbeitet als
           Zustandsmaschine. Ein Aufruf bindet zum Beispiel einen Buffer oder ein Shader-Programm an
@@ -358,7 +367,7 @@
       </section>
 
       <section id="instancing">
-        <h2>Instancing und Batching</h2>
+        <h2>Viele Objekte mit wenigen Befehlen zeichnen</h2>
         <p>
           Beim <strong>Instancing</strong> zeichnet ein einziger Draw Call dieselbe Geometrie
           mehrfach. Die Vertexdaten des Meshes werden dabei nur einmal übertragen, pro Instanz
@@ -374,9 +383,26 @@
         <p>
           In Artisan läuft diese Auswahl im Rust- und WASM-Kern, JavaScript setzt anschließend nur
           die daraus abgeleiteten Draw Calls ab. Die Pipeline ist damit CPU-gesteuert und nutzt
-          GPU-Instancing, ist aber nicht GPU-driven im engeren Sinn, bei dem die Grafikkarte selbst
-          über sichtbare Objekte entscheidet.
+          GPU-Instancing. Bei einer vollständig GPU-driven Pipeline bleiben dagegen auch Simulation,
+          Sichtbarkeitsprüfung und Instanzdaten auf der Grafikkarte. Das kann bei sehr vielen
+          einfachen Objekten schneller sein, weil pro Frame weniger Daten übertragen werden müssen.
           <a class="inline-link" href="./architektur.html#rendering">Zur Pipeline</a>
+        </p>
+        <p>
+          Die Demo <a href="./demos/murmuration/index.html">Murmuration</a> zeigt CPU- und
+          GPU-Simulation im Vergleich. Bei der CPU-Simulation ist jeder Würfel ein ECS-Entity und
+          wird in Rust aktualisiert. Danach zeichnet WebGPU alle Würfel per Instancing. Bei der
+          GPU-Simulation liegen die Partikel direkt in einem GPU-Buffer und werden dort von einem
+          Compute Shader aktualisiert. Das ECS enthält dann nur die Konfiguration der gesamten
+          Simulation. Das Rendering übernimmt in beiden Modi die GPU. Oben links kann unter
+          Simulation path zwischen ECS - CPU und GPU compute gewechselt werden.
+        </p>
+        <p>
+          Auf dem Testsystem mit Intel Core i5-13600KF und RTX 4070 erreicht die Demo bei 60 FPS
+          etwa 1,35 Millionen gleichzeitig simulierte und dargestellte ECS-Entities. Im
+          GPU-Compute-Pfad sind ohne Frustum Culling etwa 10 Millionen Partikel möglich. Mit
+          Frustum Culling waren in den getesteten Ansichten etwa 1,2- bis 4-mal so viele Partikel
+          möglich.
         </p>
       </section>
 
@@ -385,7 +411,7 @@
   </div>
 
   <footer>
-    <span>Artisan · Archetype-ECS · WebAssembly · WebGPU</span>
+    <span>Artisan - Archetype-ECS - WebAssembly - WebGPU</span>
   </footer>
 </div>
 <script type="module" src="./js/nav.js"></script>

@@ -371,7 +371,7 @@ async function start() {
   // finger-hint text; it does not change any control logic.
   if (matchMedia("(pointer: coarse)").matches) {
     document.body.classList.add("touch");
-    hint.innerText = "tap stats · ⛶ fullscreen";
+    hint.innerText = "tap stats - ⛶ fullscreen";
   }
 
   await buildScene();

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fazit - Artisan</title>
+<script>try{if(localStorage.getItem("artisan-theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <a class="wordmark" href="./index.html">Artisan</a>
+    <div class="right"><nav></nav></div>
+  </header>
+
+  <div class="doc">
+    <aside class="doc-nav"></aside>
+    <main class="doc-main">
+
+      <p class="kicker">Schlussbetrachtung</p>
+      <h1>Fazit</h1>
+      <p class="lede">
+        Artisan hat sein zentrales Ziel erreicht: Der Prototyp zeigt, dass eine von Grund auf für
+        den Browser entwickelte Game Engine komplexe Simulationen, sehr große Datenmengen und
+        anspruchsvolles Rendering verbinden kann.
+      </p>
+
+      <section id="ziel">
+        <h2>Die Ausgangsfrage</h2>
+        <p>
+          Am Anfang stand die Frage, wie weit sich moderne Webtechnologien für Spiele treiben
+          lassen. Dafür sollte keine bestehende native Engine lediglich in den Browser exportiert
+          werden. Stattdessen entstand eine eigene Architektur aus einem datenorientierten
+          Entity-Component-System, einem Rust-Kern in WebAssembly und einem WebGPU-Renderer.
+        </p>
+        <p>
+          Entscheidend war nicht nur eine hohe Zahl in einem isolierten Test. Die Architektur
+          sollte auch praktisch nutzbar sein: Spiele und Simulationen sollten sich mit
+          überschaubarem Anwendungscode entwickeln, unmittelbar im Browser ausführen und wie eine
+          gewöhnliche Webanwendung bereitstellen lassen.
+        </p>
+      </section>
+
+      <section id="erreicht">
+        <h2>Was erreicht wurde</h2>
+        <p>
+          Mit Artisan wurden mehrere lauffähige Spiele und technische Demos umgesetzt. Vivarium
+          verbindet eine prozedural erzeugte Planetenoberfläche mit individuellen Siedlern,
+          lokalen Ressourcen, zeitlich geordneten Systemen und instanziertem Rendering. Kleinere
+          Anwendungen zeigen unter anderem strukturelle Änderungen, parallele Systemausführung,
+          GPU-Compute und große instanzierte Szenen. Alle Anwendungen laufen ohne Installation
+          direkt im Browser.
+        </p>
+        <p>
+          Auch die Leistung des ECS erfüllt das Projektziel. In der dokumentierten seriellen
+          Messreihe war Artisan in 20 von 34 gültigen Kategorien die schnellste der drei
+          untersuchten Implementierungen. Im geometrischen Mittel lag es nur um den Faktor 1,045
+          über dem jeweiligen Kategorienbestwert und damit vor Bevy und flecs. Dieses Ergebnis gilt
+          für die festgelegten Arbeitslasten und die dokumentierte Testumgebung. Es ist kein Beleg
+          dafür, dass Artisan grundsätzlich schneller als jedes andere ECS ist.
+        </p>
+        <p>
+          Der Renderer erreichte ebenfalls die angestrebte Größenordnung. Artisan unterstützt
+          einen CPU/ECS-Pfad, dessen simulierte Entities über WebGPU instanziert gezeichnet werden,
+          sowie einen GPU-getriebenen Pfad, in dem Simulation und Instanzdaten auf der Grafikkarte
+          verbleiben. In einem explorativen Lauf der Murmuration-Demo wurden auf einer GeForce RTX
+          4070 zehn Millionen Würfel ohne Frustum Culling mit 60 Bildern pro Sekunde dargestellt.
+          Dieser Wert beschreibt eine konkrete Demonstrationsbeobachtung und keine allgemeine
+          Leistungszusage für andere Szenen, Geräte oder Browser.
+        </p>
+      </section>
+
+      <section id="bewertung">
+        <h2>Bewertung</h2>
+        <div class="note strong">
+          <strong>Das Projekt ist als Proof of Concept erfolgreich.</strong> Es zeigt, dass
+          browserbasierte Spiele nicht auf reduzierte Exporte nativer Projekte beschränkt sein
+          müssen. Eine gezielt für WebAssembly und WebGPU entwickelte Architektur kann reale
+          Anwendungen, hohe ECS-Leistung und Rendering im Millionenbereich zusammenführen.
+        </div>
+        <p>
+          Artisan ist damit noch kein vollständiger Ersatz für etablierte Engines. Editor,
+          Werkzeuge, Plattformabdeckung und Teile der Laufzeit benötigen weitere Entwicklung.
+          Auch einzelne Architekturverträge und Messbereiche bleiben begrenzt. Diese offenen
+          Punkte ändern jedoch nicht das Ergebnis der ursprünglichen Untersuchung. Sie beschreiben
+          den Weg von einem erfolgreichen Prototyp zu einer produktionsreifen Engine.
+        </p>
+      </section>
+
+      <section id="ausblick">
+        <h2>Ausblick</h2>
+        <p>
+          Der nächste Schritt ist daher nicht mehr der Nachweis, dass der Ansatz grundsätzlich
+          funktioniert. Künftige Arbeit kann sich auf seine Verallgemeinerung konzentrieren:
+          stabilere Werkzeuge, breitere Browser- und Geräteunterstützung, eine vollständig
+          instrumentierte Rendering-Pipeline und klarere Sicherheitsverträge an der
+          WebAssembly-Grenze.
+        </p>
+        <p>
+          Artisan beantwortet die Ausgangsfrage somit positiv. Moderne Webtechnologien reichen aus,
+          um eine leistungsfähige, datenorientierte Game Engine direkt für den Browser zu bauen.
+          Der Prototyp zeigt zugleich, welche technische Arbeit noch notwendig ist, damit aus
+          dieser Möglichkeit eine allgemein einsetzbare Plattform wird.
+        </p>
+      </section>
+
+      <div class="pager"></div>
+    </main>
+  </div>
+
+  <footer>
+    <span>Artisan - Archetype-ECS - WebAssembly - WebGPU</span>
+  </footer>
+</div>
+<script type="module" src="./js/nav.js"></script>
+</body>
+</html>

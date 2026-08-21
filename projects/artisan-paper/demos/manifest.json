@@ -2,9 +2,9 @@
   {
     "dir": "vivarium_civ",
     "tier": "featured",
-    "title": "Vivarium Civilisation",
+    "title": "Vivarium",
     "blurb": "Der zusammenhängende Anwendungsfall: individuelle Siedler bewegen sich über einen prozedural erzeugten Planeten, nutzen lokale Ressourcen und interagieren innerhalb ihrer Stämme.",
-    "meta": "planetare Simulation · ECS · 3D-Rendering",
+    "meta": "planetare Simulation - ECS - 3D-Rendering",
     "href": "../vivarium/"
   },
   {
@@ -12,7 +12,7 @@
     "tier": "showcase",
     "title": "Murmuration",
     "blurb": "Viele gleichartig aufgebaute ECS-Entities folgen einem gemeinsamen Strömungsfeld. Ein umschaltbarer GPU-Modus stellt den CPU- und GPU-Pfad anschaulich gegenüber.",
-    "meta": "dichte Iteration · Speicherbrücke · CPU und GPU",
+    "meta": "dichte Iteration - Speicherbrücke - CPU und GPU",
     "href": "../murmuration/"
   },
   {
@@ -20,7 +20,7 @@
     "tier": "showcase",
     "title": "Bouncing Rects",
     "blurb": "Rechtecke liegen in einem GPU-Storage-Buffer, werden durch einen Compute Shader bewegt und anschließend instanziert gezeichnet. Die Demo isoliert damit einen GPU-seitigen Simulationspfad.",
-    "meta": "GPU-Compute · Storage-Buffer · Instancing",
+    "meta": "GPU-Compute - Storage-Buffer - Instancing",
     "href": "../rects/"
   },
   {
@@ -28,7 +28,7 @@
     "tier": "showcase",
     "title": "Scheduler",
     "blurb": "Eine Zeitansicht der ausgeführten Systeme macht parallele Stufen und Zugriffskonflikte sichtbar. Die Ausführung kann zum Vergleich auf einen Thread begrenzt werden.",
-    "meta": "Scheduler · Systemzugriffe · Rayon",
+    "meta": "Scheduler - Systemzugriffe - Rayon",
     "href": "../scheduler/"
   },
   {
@@ -36,7 +36,15 @@
     "tier": "showcase",
     "title": "Metamorphosis",
     "blurb": "Drei optionale Komponenten erzeugen acht mögliche Signaturen. Jeder Wechsel zeigt eine strukturelle Änderung, bei der ein Entity zwischen Archetype-Tabellen verschoben wird.",
-    "meta": "Archetype-Wechsel · strukturelle Änderung · Query-Filter",
+    "meta": "Archetype-Wechsel - strukturelle Änderung - Query-Filter",
     "href": "../metamorphosis/"
+  },
+  {
+    "dir": "planet",
+    "tier": "showcase",
+    "title": "Procedural Planet",
+    "blurb": "Ein prozedural erzeugter Planet lässt sich mit verschiedenen Seeds, Subdivision Levels und Daten-Layern untersuchen.",
+    "meta": "prozedurale Generierung - WebGPU - Daten-Layer",
+    "href": "../planet/"
   }
 ]

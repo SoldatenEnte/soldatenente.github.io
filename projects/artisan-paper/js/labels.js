@@ -11,22 +11,22 @@ export function anzahl(n) {
 }
 
 const KATEGORIE = {
-  A1: (n) => `1 Komponente schreiben · ${anzahl(n)}`,
-  A2: (n) => `1 lesen, 1 schreiben · ${anzahl(n)}`,
-  A3: (n) => `4 Komponenten · ${anzahl(n)}`,
-  A4: (n) => `8 Komponenten · ${anzahl(n)}`,
-  A5: (n) => `2 Komponenten, nur lesen · ${anzahl(n)}`,
-  B1: (k) => `${k} ${k === 1 ? "Archetype" : "Archetypes"} · 100.000 Entities`,
-  C1: () => "Leere Entity erzeugen · 200.000",
-  C2: () => "Entity mit 2 Komponenten erzeugen · 200.000",
-  C3: () => "Entity löschen · 200.000",
-  D1: () => "Komponente hinzufügen · 100.000",
-  D2: () => "Komponente entfernen · 100.000",
-  D3: () => "Hinzufügen und Entfernen im Wechsel · 20.000 × 20",
-  E1: () => "Wahlfreier Lesezugriff · 100.000 × 10",
-  E2: () => "Wahlfreier Schreibzugriff · 100.000 × 10",
-  F1: () => "Vereinzelte Änderungen · 200.000",
-  G1: () => "3 Systeme · 100.000",
+  A1: (n) => `1 Komponente schreiben - ${anzahl(n)}`,
+  A2: (n) => `1 lesen, 1 schreiben - ${anzahl(n)}`,
+  A3: (n) => `4 Komponenten - ${anzahl(n)}`,
+  A4: (n) => `8 Komponenten - ${anzahl(n)}`,
+  A5: (n) => `2 Komponenten, nur lesen - ${anzahl(n)}`,
+  B1: (k) => `${k} ${k === 1 ? "Archetype" : "Archetypes"} - 100.000 Entities`,
+  C1: () => "Leere Entity erzeugen - 200.000",
+  C2: () => "Entity mit 2 Komponenten erzeugen - 200.000",
+  C3: () => "Entity löschen - 200.000",
+  D1: () => "Komponente hinzufügen - 100.000",
+  D2: () => "Komponente entfernen - 100.000",
+  D3: () => "Hinzufügen und Entfernen im Wechsel - 20.000 × 20",
+  E1: () => "Wahlfreier Lesezugriff - 100.000 × 10",
+  E2: () => "Wahlfreier Schreibzugriff - 100.000 × 10",
+  F1: () => "Vereinzelte Änderungen - 200.000",
+  G1: () => "3 Systeme - 100.000",
 };
 
 const BESCHREIBUNG = {

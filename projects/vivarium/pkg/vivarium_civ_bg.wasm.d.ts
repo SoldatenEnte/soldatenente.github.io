@@ -101,6 +101,7 @@ export const wasmengine_wasm_set_dynamic_mesh: (a: number, b: number, c: number,
 export const wasmengine_wasm_set_mesh_handle: (a: number, b: number, c: number) => void;
 export const wasmengine_wasm_set_parent: (a: number, b: number, c: number) => void;
 export const wasmengine_wasm_spawn_batch: (a: number, b: number) => [number, number];
+export const wasmengine_wasm_spawn_batch_with: (a: number, b: number, c: number, d: number) => [number, number];
 export const wasmengine_wasm_tile_get: (a: number, b: number, c: number, d: number) => number;
 export const wasmengine_wasm_tile_remove: (a: number, b: number, c: number, d: number) => void;
 export const wasmengine_wasm_tile_set: (a: number, b: number, c: number, d: number, e: number) => void;

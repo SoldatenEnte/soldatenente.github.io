@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
     />
-    <title>Artisan — Scheduler</title>
+    <title>Artisan - Scheduler</title>
     <style>
       :root {
         --accent: #7dd3fc;
@@ -260,12 +260,33 @@
         background: rgba(4, 5, 12, 0.75);
         z-index: 20;
       }
+      #hint {
+        display: none;
+        position: absolute;
+        left: 50%;
+        bottom: calc(176px + env(safe-area-inset-bottom));
+        z-index: 10;
+        transform: translateX(-50%);
+        color: #64748b;
+        font-size: 0.7rem;
+        white-space: nowrap;
+        pointer-events: none;
+      }
 
-      @media (pointer: coarse) {
+      @media (pointer: coarse), (max-width: 700px) {
         #toggle, #close, #fullscreen { min-width: 40px; min-height: 40px; }
         button { padding: 10px 6px; font-size: 0.74rem; }
         #chart-wrap { height: 170px; }
-        #ui { max-height: calc(100vh - 200px); }
+        #ui {
+          top: max(12px, env(safe-area-inset-top));
+          left: max(12px, env(safe-area-inset-left));
+          width: calc(100vw - 2 * max(12px, env(safe-area-inset-left)));
+          max-width: none;
+          max-height: calc(100vh - 194px - env(safe-area-inset-bottom));
+        }
+        #hint { display: block; }
+        #chart-title { font-size: 0; }
+        #chart-title b { font-size: 0.62rem; }
       }
     </style>
   </head>
@@ -321,7 +342,7 @@
     <div id="chart-wrap">
       <div id="chart-head">
         <div id="chart-title">
-          Live schedule · <b>same-stage tasks run together</b> · dashed line = wait
+          Live schedule - <b>same-stage tasks run together</b> - dashed line = wait
         </div>
         <button id="chart-pause" type="button">Pause</button>
       </div>
@@ -329,6 +350,7 @@
     </div>
 
     <div id="loading">Loading…</div>
+    <div id="hint">drag to orbit - tap stats for details</div>
 
     <script src="./coi-serviceworker.js"></script>
     <script type="module">await import("./game.js");</script>

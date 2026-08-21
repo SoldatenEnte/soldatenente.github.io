@@ -141,6 +141,18 @@ export class WasmEngine {
     wasm_set_mesh_handle(entity_id: number, mesh_id: number): void;
     wasm_set_parent(child_id: number, parent_id: number): void;
     wasm_spawn_batch(count: number): Uint32Array;
+    /**
+     * Spawns `count` entities that all carry the same component set.
+     *
+     * The per-entity path costs one boundary crossing per component: building
+     * 250 000 entities with eight components each from JavaScript means two
+     * million calls, which dominates everything else. This performs the whole
+     * construction inside WebAssembly and returns the identifiers once.
+     *
+     * Components are created with their default values; fill them afterwards
+     * through a column view rather than per entity.
+     */
+    wasm_spawn_batch_with(count: number, names: string[]): Uint32Array;
     wasm_tile_get(x: number, y: number, layer: number): number;
     wasm_tile_remove(x: number, y: number, layer: number): void;
     wasm_tile_set(x: number, y: number, layer: number, entity_id: number): void;
@@ -502,6 +514,7 @@ export interface InitOutput {
     readonly wasmengine_wasm_set_mesh_handle: (a: number, b: number, c: number) => void;
     readonly wasmengine_wasm_set_parent: (a: number, b: number, c: number) => void;
     readonly wasmengine_wasm_spawn_batch: (a: number, b: number) => [number, number];
+    readonly wasmengine_wasm_spawn_batch_with: (a: number, b: number, c: number, d: number) => [number, number];
     readonly wasmengine_wasm_tile_get: (a: number, b: number, c: number, d: number) => number;
     readonly wasmengine_wasm_tile_remove: (a: number, b: number, c: number, d: number) => void;
     readonly wasmengine_wasm_tile_set: (a: number, b: number, c: number, d: number, e: number) => void;

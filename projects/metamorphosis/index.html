@@ -8,7 +8,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
     />
-    <title>Artisan — Metamorphosis</title>
+    <title>Artisan - Metamorphosis</title>
     <style>
       :root {
         --accent: #c4b5fd;
@@ -265,7 +265,7 @@
 
       /* Coarse pointer = finger, not mouse. Bigger tap targets only; nothing
          about layout or information density changes. */
-      @media (pointer: coarse) {
+      @media (pointer: coarse), (max-width: 700px) {
         #toggle,
         #close,
         #fullscreen {
@@ -278,6 +278,19 @@
         }
         .btns {
           gap: 8px;
+        }
+        #ui {
+          top: max(12px, env(safe-area-inset-top));
+          left: max(12px, env(safe-area-inset-left));
+          width: calc(100vw - 2 * max(12px, env(safe-area-inset-left)));
+          max-width: none;
+          max-height: calc(100vh - 24px - env(safe-area-inset-bottom));
+        }
+        #hint {
+          left: 50%;
+          bottom: max(12px, env(safe-area-inset-bottom));
+          transform: translateX(-50%);
+          white-space: nowrap;
         }
       }
     </style>
@@ -339,7 +352,7 @@
     </div>
 
     <div id="loading">Loading…</div>
-    <div id="hint">drag to orbit · scroll to zoom · H stats</div>
+    <div id="hint">drag to orbit - scroll to zoom - H stats</div>
 
     <script src="./coi-serviceworker.js"></script>
     <script type="module">await import("./game.js");</script>

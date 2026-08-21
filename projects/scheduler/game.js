@@ -61,6 +61,7 @@ function quatMul(a, b) {
 
 async function start() {
   const wasm = await init();
+  const isMobile = matchMedia("(pointer: coarse), (max-width: 700px)").matches;
   // Without the pool every stage collapses onto one lane and the whole demo
   // has nothing to show, so unlike the other demos this one reports the
   // failure in the UI rather than quietly carrying on.
@@ -88,7 +89,7 @@ async function start() {
   const cubeData = mesh_cube(1.0);
   const cubeMeshId = renderer.assets.createMesh(cubeData.vertices, cubeData.indices);
 
-  const touchDefault = matchMedia("(pointer: coarse)").matches ? "160" : "300";
+  const touchDefault = isMobile ? "160" : "300";
   let side = parseInt(params.get("side") || touchDefault, 10);
   if (!Number.isFinite(side) || side < 2) side = Number(touchDefault);
   let parallel = params.get("serial") !== "1";
@@ -179,7 +180,7 @@ async function start() {
     const shown = visibleStages();
     shown.forEach(({ systems }, visibleIndex) => {
       parts.push(`<div class="stage-head">Stage ${visibleIndex + 1} <span class="stage-note">${
-        systems.length > 1 ? `· ${systems.length} tasks together` : "· one task"
+        systems.length > 1 ? `- ${systems.length} tasks together` : "- one task"
       }</span></div>`);
       for (const { system: s } of systems) {
         const c = SYS_COLORS[sysColor.get(s.name) % SYS_COLORS.length];
@@ -428,9 +429,9 @@ async function start() {
       c.style.display = c.style.display === "none" ? "block" : "none";
     }
   });
-  setPanel(true);
+  setPanel(!isMobile);
 
-  if (matchMedia("(pointer: coarse)").matches) document.body.classList.add("touch");
+  if (isMobile) document.body.classList.add("touch");
 
   for (const b of document.querySelectorAll("[data-side]")) {
     b.addEventListener("click", async () => {

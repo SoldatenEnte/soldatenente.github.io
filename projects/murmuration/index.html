@@ -8,7 +8,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
     />
-    <title>Artisan — Murmuration</title>
+    <title>Artisan - Murmuration</title>
     <style>
       :root {
         --accent: #7dd3fc;
@@ -208,6 +208,13 @@
         line-height: 1.45;
         color: #fcd34d;
       }
+      .mode-note {
+        margin-top: 7px;
+        font-size: 0.66rem;
+        line-height: 1.45;
+        color: #94a3b8;
+      }
+      .mode-note strong { color: #e2e8f0; }
       #loading {
         position: absolute;
         inset: 0;
@@ -263,7 +270,7 @@
       </div>
 
       <div class="section">
-        <div class="label">Entities</div>
+        <div class="label">Objects</div>
         <div class="btns">
           <button data-count="25000">25k</button>
           <button data-count="100000">100k</button>
@@ -278,11 +285,12 @@
       </div>
 
       <div class="section">
-        <div class="label">Mode</div>
+        <div class="label">Simulation path</div>
         <div class="btns">
-          <button data-mode="cpu">CPU</button>
-          <button data-mode="gpu">GPU</button>
+          <button data-mode="cpu" title="Every cube is an ECS entity simulated in Rust/WebAssembly">ECS - CPU</button>
+          <button data-mode="gpu" title="Particles are simulated by a WebGPU compute shader">GPU compute</button>
         </div>
+        <div class="mode-note"><strong>Rendering: WebGPU in both paths.</strong><br>ECS - CPU updates real entities. GPU compute keeps particles on the GPU.</div>
       </div>
 
       <div class="section">
@@ -303,7 +311,7 @@
 
       <div class="section">
         <div class="label">Frame</div>
-        <div class="row hero"><span>Entities</span><span id="v-count">—</span></div>
+        <div class="row hero"><span>Objects</span><span id="v-count">—</span></div>
         <div class="row hero"><span>FPS</span><span id="v-fps">—</span></div>
         <div class="row"><span>Frame time</span><span id="v-frame">—</span></div>
         <div class="row">
@@ -316,7 +324,7 @@
     </div>
 
     <div id="loading">Loading…</div>
-    <div id="hint">drag to look around · F fullscreen · H stats</div>
+    <div id="hint">drag to look around - F fullscreen - H stats</div>
 
     <script src="./coi-serviceworker.js"></script>
     <script type="module">await import("./game.js");</script>
