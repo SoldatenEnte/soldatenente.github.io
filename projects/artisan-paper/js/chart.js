@@ -19,9 +19,9 @@ export const ENGINE_LABEL = {
 /// Stroke and marker conventions per engine. `dash` and `marker` carry the
 /// identity in line charts, the same way fill texture does in bar charts.
 const STYLE = {
-  artisan: { dash: "none", marker: "circle", width: 2 },
-  bevy: { dash: "5 3", marker: "square", width: 1.4 },
-  flecs: { dash: "1.5 2.5", marker: "triangle", width: 1.4 },
+  artisan: { dash: "5 3", marker: "circle", width: 2 },
+  bevy: { dash: "none", marker: "square", width: 1.4 },
+  flecs: { dash: "none", marker: "triangle", width: 1.4 },
   three: { dash: "5 3", marker: "square", width: 1.4 },
 };
 
@@ -73,7 +73,7 @@ function fmtCount(n) {
 }
 
 /**
- * Log–log line chart of median time against a swept parameter.
+ * Log-log line chart of median time against a swept parameter.
  *
  * Both axes are logarithmic: entity counts span three orders of magnitude, and
  * on a linear axis the small counts would collapse into the origin and hide
@@ -175,7 +175,7 @@ export function sweepChart(series, { title, xLabel, yLabel = "median ms", height
 }
 
 /**
- * Grouped bar chart — one group per swept value, one bar per engine.
+ * Grouped bar chart: one group per swept value, one bar per engine.
  * Linear y-axis, because bar length must stay proportional to the value.
  */
 export function groupedBars(groups, { height = 240, yLabel = "median ms" } = {}) {
@@ -202,12 +202,12 @@ export function groupedBars(groups, { height = 240, yLabel = "median ms" } = {})
   }
   svg.appendChild(grid);
 
-  // flecs additionally gets a hatched fill, so its bars read differently from
-  // the two solid fills even in grayscale, on top of its distinct hue.
+  // Artisan additionally gets a hatched fill. It is the implementation under
+  // investigation and therefore receives the recurring secondary visual cue.
   const defs = el("defs");
-  const pat = el("pattern", { id: "hatch", width: 5, height: 5, patternTransform: "rotate(45)", patternUnits: "userSpaceOnUse" });
+  const pat = el("pattern", { id: "artisan-hatch", width: 5, height: 5, patternTransform: "rotate(45)", patternUnits: "userSpaceOnUse" });
   pat.appendChild(el("rect", { width: 5, height: 5, fill: "var(--paper)" }));
-  pat.appendChild(el("line", { x1: 0, y1: 0, x2: 0, y2: 5, stroke: "var(--s-flecs)", "stroke-width": 2.2 }));
+  pat.appendChild(el("line", { x1: 0, y1: 0, x2: 0, y2: 5, stroke: "var(--s-artisan)", "stroke-width": 2.2 }));
   defs.appendChild(pat);
   svg.appendChild(defs);
 
@@ -223,9 +223,9 @@ export function groupedBars(groups, { height = 240, yLabel = "median ms" } = {})
         width: barW - 2,
         height: Math.max(1, H - pad.bottom - py(v)),
       });
-      if (engine === "flecs") {
-        rect.setAttribute("fill", "url(#hatch)");
-        rect.setAttribute("stroke", "var(--s-flecs)");
+      if (engine === "artisan") {
+        rect.setAttribute("fill", "url(#artisan-hatch)");
+        rect.setAttribute("stroke", "var(--s-artisan)");
         rect.setAttribute("stroke-width", 1);
       } else {
         rect.setAttribute("fill", `var(--s-${engine})`);

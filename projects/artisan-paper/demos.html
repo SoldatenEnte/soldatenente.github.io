@@ -20,8 +20,8 @@
 
       <h1>Demos</h1>
       <p class="lede">
-        Alle Anwendungen führen denselben nach WebAssembly übersetzten Rust-Kern aus und rendern
-        über WebGPU. Sie starten direkt im Browser, ohne Installation.
+        Alle Demos sind interaktiv und lassen sich über ihre Karte direkt im Browser starten. Eine
+        Installation ist nicht erforderlich; benötigt wird lediglich ein Browser mit WebGPU.
       </p>
 
       <div id="gpu-hinweis"></div>
@@ -30,31 +30,22 @@
         <h2>Vivarium</h2>
         <div id="featured"></div>
         <p>
-          Vivarium erzeugt einen Icosphere-Planeten mit Unterteilungsstufe sechs, leitet aus
-          dessen indiziertem Netz die Nachbarschaft der Dreiecksflächen ab und berechnet
-          prozedurale Höhen-, Wasser-, Temperatur- und Feuchtigkeitswerte. Ein Planet-Entity mit
-          indexgleichen Flächenarrays steht dabei neben einzelnen Siedler-Entities.
+          In Vivarium lassen sich Startpopulation und Seed wählen, bevor die Simulation im Browser
+          beginnt. Anschließend kann beobachtet werden, wie sich Siedler bewegen, Ressourcen nutzen,
+          neue Stammesmitglieder hervorbringen und wieder aus der Welt verschwinden.
         </p>
         <p>
-          Die Anfangspopulation verteilt sich um mehrere räumlich getrennte Stammeszentren.
-          Siedler besitzen Hunger, Durst, Alter, Stammeskennung sowie Kooperations-, Aggressions-
-          und Mobilitätswerte und bewegen sich anhand von Nahrung, Wasser und sozialen Signalen
-          über den Flächengraphen. Reproduktion erzeugt neue Entities, Merkmale werden verändert
-          weitergegeben, und Tod durch Alter, Hunger oder Durst entfernt Entities aus der World.
+          Die Demo zeigt das Zusammenspiel von ECS-Entities, Simulationssystemen und Rendering in
+          einer fortlaufenden Anwendung. Aufbau des Planeten und Regeln der Siedler werden im
+          Kapitel <a href="./planet.html">Planetare Simulation</a> ausführlich erklärt.
         </p>
-        <p>
-          Die Anwendung macht damit das Zusammenspiel aus anwendungsspezifischen Arrays,
-          ECS-Entities, WASM-Exporten, Render-Schedule und WebGPU-Instancing an einer
-          zusammenhängenden Anwendung sichtbar. Sie ist keine eigenständige Evaluation des
-          Gesellschaftsmodells.
-        </p>
-        <p><a href="./planet.html">Die planetare Simulation im Zusammenhang erklären →</a></p>
       </section>
 
       <section id="weitere">
         <h2>Weitere Demos</h2>
         <p class="dek">
-          Kleinere Anwendungen, die jeweils einen Teil der Engine isoliert zeigen.
+          Die kleineren Anwendungen zeigen jeweils einen Teil der Engine isoliert. Zum Ausprobieren
+          einfach die gewünschte Karte auswählen.
         </p>
         <div id="grid" class="cards"></div>
       </section>
@@ -79,13 +70,12 @@ document.getElementById("gpu-hinweis").innerHTML = "gpu" in navigator
      Die Demos starten nicht. Aktuelle Versionen von Chrome, Edge oder Firefox auf dem Desktop
      führen sie aus.</div>`;
 
-function card(d, idx) {
+function card(d) {
   return `<a class="card" href="${d.href}">
     ${screenshot(d)}
-    <div class="idx">${idx}</div>
     <h3>${d.title}</h3>
     <p>${d.blurb}</p>
-    <div class="tags">${d.meta}</div>
+    <div class="card-action">Im Browser starten →</div>
   </a>`;
 }
 
@@ -123,16 +113,15 @@ try {
   document.getElementById("featured").innerHTML = flagship
     ? `<div class="cards"><a class="card featured" href="${flagship.href}">
          ${screenshot(flagship)}
-         <div class="idx">Starten</div>
          <h3>${flagship.title}</h3>
          <p>${flagship.blurb}</p>
-         <div class="tags">${flagship.meta}</div>
+         <div class="card-action">Im Browser starten →</div>
        </a></div>`
     : `<div class="note warn">Diese Demo ist im aktuellen Build nicht enthalten.</div>`;
 
   const rest = demos.filter((d) => d.tier !== "featured");
   document.getElementById("grid").innerHTML =
-    rest.map((d, i) => card(d, String(i + 1).padStart(2, "0"))).join("") ||
+    rest.map(card).join("") ||
     `<div class="note warn">Keine weiteren Demos im Build enthalten.</div>`;
   activateScreenshots();
 } catch {

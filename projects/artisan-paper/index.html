@@ -213,8 +213,8 @@
           <a class="card" href="./evaluation.html">
             <div class="idx">Kapitel 4 - Zahlen</div>
             <h3>Evaluation</h3>
-            <p>Die Messreihe gegen Bevy und flecs, die Kosten der Sprachgrenze und ein Vergleich
-               des Renderers mit Three.js.</p>
+            <p>Die festgelegte Messreihe gegen Bevy und flecs, ihre Ergebnisse und die Grenzen
+               ihrer Aussagekraft.</p>
           </a>
           <a class="card" href="./demos.html">
             <div class="idx">Kapitel 5 - Ausprobieren</div>
@@ -271,7 +271,7 @@ try {
         const s = d.summary[e];
         return `<div class="stat">
           <div class="label"><span class="swatch ${e}"></span>${LABEL[e] ?? e}</div>
-          <div class="value">${s.geomean_vs_best ? de(s.geomean_vs_best) : "–"}<span class="unit">×</span></div>
+          <div class="value">${s.geomean_vs_best ? de(s.geomean_vs_best) : "-"}<span class="unit">x</span></div>
           <div class="sub">in ${s.wins} von ${s.categories} Kategorien die schnellste</div>
         </div>`;
       })

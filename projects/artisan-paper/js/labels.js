@@ -22,9 +22,9 @@ const KATEGORIE = {
   C3: () => "Entity löschen - 200.000",
   D1: () => "Komponente hinzufügen - 100.000",
   D2: () => "Komponente entfernen - 100.000",
-  D3: () => "Hinzufügen und Entfernen im Wechsel - 20.000 × 20",
-  E1: () => "Wahlfreier Lesezugriff - 100.000 × 10",
-  E2: () => "Wahlfreier Schreibzugriff - 100.000 × 10",
+  D3: () => "Hinzufügen und Entfernen im Wechsel - 20.000 x 20",
+  E1: () => "Wahlfreier Lesezugriff - 100.000 x 10",
+  E2: () => "Wahlfreier Schreibzugriff - 100.000 x 10",
   F1: () => "Vereinzelte Änderungen - 200.000",
   G1: () => "3 Systeme - 100.000",
 };

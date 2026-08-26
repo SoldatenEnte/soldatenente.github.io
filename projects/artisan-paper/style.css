@@ -1,13 +1,13 @@
-/* Artisan — site theme.
+/* Artisan site theme.
  *
  * Professional technical-product look: a clean grotesk sans throughout (no
- * serif — on Windows "Iowan Old Style"/Palatino silently fall back to Georgia,
+ * serif: on Windows "Iowan Old Style"/Palatino silently fall back to Georgia,
  * which reads as a stock blog theme, not a systems-engineering site).
  *
  * Color now carries real meaning for data: each engine gets a distinct hue.
  * Shape/texture stay as a *second*, redundant cue (marker shape, dash pattern,
  * hatching) so the charts still work for a reader who can't distinguish the
- * hues, printed or in grayscale — color is additive, not the only channel.
+ * hues, printed or in grayscale. Color is additive, not the only channel.
  *
  * No web fonts: the page renders identically offline and on first paint from
  * the system sans stack, which is genuinely excellent on every platform. */
@@ -24,7 +24,7 @@
   --rule-2: #eef0f3;
   --wash: #f5f6f8;
 
-  /* Brand accent — warm amber, a quiet nod to Rust without being literal. */
+  /* Brand accent: warm amber, a quiet nod to Rust without being literal. */
   --accent: #c1560a;
   --accent-ink: #7a3607;
   --accent-soft: #fdf1e6;
@@ -33,9 +33,9 @@
   /* Data-series colors. Chosen for contrast against each other in both color
      vision and grayscale luminance (so a B&W printout still separates them by
      value), then paired with a marker shape and line style as a second cue. */
-  --s-artisan: #c1560a;   /* amber   — solid fill, circle marker */
-  --s-bevy: #2f6fed;      /* blue    — solid fill, square marker, dashed line */
-  --s-flecs: #7c4dd6;     /* violet  — hatched fill, triangle marker, dotted line */
+  --s-artisan: #c1560a;   /* amber, hatched fill, circle marker, dashed line */
+  --s-bevy: #2f6fed;      /* blue, solid fill, square marker, solid line */
+  --s-flecs: #7c4dd6;     /* violet, solid fill, triangle marker, solid line */
   --s-three: #2f6fed;
 
   --warn: #9a6a00;
@@ -295,8 +295,28 @@ tr.group-head td {
   color: var(--accent-ink);
   border-bottom: 1px solid var(--rule);
 }
-td.best { font-weight: 700; color: var(--ink); }
-td.best::before { content: "●"; color: var(--accent); font-size: 8px; margin-right: 6px; vertical-align: 1.5px; }
+td.best {
+  font-weight: 700;
+}
+td.best.artisan {
+  color: var(--s-artisan);
+  background: color-mix(in srgb, var(--s-artisan) 10%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--s-artisan) 24%, transparent);
+}
+td.best.bevy {
+  color: var(--s-bevy);
+  background: color-mix(in srgb, var(--s-bevy) 10%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--s-bevy) 24%, transparent);
+}
+td.best.flecs {
+  color: var(--s-flecs);
+  background: color-mix(in srgb, var(--s-flecs) 10%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--s-flecs) 24%, transparent);
+}
+td.best::before { content: "●"; font-size: 8px; margin-right: 6px; vertical-align: 1.5px; }
+td.best.artisan::before { color: var(--s-artisan); }
+td.best.bevy::before { color: var(--s-bevy); }
+td.best.flecs::before { color: var(--s-flecs); }
 td.muted { color: var(--ink-4); }
 .scroll-x { overflow-x: auto; }
 tbody tr:hover td { background: var(--wash); }
@@ -311,11 +331,11 @@ tbody tr:hover td { background: var(--wash); }
   vertical-align: -1px;
   margin-right: 7px;
 }
-.swatch.artisan { background: var(--s-artisan); }
-.swatch.bevy { background: var(--s-bevy); }
-.swatch.flecs {
-  background: repeating-linear-gradient(45deg, var(--s-flecs) 0 2px, color-mix(in srgb, var(--s-flecs) 25%, transparent) 2px 4px);
+.swatch.artisan {
+  background: repeating-linear-gradient(45deg, var(--s-artisan) 0 2px, color-mix(in srgb, var(--s-artisan) 25%, transparent) 2px 4px);
 }
+.swatch.bevy { background: var(--s-bevy); }
+.swatch.flecs { background: var(--s-flecs); }
 .swatch.three { background: var(--s-three); }
 
 .legend {
@@ -331,11 +351,11 @@ tbody tr:hover td { background: var(--wash); }
 
 .bar-track { display: block; width: 100%; height: 10px; background: var(--rule-2); border-radius: 3px; overflow: hidden; }
 .bar { display: block; height: 100%; }
-.bar.artisan { background: var(--s-artisan); }
-.bar.bevy { background: var(--s-bevy); }
-.bar.flecs {
-  background: repeating-linear-gradient(45deg, var(--s-flecs) 0 2.5px, color-mix(in srgb, var(--s-flecs) 35%, var(--paper)) 2.5px 5px);
+.bar.artisan {
+  background: repeating-linear-gradient(45deg, var(--s-artisan) 0 2.5px, color-mix(in srgb, var(--s-artisan) 35%, var(--paper)) 2.5px 5px);
 }
+.bar.bevy { background: var(--s-bevy); }
+.bar.flecs { background: var(--s-flecs); }
 
 /* --- Stat display --------------------------------------------------------- */
 
@@ -363,10 +383,17 @@ tbody tr:hover td { background: var(--wash); }
   transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
 .card:hover { border-color: color-mix(in srgb, var(--accent) 35%, var(--rule)); box-shadow: var(--shadow-2); transform: translateY(-1px); }
-.card .idx { font-size: 11px; font-weight: 650; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: 12px; }
 .card h3 { margin: 0 0 8px; font-size: 19px; }
-.card p { font-size: 13.5px; line-height: 1.6; color: var(--ink-3); margin: 0 0 16px; flex: 1; }
-.card .tags { font-size: 10.5px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-4); }
+.card p { font-size: 13.5px; line-height: 1.6; color: var(--ink-3); margin: 0 0 6px; }
+.card .card-action {
+  margin-top: 4px;
+  padding-top: 9px;
+  border-top: 1px solid var(--rule-2);
+  color: var(--accent-ink);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
 .demo-shot {
   position: relative;
   aspect-ratio: 16 / 9;
@@ -608,7 +635,7 @@ footer {
 .matrix td.yes { color: var(--ink); font-weight: 700; }
 .matrix td.yes::after { content: "✓"; }
 .matrix td.no { color: var(--rule); }
-.matrix td.no::after { content: "–"; }
+.matrix td.no::after { content: "-"; }
 
 /* Mehrere kleine Tabellen nebeneinander, je eine pro Archetype. */
 .archetype-grid {
@@ -698,8 +725,6 @@ footer {
   .card.featured { padding: 16px 16px 18px 19px; }
   .card.featured h3 { font-size: 22px; }
   .card.featured p, .card p { font-size: 13px; line-height: 1.52; }
-  .card .idx { margin-bottom: 8px; }
-  .card .tags { line-height: 1.45; }
   .demo-shot, .card.featured .demo-shot {
     margin: -6px -6px 14px;
     border-radius: 7px;

@@ -2,7 +2,7 @@
 #
 # The rayon thread pool runs on SharedArrayBuffer, which browsers only expose to
 # cross-origin isolated documents. Without these headers every lab falls back to
-# a single thread and `performance.now()` stays coarsely clamped — the pages
+# a single thread and `performance.now()` stays coarsely clamped, so the pages
 # detect that and label their results, but the threaded measurements are simply
 # unavailable.
 #

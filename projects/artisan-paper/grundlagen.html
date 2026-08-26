@@ -121,8 +121,8 @@
               <div class="cell"><span class="k">E1</span><span class="v">→ 0</span></div>
               <div class="cell"><span class="k">E2</span><span class="v">→ 1</span></div>
               <div class="cell"><span class="k">E3</span><span class="v">→ 2</span></div>
-              <div class="cell empty"><span class="k">E4</span><span class="v">–</span></div>
-              <div class="cell empty"><span class="k">E5</span><span class="v">–</span></div>
+              <div class="cell empty"><span class="k">E4</span><span class="v">-</span></div>
+              <div class="cell empty"><span class="k">E5</span><span class="v">-</span></div>
             </div>
           </div>
         </div>
@@ -224,7 +224,7 @@
           Browser validiert das erzeugte Modul und führt es anschließend interpretiert oder in
           echten Maschinencode übersetzt aus. Ein WebAssembly-Modul ist also kein fertiges natives
           Programm für eine bestimmte CPU, sondern ein Zwischenformat, das der Browser selbst weiterverarbeitet
-          <a class="cite" href="./quellen.html#literatur">[1–2]</a>.
+          <a class="cite" href="./quellen.html#literatur">[1-2]</a>.
         </p>
         <p>
           Ausgeführt wird das Modul in einer Sandbox. Es hat keinen freien Zugriff auf das
@@ -294,7 +294,7 @@
           <code>wasm-bindgen-rayon</code> verbindet dieses Modell mit Web Workers und einem
           geteilten WebAssembly-Speicher. Artisan exportiert die Initialisierung dieses Thread-Pools
           und nutzt Rayon sowohl für parallele Query-Iteration als auch für die parallele Ausführung
-          verträglicher Systeme <a class="cite" href="./quellen.html#literatur">[11–12]</a>.
+          verträglicher Systeme <a class="cite" href="./quellen.html#literatur">[11-12]</a>.
         </p>
       </section>
 
@@ -359,7 +359,7 @@
           Neben Renderpipelines kennt WebGPU auch <em>Compute Pipelines</em> für allgemeine
           parallele Berechnungen, unabhängig von der festen Abfolge aus Vertex- und
           Fragmentverarbeitung. Beide Pipelinearten werden in WGSL beschrieben, der zu WebGPU
-          gehörenden Shading-Sprache <a class="cite" href="./quellen.html#literatur">[4–5]</a>.
+          gehörenden Shading-Sprache <a class="cite" href="./quellen.html#literatur">[4-5]</a>.
           Artisans reguläre Batch-Pipeline nutzt für die hier betrachtete
           Darstellung vor allem Renderpipelines mit Instancing; aus der vorhandenen
           Compute-Unterstützung von WebGPU folgt keine konkrete Nutzung in jedem Renderpfad.
@@ -389,7 +389,7 @@
           <a class="inline-link" href="./architektur.html#rendering">Zur Pipeline</a>
         </p>
         <p>
-          Die Demo <a href="./demos/murmuration/index.html">Murmuration</a> zeigt CPU- und
+          Die Demo <a href="../murmuration/">Murmuration</a> zeigt CPU- und
           GPU-Simulation im Vergleich. Bei der CPU-Simulation ist jeder Würfel ein ECS-Entity und
           wird in Rust aktualisiert. Danach zeichnet WebGPU alle Würfel per Instancing. Bei der
           GPU-Simulation liegen die Partikel direkt in einem GPU-Buffer und werden dort von einem

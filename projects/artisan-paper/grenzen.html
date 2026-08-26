@@ -20,18 +20,20 @@
 
       <h1>Grenzen</h1>
       <p class="lede">
-        Was der Prototyp im untersuchten Stand nicht garantiert, und was die Messungen nicht
-        zeigen.
+        Der Prototyp belegt, dass der Ansatz funktioniert. Er belegt noch nicht, dass Artisan
+        vollständig, auf jedem Gerät gleich leistungsfähig oder grundsätzlich schneller als
+        etablierte ECS-Implementierungen ist.
       </p>
 
       <section id="handles">
-        <h2>Handles und TypedArrays</h2>
+        <h2>API- und Speicherverträge</h2>
         <p>
           Rust-interne Entity-Handles bestehen aus einer numerischen ID und einer Generation.
           Gelöschte IDs können wiederverwendet werden; die erhöhte Generation unterscheidet das
           neue Entity von einem alten Handle. Mehrere JavaScript-Schnittstellen übertragen jedoch
           nur die numerische ID. Ein auf JavaScript-Seite gespeichertes Handle ist nach
-          Wiederverwendung seiner ID daher nicht durch denselben Generationstest geschützt.
+          Wiederverwendung seiner ID daher nicht durch denselben Generationstest geschützt. Für
+          eine robuste öffentliche API müsste JavaScript ebenfalls ID und Generation erhalten.
         </p>
         <p>
           Direkte Speicherzeiger und die darauf angelegten TypedArrays können außerdem durch das
@@ -39,12 +41,13 @@
           WebAssembly-Speichers ungültig werden. Der JavaScript-Query-Cache prüft Strukturzähler
           und Bufferidentität pro Anfrage und baut betroffene Arrays bei einem Cache Miss neu auf.
           Einzelne außerhalb dieses Caches gespeicherte Zeiger bleiben dennoch an dieselben
-          Lebensdauerregeln gebunden.
+          Lebensdauerregeln gebunden. Diese Regeln sind beherrschbar, machen die direkte
+          Speicherbrücke aber fehleranfälliger als eine vollständig gekapselte Schnittstelle.
         </p>
       </section>
 
       <section id="scheduler">
-        <h2>Scheduler und Änderungserkennung</h2>
+        <h2>Laufzeit und Korrektheit</h2>
         <p>
           Die zeilenbezogene Änderungserkennung setzt einen getrackten Schreibpfad voraus. Ein
           gewöhnlicher Query-Zugriff mit <code>&amp;mut T</code> aktualisiert nur den
@@ -58,60 +61,63 @@
           geordnete Systeme anschließend in dieselbe parallele Stage gepackt werden. Eine
           belastbare Ordnung allein durch Labels erfordert eine Korrektur des Schedulers.
         </p>
-        <p>
-          Behoben ist dagegen die frühere Invalidierungslücke der 3D-Batchliste. Sichtbarkeitswechsel
-          erhöhen einen eigenen <code>VisibilityGen</code>, der gemeinsam mit
-          <code>structural_gen</code> über die erneute Extraktion entscheidet. Ein separates
-          Prüfprogramm kontrolliert, dass eine Kameradrehung die Batchliste aktualisiert, ohne
-          fälschlich als strukturelle Änderung behandelt zu werden.
-        </p>
       </section>
 
       <section id="messung">
-        <h2>Grenzen der Messung</h2>
+        <h2>Aussagekraft der Benchmarks</h2>
         <p>
-          Die Messreihe vergleicht drei Implementierungen, nicht drei Speichermodelle. Bevy und
-          Artisan verwenden beide Table- beziehungsweise Archetype-Speicherung, flecs verwendet
-          Archetypes mit optionalen Sparse-Komponenten. Ein Unterschied ist ein Beleg über die
-          Implementierung, nicht über Archetypes als Konzept.
+          In der festgelegten seriellen Suite ist Artisan in 20 von 34 Kategorien am schnellsten.
+          Im geometrischen Mittel liegt es näher am jeweils schnellsten Ergebnis als Bevy und
+          flecs. Damit ist die zulässige Aussage klar: Für diese Arbeitslasten, Versionen und
+          Konfigurationen ist Artisan eine sehr konkurrenzfähige und insgesamt schnellste
+          Implementierung.
         </p>
         <p>
-          Sprache und Compiler unterscheiden sich ebenfalls: rustc für zwei Runner, MSVC für einen.
-          Die Codegenerierung ist damit Teil des Gemessenen und lässt sich hier nicht abtrennen.
-          flecs ist außerdem eine deutlich vollständigere Engine als Artisan; Kosten, die dort
-          Funktionen erkaufen, die Artisan nicht besitzt, erscheinen hier trotzdem als Kosten.
+          Daraus folgt nicht, dass Artisan allgemein schneller als flecs oder Bevy ist. Die Suite
+          bildet typische, aber nur ausgewählte Situationen ab und misst keine parallelen Systeme,
+          komplexen Beziehungen, große Anwendungsgraphen oder den vollständigen Funktionsumfang
+          der Frameworks. Außerdem unterscheiden sich Sprache und Compiler: rustc erzeugt die
+          beiden Rust-Runner, MSVC den flecs-Runner. Diese Codegenerierung ist Teil des Ergebnisses.
         </p>
         <p>
-          Absolute Werte gelten nur für die dokumentierte Maschine. Übertragbar sind allenfalls die
-          Verhältnisse, und auch die nur innerhalb der geprüften Bereiche.
+          Die Einzelwerte zeigen zudem echte Zielkonflikte. flecs ist beim zufälligen Zugriff und
+          bei vereinzelten Änderungen schneller, während Artisan besonders bei mehreren linearen
+          Iterationen und strukturellen Arbeitslasten gewinnt. Die Ergebnisse sprechen deshalb
+          für die untersuchte Implementierung und ihre Schwerpunkte, nicht für die Überlegenheit
+          eines Speichermodells in jeder Situation.
         </p>
         <p>
-          Für den Renderingpfad fehlt weiterhin die getrennte Instrumentierung von Batch-Extraktion
-          und Buffer-Upload sowie Sweeps über Ressourcendiversität und Zeilenreihenfolge. Der
-          Vergleich mit Three.js verändert mehrere Faktoren gleichzeitig und ersetzt eine solche
-          Untersuchung nicht.
+          Absolute Zeiten gelten nur für die dokumentierte Maschine. Auch relative Unterschiede
+          sollten nur innerhalb der geprüften Größen und Szenarien übertragen werden. Für den
+          Renderingpfad gibt es auf dieser Seite bewusst keinen Leistungsvergleich: Die Demos
+          zeigen seine Funktionsfähigkeit und Größenordnung, ersetzen aber keinen kontrollierten
+          Vergleich mit einer anderen Engine.
         </p>
       </section>
 
       <section id="einordnung">
-        <h2>Einordnung</h2>
+        <h2>Grenzen als Web-Engine</h2>
         <p>
           WebAssembly und WebGPU stellen standardisierte Bausteine für rechen- und grafikintensive
           Webanwendungen bereit. Web Workers und <code>SharedArrayBuffer</code> ermöglichen die für
-          den Rayon-Pfad benötigte Form geteilter Arbeit. Diese Grundlagen erklären, warum eine
-          Architektur wie Artisan technisch realisierbar ist.
+          den Rayon-Pfad benötigte Form geteilter Arbeit. Damit sind datenintensive Spiele und
+          Simulationen im Browser technisch realistisch <a class="cite" href="./quellen.html#literatur">[2, 4]</a>.
         </p>
         <p>
-          Aus dem Vorhandensein der Standards folgt jedoch keine Gleichwertigkeit mit nativen
-          Engines. Browserunterstützung, Sicherheitsanforderungen für geteilten Speicher und die
-          Kosten des Datentransfers zur GPU sind für einen konkreten Stand gesondert zu betrachten.
-          Auch die direkte Speicherbrücke ist keine automatische Eigenschaft von WebAssembly. Sie
-          erfordert projektspezifische Layout- und Lebensdauerverträge, die eine stärker
-          gekapselte native API nicht in derselben Form an JavaScript weitergeben würde.
+          Der Browser bringt zugleich eigene Grenzen mit: Geräte und Implementierungen
+          unterscheiden sich, geteilter Speicher benötigt zusätzliche Sicherheits-Header und
+          große Anwendungen müssen ihre Assets zunächst übertragen und zwischenspeichern. WebGPU
+          befindet sich zum Zeitpunkt dieser Arbeit außerdem noch im
+          W3C-Candidate-Recommendation-Prozess <a class="cite" href="./quellen.html#literatur">[4]</a>.
+          Verfügbarkeit, Treiberverhalten und Leistungswerte müssen deshalb auf den tatsächlich
+          unterstützten Plattformen geprüft werden.
         </p>
         <p>
-          Artisan ist daher kein funktionsgleicher Ersatz für Bevy oder flecs. Der Prototyp isoliert
-          eine Architekturidee und prüft ausgewählte Kosten ihrer Umsetzung.
+          Hinzu kommt die Produktreife: Artisan besitzt weder den Werkzeugumfang noch die
+          Plattformabdeckung etablierter Engines. Der Ansatz ist besonders interessant, wenn
+          sofortige Ausführung per URL, Web-Oberflächen und große datenorientierte Simulationen
+          wichtig sind. Er ist aber kein universeller Ersatz für native Engines oder deren
+          ausgereifte Editoren, Konsolenunterstützung und Ökosysteme.
         </p>
       </section>
 
