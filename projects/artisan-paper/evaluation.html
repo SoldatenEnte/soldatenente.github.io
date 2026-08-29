@@ -23,6 +23,12 @@
         Die Evaluation vergleicht Artisan, Bevy ECS und Flecs anhand vorab festgelegter
         Arbeitslasten aus Spielen und Simulationen.
       </p>
+      <p class="dek">
+        Ein Benchmark ist ein kontrolliertes Messprogramm. Seine Arbeitslast legt genau fest,
+        welche Operationen in welchem Umfang ausgeführt werden. Die Gesamtheit aller hier
+        verwendeten Arbeitslasten wird im Folgenden als Testsuite bezeichnet. Die verwendeten
+        <a href="./grundlagen.html#ecs">ECS-Grundbegriffe</a> werden im Grundlagenkapitel eingeführt.
+      </p>
 
       <section id="methodik">
         <h2>Methodik</h2>
@@ -30,10 +36,11 @@
         <h3>Auswahl der Tests</h3>
         <p>
           Die Kategorien wurden aus verbreiteten ECS-Benchmarks und typischen Abläufen in Spielen
-          und Simulationen abgeleitet. Sie umfassen dichte Iteration, unterschiedlich verteilte
-          Archetypes, das Erzeugen und Löschen von Entities, strukturelle Änderungen, wahlfreien
-          Zugriff, Änderungserkennung und Scheduling. Damit enthält die Suite sowohl günstige als
-          auch ungünstige Fälle für archetypbasierte Speicherung.
+          und Simulationen abgeleitet. Sie umfassen die dichte Iteration durch zusammenhängende
+          Komponentenspalten, unterschiedlich verteilte Archetypes, das Erzeugen und Löschen von
+          Entities, Änderungen ihrer Komponentenkombination, den Zugriff auf einzelne Entities,
+          Änderungserkennung und die Ausführung mehrerer Systeme durch den Scheduler. Damit enthält
+          die Suite sowohl günstige als auch ungünstige Fälle für archetypbasierte Speicherung.
         </p>
         <p>
           Kategorien und Arbeitsumfänge standen vor der ersten ausgewerteten Messung fest. Danach
@@ -43,16 +50,22 @@
 
         <h3>Durchführung</h3>
         <p>
-          Alle drei Engines werden seriell ausgeführt, damit unterschiedliche Thread-Pools das
-          Ergebnis nicht beeinflussen. Auf drei verworfene Aufwärmläufe folgen 15 Messläufe mit
-          jeweils neu aufgebauter ECS-World. Jede Kategorie berechnet zusätzlich eine Prüfsumme;
-          stimmen die Prüfsummen der Engines nicht überein, wird das Ergebnis ausgeschlossen.
+          Alle drei Engines werden seriell, also auf jeweils einem Ausführungsthread, gemessen.
+          Dadurch beeinflussen unterschiedliche Thread-Pools das Ergebnis nicht. Drei verworfene
+          Aufwärmläufe bringen Code und Speicherpfade zunächst in einen wiederholbaren Zustand.
+          Danach folgen 15 Messläufe mit jeweils neu aufgebauter ECS-World, dem zentralen
+          Datenbestand der jeweiligen Engine. Jede Kategorie berechnet außerdem eine Prüfsumme aus
+          ihrem Ergebnis. Stimmen diese Kontrollwerte nicht überein, haben die Engines nicht
+          dieselbe Arbeit ausgeführt und die Messung wird ausgeschlossen.
         </p>
 
         <h3>Auswertung</h3>
         <p>
-          Angegeben werden der Median der 15 Messläufe und ein verteilungsfreies
-          95-Prozent-Konfidenzintervall. Die Einzelmessungen bleiben in den Ergebnisdateien erhalten.
+          Angegeben wird der Median, also der mittlere Wert der 15 nach Laufzeit sortierten
+          Messläufe. Ein verteilungsfreies 95-Prozent-Konfidenzintervall aus den geordneten
+          Einzelmessungen beschreibt zusätzlich die Unsicherheit dieses Medians, ohne eine
+          Normalverteilung vorauszusetzen. Die Einzelmessungen bleiben in den Ergebnisdateien
+          erhalten.
         </p>
       </section>
 
@@ -61,25 +74,29 @@
         <p>
           Die Tests untersuchen nicht nur abstrakte ECS-Operationen, sondern typische Bestandteile
           eines Simulationsschritts. Eine Iteration über Position und Geschwindigkeit entspricht
-          etwa der Bewegung vieler Figuren pro Frame. Das Erzeugen oder Löschen von Entities bildet
-          Spawn- und Despawn-Ereignisse ab; Komponentenwechsel entsprechen beispielsweise dem
-          Hinzufügen eines Status oder dem Wechsel eines Zustands.
+          etwa der Bewegung vieler Figuren pro Frame, also pro berechnetem Bild. Das Erzeugen und
+          Löschen von Entities bildet sogenannte Spawn- und Despawn-Ereignisse ab;
+          Komponentenwechsel entsprechen beispielsweise dem Hinzufügen eines Status oder dem
+          Wechsel eines Zustands.
         </p>
         <div id="headline"></div>
 
         <h3>Iteration nach Entity-Zahl</h3>
         <p class="dek">
           Gemessen wird, wie die Laufzeit beim Verarbeiten wachsender Entity-Mengen steigt. Beide
-          Achsen sind logarithmisch, da die Entity-Zahlen drei Größenordnungen umfassen. Eng
-          beieinanderliegende oder überlappende Kurven bedeuten, dass die Engines in diesem Test
-          ähnlich schnell sind; die exakten Medianwerte stehen in der Tabelle.
+          Achsen sind logarithmisch, da die Entity-Zahlen drei Größenordnungen umfassen. Gleiche
+          Abstände stehen auf solchen Achsen für gleiche Multiplikationsfaktoren statt für gleiche
+          absolute Differenzen. Eng beieinanderliegende oder überlappende Kurven bedeuten, dass die
+          Engines in diesem Test ähnlich schnell sind; die exakten Medianwerte stehen in der
+          Tabelle.
         </p>
         <div id="sweep-a"></div>
 
         <h3>Archetype-Fragmentierung</h3>
         <p class="dek">
-          Dieselben 100.000 Entities werden auf immer mehr Archetypes verteilt. Das entspricht
-          einer Spielwelt mit zunehmend unterschiedlichen Kombinationen von Komponenten.
+          Dieselben 100.000 Entities werden auf immer mehr Archetypes verteilt. Diese
+          Archetype-Fragmentierung entspricht einer Spielwelt mit zunehmend unterschiedlichen
+          Kombinationen von Komponenten und damit mehr getrennten Speicherbereichen.
         </p>
         <div id="sweep-b"></div>
 

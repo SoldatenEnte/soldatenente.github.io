@@ -1,35 +1,11 @@
 <!doctype html>
-<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Planetare Simulation - Artisan</title><script>try{if(localStorage.getItem("artisan-theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
-<link rel="stylesheet" href="./style.css"></head><body><div class="wrap">
-<header class="masthead"><a class="wordmark" href="./index.html">Artisan</a><div class="right"><nav></nav></div></header>
-<div class="doc"><aside class="doc-nav"></aside><main class="doc-main">
-<p class="kicker">Anwendungsfall</p><h1>Eine planetare Zivilisationssimulation</h1>
-<p class="lede">Vivarium ist die Demo-Anwendung von Artisan. Die Simulation erzeugt einen Planeten, verteilt Ressourcen auf seiner Oberfläche und simuliert einzelne Siedler. Dieselben Flächen bilden die sichtbare Welt und die räumliche Grundlage der Simulation.</p>
-<p>Die <a href="../planet/">Planet-Demo</a> zeigt die Generierung ohne Zivilisationssimulation. Seed, Auflösung und Daten-Layer können dort direkt verändert werden.</p>
-
-<section id="modell"><h2>Vom Mesh zur Welt</h2>
-<p>Der Planet basiert auf einer Icosphere mit Subdivision Level 6. Dafür werden die Dreiecke eines Ikosaeders mehrfach unterteilt und auf eine Kugel projiziert. Benachbarte Dreiecke teilen zunächst dieselben Vertices. So kann Artisan ihre Nachbarschaft direkt aus dem Mesh ableiten.</p>
-<p>Für das Rendering erhält jede Fläche anschließend eigene Vertices und kann unabhängig eingefärbt werden. Der zuvor berechnete Graph bleibt für die Simulation erhalten. Jeder Flächenindex verweist dabei auf dieselbe Position in den Daten für Höhe, Klima, Ressourcen und Bevölkerung.</p></section>
-
-<section id="klima"><h2>Höhe, Klima und Ressourcen</h2>
-<p>Ein Seed und mehrere Noise-Funktionen bestimmen Kontinente, Ebenen, Hügel und Gebirge. Werte unterhalb des Wasserniveaus bilden Ozeane, während höhere Werte die Oberfläche nach außen verschieben.</p>
-<p>Temperatur und Feuchtigkeit hängen von Breitengrad, Höhe und weiteren Noise-Werten ab. Gemeinsam mit dem Wasserstatus bestimmen sie die Farbe und Fruchtbarkeit einer Fläche. Das macht die berechneten Zustände sichtbar, ersetzt aber kein vollständiges Klimamodell.</p>
-<p>Fruchtbare Landflächen speichern Nahrung, die von Siedlern verbraucht und regelmäßig regeneriert wird. Dürre kann sich über benachbarte Flächen ausbreiten und diese Regeneration vorübergehend verringern.</p>
-</section>
-
-<section id="graph"><h2>Die Oberfläche als Graph</h2>
-<p>Jeder Knoten des Graphen entspricht einer Dreiecksfläche. Gemeinsame Kanten verbinden benachbarte Flächen. Siedler bewegen sich dadurch schrittweise über die Oberfläche, ohne dass dafür Kollisionen berechnet werden müssen.</p>
-<p>Mittelpunkte, Nachbarschaften und die Entfernung zu Wasser werden vorberechnet. Bewegung, Nahrungssuche und die Ausbreitung von Dürre verwenden anschließend dieselbe räumliche Grundlage.</p></section>
-
-<section id="siedler"><h2>Die Logik der Siedler</h2>
-<p>Die Grundidee orientiert sich an <em>Sugarscape</em> von Epstein und Axtell <a href="./quellen.html#ref-13">[13]</a>. Dort bewegen sich autonome Agents anhand lokal verfügbarer Ressourcen. Verbrauch, Alter, Fortpflanzung und einfache Interaktionen erzeugen daraus größere Populations- und Gruppenmuster. Vivarium überträgt dieses Prinzip auf eine dreieckige Planetenoberfläche.</p>
-<p>Jeder Siedler bewertet seine aktuelle Fläche und ihre direkten Nachbarn. Nahrung, Wasser, bekannte Ziele und die lokale Verteilung der Stämme bestimmen, welche Fläche als Nächstes gewählt wird. Eine kurze Bindung an das gewählte Ziel verhindert, dass die Richtung bei kleinen Wertänderungen sofort wechselt.</p>
-<p>Hunger und Durst steigen mit der Zeit. Siedler desselben Stammes können Nahrung teilen, während aggressive Mitglieder verschiedener Stämme Nahrung rauben können. Fortpflanzung erzeugt ein neues Entity mit leicht veränderten Verhaltenswerten. Diese lokalen Regeln sind bewusst einfach und bilden kein empirisch validiertes Gesellschaftsmodell.</p></section>
-
-<section id="aussage"><h2>Was die Simulation zeigt</h2>
-<p>Vivarium führt prozedurale Geometrie, flächenbezogene Daten, ECS-Entities, geordnete Systeme, WebAssembly und instanziertes Rendering in einer Anwendung zusammen. Die kleineren Demos betrachten einzelne Mechanismen. Vivarium zeigt ihr Zusammenspiel unter einer fortlaufenden Arbeitslast.</p>
-<p>Aus der lauffähigen Simulation folgt kein allgemeiner Nachweis, dass Artisan einer vollständigen Engine überlegen ist. Ebenso darf die Zahl gleichzeitig verwalteter Siedler nicht mit den einfacheren Entity-Arbeitslasten der Benchmarks gleichgesetzt werden. Aussagekräftig ist der Demonstrator für den realisierten Datenfluss und das Verhalten der implementierten Regeln.</p>
-<p class="next"><a href="./evaluation.html">Weiter zu den Messungen</a></p></section>
-<div class="pager"></div></main></div><footer><span>Artisan - Planetare Simulation</span></footer></div>
-<script type="module" src="./js/nav.js"></script></body></html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="refresh" content="0; url=./vivarium.html">
+<title>Weiterleitung nach Vivarium - Artisan</title>
+</head>
+<body>
+<p>Dieses Kapitel heißt jetzt <a href="./vivarium.html">Vivarium</a>. Leite weiter...</p>
+</body>
+</html>

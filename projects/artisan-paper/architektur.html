@@ -23,14 +23,21 @@
         Artisan trennt Spiellogik, Datenverarbeitung, Browser-Anbindung und Rendering. Ziel sind
         kurze Datenwege, wenige Kopien und eine klare Aufteilung der Aufgaben.
       </p>
+      <p class="dek">
+        Dieses Kapitel setzt die Grundbegriffe des ECS und des Renderings voraus. Die Seite
+        <a href="./grundlagen.html">Grundlagen</a> erklärt Archetypes, Queries, WebAssembly,
+        WebGPU, Batches und Instancing ausführlicher.
+      </p>
 
       <section id="schichten">
         <h2>Drei Schichten</h2>
         <dl class="terms">
           <div>
             <dt>Anwendung und API</dt>
-            <dd>Der Spielcode definiert Komponenten, Systeme und Szenen. JavaScript bindet die
-                Anwendung in den Browser ein und verarbeitet Eingaben.</dd>
+            <dd>Der Spielcode definiert Komponenten, Systeme und Szenen. Die
+                Programmierschnittstelle (API) stellt dafür die nutzbaren Funktionen und Datentypen
+                bereit. JavaScript bindet die Anwendung in den Browser ein und verarbeitet
+                Eingaben.</dd>
           </div>
           <div>
             <dt>Engine-Kern</dt>
@@ -45,8 +52,9 @@
         </dl>
         <p>
           Die Schichten bleiben über einfache IDs und Speicherinformationen verbunden. Rust kann
-          beispielsweise eine Mesh ID speichern, während JavaScript das zugehörige Mesh verwaltet.
-          So muss der Engine-Kern weder Browser-APIs noch konkrete GPU-Ressourcen kennen.
+          beispielsweise die Kennnummer eines Meshes speichern, also eines geometrischen Modells,
+          während JavaScript das zugehörige Mesh verwaltet. So muss der Engine-Kern weder
+          Browser-APIs noch konkrete GPU-Ressourcen kennen.
         </p>
       </section>
 
@@ -54,8 +62,10 @@
         <h2>Bausteine der Game Engine</h2>
         <p>
           Artisan stellt die wiederkehrenden Grundlagen einer Spielanwendung bereit. Dazu gehören
-          die World, Systeme, Zeitsteuerung, Eingaben, Transformationen, Assets, Kameras sowie 2D-
-          und 3D-Rendering.
+          die <em>World</em> als zentraler Datenbestand des ECS, Systeme, Zeitsteuerung, Eingaben,
+          Transformationen aus Position, Drehung und Skalierung, Kameras sowie 2D- und
+          3D-Rendering. Als Assets bezeichnet die Engine wiederverwendbare Ressourcen wie Meshes,
+          Materialien oder Texturen.
         </p>
         <p>
           Ein Spiel ergänzt eigene Komponenten, Systeme und Assets. Begriffe wie Siedler, Hunger
@@ -80,8 +90,8 @@
           Zero-Copy bedeutet, dass Daten beim Wechsel zwischen zwei Programmteilen nicht in einen
           zweiten Speicherbereich kopiert werden. Beide Seiten greifen stattdessen auf dieselben
           Daten zu. Das spart Kopierzeit, zusätzliche Speicherbelegung und viele kurzlebige
-          Objekte. Besonders bei großen Datenmengen, die in jedem Frame benötigt werden, kann das
-          den Aufwand deutlich reduzieren.
+          Objekte. Besonders bei großen Datenmengen, die für jedes berechnete Bild, den Frame,
+          benötigt werden, kann das den Aufwand deutlich reduzieren.
         </p>
         <p>
           Artisan nutzt dieses Prinzip zwischen Rust und JavaScript. Die Komponentenspalten bleiben
@@ -91,9 +101,9 @@
         </p>
         <p>
           JavaScript muss direkte Änderungen an den Rust-Kern melden und Speicherverweise bei Bedarf
-          erneuern. Die Evaluation vergleicht diesen Zugriff mit mehreren alternativen
-          Übertragungswegen.
-          <a class="inline-link" href="./evaluation.html#bruecke">Zur Messung</a>
+          erneuern. Warum solche Verweise nicht dauerhaft gültig bleiben, erläutert das Kapitel
+          zu den Grenzen der Implementierung.
+          <a class="inline-link" href="./grenzen.html#handles">Zu den Grenzen</a>
         </p>
       </section>
 
@@ -101,8 +111,9 @@
         <h2>Rendering-Pipeline</h2>
         <p>
           Der Rust-Kern wählt sichtbare Entities aus und gruppiert Objekte mit passenden Meshes,
-          Materialien und Shadern zu Batches. JavaScript liest die benötigten Transformationen und
-          Materialdaten aus dem WebAssembly-Speicher und überträgt sie in GPU-Buffer.
+          Materialien und Shadern zu Batches, die gemeinsam gezeichnet werden können. JavaScript
+          liest die benötigten Transformationen und Materialdaten aus dem WebAssembly-Speicher und
+          überträgt sie in GPU-Buffer.
         </p>
         <p>
           WebGPU zeichnet jeden Batch mit Instancing. Dadurch kann ein Draw Call viele Objekte mit

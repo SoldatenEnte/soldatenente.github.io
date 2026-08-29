@@ -3,7 +3,7 @@
 // Hosts such as GitHub Pages do not let you set COOP/COEP. This service worker
 // re-serves every same-origin response with those headers attached, which makes
 // the document cross-origin isolated and therefore re-enables SharedArrayBuffer
-// — and with it the rayon thread pool the labs use.
+// and with it the rayon thread pool the labs use.
 //
 // The first load registers the worker and reloads once; from then on the page is
 // isolated. If registration fails the labs still work, single-threaded, and say
@@ -45,11 +45,11 @@ if (typeof window === "undefined") {
   (() => {
     if (window.crossOriginIsolated) return; // already isolated by real headers
     if (!window.isSecureContext) {
-      console.warn("[coi] insecure context — cross-origin isolation unavailable");
+      console.warn("[coi] insecure context: cross-origin isolation unavailable");
       return;
     }
     if (!navigator.serviceWorker) {
-      console.warn("[coi] service workers unavailable — labs will run single-threaded");
+      console.warn("[coi] service workers unavailable: labs will run single-threaded");
       return;
     }
 

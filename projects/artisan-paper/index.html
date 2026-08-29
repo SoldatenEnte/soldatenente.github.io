@@ -25,10 +25,16 @@
       <p class="lede">
         Diese Arbeit untersucht, wie sich rechen- und grafikintensive Spiele und
         Echtzeitsimulationen effizient im Browser umsetzen lassen. Dafür werden ein datenorientiertes
-        Entity-Component-System, Rust, WebAssembly und WebGPU zu einer gemeinsamen Architektur
+        Entity-Component-System (ECS), Rust, WebAssembly und WebGPU zu einer gemeinsamen Architektur
         verbunden. Eine planetare Zivilisationssimulation dient als Anwendungsbeispiel; gezielte
         Benchmarks bewerten die zentralen Datenpfade.
       </p>
+
+      <div style="margin: 18px 0 28px 0;">
+        <a class="btn" href="./artisan_paper.pdf" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:9px 18px;background:var(--paper-2);border:1px solid var(--rule);border-radius:6px;font-size:13px;font-weight:600;color:var(--ink);text-decoration:none;box-shadow:0 1px 2px rgba(0,0,0,0.04);">
+          📄 Als PDF-Paper herunterladen (artisan_paper.pdf)
+        </a>
+      </div>
 
       <section id="motivation">
         <h2>Warum Spiele im Browser?</h2>
@@ -120,7 +126,7 @@
           <strong>Vivarium</strong> ist das Anwendungsbeispiel für die eingesetzten Technologien.
           Die Demo setzt die im Titel genannte planetare Zivilisationssimulation um und führt die
           zentralen Teile von Artisan in einer vollständigen Anwendung zusammen. Sie wird im
-          Kapitel <a href="./planet.html">Planet</a> beschrieben.
+          Kapitel <a href="./vivarium.html">Vivarium</a> beschrieben.
         </p>
         <p>
           Im Mittelpunkt steht, wie Artisan die dafür benötigte Simulation, Datenverwaltung und
@@ -162,7 +168,7 @@
             <h3>flecs</h3>
             <p>
               Flecs ist ein in C geschriebenes Open-Source-ECS und gilt als eines der schnellsten
-              ECS-Frameworks. Es konzentriert sich auf die effiziente Verwaltung großer Mengen von
+              ECS-Frameworks <a class="cite" href="./quellen.html#ref-10">[10]</a>. Es konzentriert sich auf die effiziente Verwaltung großer Mengen von
               Entities und ergänzt Bevy damit als spezialisierte zweite Referenz.
             </p>
           </div>
@@ -192,43 +198,43 @@
         </p>
         <div class="cards">
           <a class="card" href="./grundlagen.html">
-            <div class="idx">Kapitel 1 - Einstieg</div>
+            <div class="idx">Kapitel 1 · Einstieg</div>
             <h3>Grundlagen</h3>
             <p>Was ein Entity-Component-System ist, warum die Anordnung im Speicher über die
                Geschwindigkeit entscheidet, und was WebAssembly und WebGPU dazu beitragen. Ohne
                Vorwissen lesbar.</p>
           </a>
           <a class="card" href="./architektur.html">
-            <div class="idx">Kapitel 2 - Umsetzung</div>
+            <div class="idx">Kapitel 2 · Umsetzung</div>
             <h3>Architektur</h3>
             <p>Wie Artisan das konkret baut: die Speicherspalten, der direkte Zugriff aus
                JavaScript und der Weg zum fertigen Zeichenbefehl.</p>
           </a>
           <a class="card" href="./planet.html">
-            <div class="idx">Kapitel 3 - Anwendung</div>
+            <div class="idx">Kapitel 3 · Anwendung</div>
             <h3>Planet</h3>
             <p>Wie aus einer Icosphere eine simulierte Welt wird und wie Artisan Flächenzustand,
                Siedler, Systeme und Rendering miteinander verbindet.</p>
           </a>
           <a class="card" href="./evaluation.html">
-            <div class="idx">Kapitel 4 - Zahlen</div>
+            <div class="idx">Kapitel 4 · Zahlen</div>
             <h3>Evaluation</h3>
             <p>Die festgelegte Messreihe gegen Bevy und flecs, ihre Ergebnisse und die Grenzen
                ihrer Aussagekraft.</p>
           </a>
           <a class="card" href="./demos.html">
-            <div class="idx">Kapitel 5 - Ausprobieren</div>
+            <div class="idx">Kapitel 5 · Ausprobieren</div>
             <h3>Demos</h3>
             <p>Die Zivilisationssimulation und kleinere Anwendungen, alle direkt im Browser
                lauffähig.</p>
           </a>
           <a class="card" href="./grenzen.html">
-            <div class="idx">Kapitel 6 - Einordnung</div>
+            <div class="idx">Kapitel 6 · Einordnung</div>
             <h3>Grenzen</h3>
             <p>Was der Prototyp nicht garantiert und was die Messungen nicht belegen.</p>
           </a>
           <a class="card" href="./fazit.html">
-            <div class="idx">Kapitel 7 - Schluss</div>
+            <div class="idx">Kapitel 7 · Schluss</div>
             <h3>Fazit</h3>
             <p>Was das Projekt erreicht hat, wie die Ergebnisse einzuordnen sind und welche
                Arbeit auf dem Weg zu einer produktionsreifen Engine bleibt.</p>

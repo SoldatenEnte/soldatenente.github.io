@@ -37,7 +37,9 @@ function renderHeadline(d) {
       Der Wert fasst zusammen, wie weit eine Engine im Mittel vom jeweils schnellsten Ergebnis
       einer Kategorie entfernt liegt. 1,00 bedeutet, dass sie in allen Kategorien am schnellsten
       war; höhere Werte bedeuten einen größeren durchschnittlichen Abstand. Für diese Verhältnisse
-      wird das geometrische Mittel verwendet.
+      wird das geometrische Mittel verwendet: Es mittelt die Faktoren durch Multiplikation und
+      anschließendes Wurzelziehen, damit nicht eine einzelne Kategorie mit besonders großem
+      Zahlenwert die Zusammenfassung bestimmt.
       ${d.invalid_categories ? `<br><span class="tag warn">${d.invalid_categories} ungültig</span>
         Kategorien mit abweichenden Prüfsummen sind aus dem Mittel ausgenommen.` : ""}
     </div>` +

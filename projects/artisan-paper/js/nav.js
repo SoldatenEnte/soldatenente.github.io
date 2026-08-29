@@ -49,12 +49,11 @@ export const PAGES = [
     ],
   },
   {
-    file: "planet.html",
-    title: "Planet",
+    file: "vivarium.html",
+    title: "Vivarium",
     sections: [
       ["modell", "Vom Mesh zur Welt"], ["klima", "Höhe, Klima und Ressourcen"],
-      ["graph", "Die Oberfläche als Graph"], ["siedler", "Siedler und Stämme"],
-      ["ablauf", "Ein Simulationsschritt"], ["artisan", "Wie Artisan dafür genutzt wird"],
+      ["graph", "Die Oberfläche als Graph"], ["siedler", "Die Logik der Siedler"],
       ["aussage", "Was die Simulation zeigt"],
     ],
   },

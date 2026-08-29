@@ -191,11 +191,11 @@ h3 { font-size: 18px; font-weight: 650; margin: 30px 0 10px; letter-spacing: -0.
   font-size: 19px;
   line-height: 1.6;
   color: var(--ink-2);
-  max-width: 62ch;
+  max-width: 100%;
   margin: 0 0 28px;
   font-weight: 400;
 }
-p { max-width: 68ch; }
+p { max-width: 100%; }
 a { color: var(--accent-ink); text-decoration-thickness: 1px; text-underline-offset: 2px; }
 code {
   font-family: var(--mono);
@@ -218,7 +218,7 @@ code {
   font-size: 13.5px;
   color: var(--ink-3);
   line-height: 1.65;
-  max-width: 72ch;
+  max-width: 100%;
 }
 .rule { border: 0; border-top: 1px solid var(--rule); margin: 52px 0; }
 .rule.thick { border-top: 1.5px solid var(--ink); }
@@ -234,7 +234,7 @@ code {
   border: 1px solid var(--rule);
   padding: 13px 16px;
   margin: 22px 0;
-  max-width: 82ch;
+  max-width: 100%;
 }
 .note strong { color: var(--ink); font-weight: 650; }
 .note.warn { background: var(--warn-soft); border-color: color-mix(in srgb, var(--warn) 35%, var(--rule)); color: var(--ink-2); }
@@ -584,9 +584,22 @@ footer {
 
 /* min-width 0 erlaubt dem Grid-Item, schmaler als sein breitester Inhalt zu
    werden. Ohne das scrollt die ganze Seite statt der Tabelle. */
-.doc-main { min-width: 0; }
+.doc-main {
+  min-width: 0;
+  max-width: 740px;
+}
 .doc-main h2:first-of-type { margin-top: 44px; }
 .doc-main section { scroll-margin-top: 96px; }
+
+figure {
+  margin: 28px 0;
+  width: 100%;
+}
+figure img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
 
 /* Vor- und Zurueck-Navigation am Seitenende. */
 .pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 72px; }

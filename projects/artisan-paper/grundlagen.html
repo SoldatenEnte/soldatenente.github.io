@@ -18,9 +18,10 @@
     <aside class="doc-nav"></aside>
     <main class="doc-main">
 
+      <p class="kicker">Kapitel 1 · Grundlagen</p>
       <h1>Grundlagen</h1>
       <p class="lede">
-        Artisan verbindet drei Ideen. Ein Entity-Component-System ordnet die Spielwelt als Daten.
+        Artisan verbindet drei Ideen. Ein Entity-Component-System (ECS) ordnet die Spielwelt als Daten.
         WebAssembly verarbeitet diese Daten im Browser. WebGPU stellt sie dar. Dieses Kapitel baut
         die drei Teile nacheinander auf.
       </p>
@@ -33,10 +34,11 @@
           ihrer Daten unmittelbar, wie effizient der Prozessor sie verarbeiten kann.
         </p>
         <p>
-          Zur Erklärung dient im Folgenden bewusst ein vereinfachtes, fiktives Spielbeispiel mit
-          Drachen, Fledermäusen und Goblins. Es gehört nicht zum Datenmodell von Vivarium, macht
-          unterschiedliche Komponentenkombinationen aber deutlicher sichtbar als die dort relativ
-          ähnlich aufgebauten Siedler.
+          Das folgende Beispiel führt in ein Entity-Component-System, kurz ECS, ein. Zur Erklärung
+          dient bewusst eine vereinfachte, fiktive Spielwelt mit Drachen, Fledermäusen und Goblins.
+          Sie gehört nicht zum Datenmodell von Vivarium, macht unterschiedliche
+          Komponentenkombinationen aber deutlicher sichtbar als die dort relativ ähnlich
+          aufgebauten Siedler.
         </p>
         <p>
           Ein klassisches Objekt in einem Spiel wird häufig über Vererbung modelliert: ein Gegner
@@ -51,25 +53,26 @@
           <code>Position</code>, <code>Velocity</code>, <code>Health</code> und
           <code>Flying</code>. Verliert er die Flugfähigkeit, verschwindet nur der Baustein
           <code>Flying</code>, ohne dass irgendeine Klassenhierarchie angepasst werden müsste
-          <a class="cite" href="./quellen.html#literatur">[8]</a>.
+          <a class="cite" href="./quellen.html#ref-8">[8]</a>.
         </p>
         <dl class="terms">
-          <div><dt>Entity</dt><dd>Eine Kennung aus ID und Versionsnummer. Die Versionsnummer verhindert, dass eine wiederverwendete ID mit einem gelöschten Entity verwechselt wird. Das Entity selbst trägt keine Daten.</dd></div>
-          <div><dt>Component</dt><dd>Ein reiner Datencontainer, zum Beispiel <code>Position { x, y }</code>. Kein Verhalten, nur Werte.</dd></div>
+          <div><dt>Entity</dt><dd>Eine Kennung aus ID und Generation. Die Generation verhindert, dass eine wiederverwendete ID mit einem gelöschten Entity verwechselt wird. Das Entity selbst trägt keine Daten.</dd></div>
+          <div><dt>Component</dt><dd>In Artisan ein reiner Datencontainer, zum Beispiel <code>Position { x, y }</code>. Verhalten liegt nicht in der Komponente, sondern in Systemen.</dd></div>
           <div><dt>System</dt><dd>Eine Funktion, die über alle Entities mit passenden Komponenten läuft, zum Beispiel: Geschwindigkeit lesen, Position schreiben.</dd></div>
-          <div><dt>Query</dt><dd>Die Anfrage eines Systems: welche Komponenten müssen vorhanden sein, welche fehlen, und wird gelesen oder geschrieben.</dd></div>
+          <div><dt>Query</dt><dd>Die Datenanfrage eines Systems: welche Komponenten müssen vorhanden sein oder fehlen, und auf welche davon wird lesend oder schreibend zugegriffen?</dd></div>
         </dl>
         <p>
-          Die Query hat neben der reinen Datenauswahl noch eine zweite Aufgabe. Aus ihr lässt sich
-          ableiten, ob zwei Systeme gefahrlos gleichzeitig laufen können. Lesen beide nur, gibt es
-          keinen Konflikt. Schreibt eines eine Komponente, die das andere gerade liest oder
-          schreibt, ist Gleichzeitigkeit ohne zusätzliche Absicherung nicht sicher. Genau diese
-          Information nutzt später der Scheduler, um Systeme parallel einzuplanen.
+          Die Query wählt damit nicht nur Daten aus, sondern beschreibt auch den Zugriff darauf.
+          Daraus lässt sich ableiten, ob zwei Systeme gefahrlos gleichzeitig laufen können. Lesen
+          beide nur, gibt es keinen Konflikt. Schreibt eines eine Komponente, die das andere gerade
+          liest oder schreibt, ist Gleichzeitigkeit ohne zusätzliche Absicherung nicht sicher. Der
+          Scheduler, also die Ablaufplanung der Engine, nutzt diese Information später, um Systeme
+          in eine sichere Reihenfolge zu bringen und verträgliche Systeme parallel einzuplanen.
         </p>
         <p>
-          Ein kleines Beispiel macht das greifbar und wird im Folgenden für Sparse Set und
-          Archetype weiterverwendet: fünf Entities aus einer einfachen Szene, verteilt auf vier
-          unterschiedliche Kombinationen von Komponenten.
+          Ein kleines Beispiel macht das greifbar und wird im nächsten Abschnitt für zwei
+          unterschiedliche Speichermodelle weiterverwendet: fünf Entities aus einer einfachen
+          Szene, verteilt auf vier Kombinationen von Komponenten.
         </p>
         <div class="scroll-x">
           <table class="matrix">
@@ -96,7 +99,7 @@
         <p>
           Ein <strong>Sparse Set</strong> hält für jeden Komponententyp ein dicht gepacktes Array
           mit den tatsächlich vorhandenen Werten, dazu eine Indextabelle, die von einem Entity zur
-          Position in diesem Array führt. Einfügen, Entfernen und der direkte Zugriff über ein
+          Position in diesem Array führt <a class="cite" href="./quellen.html#ref-7">[7]</a>. Einfügen, Entfernen und der direkte Zugriff über ein
           bekanntes Entity sind dabei sehr günstig. Der Nachteil zeigt sich, sobald eine Query
           mehrere Komponententypen gleichzeitig braucht: Für jedes Entity muss dann geprüft werden,
           ob es in allen beteiligten Sets vorkommt, bevor überhaupt gerechnet werden kann.
@@ -156,21 +159,23 @@
         <div class="note">
           <strong>Der Preis dafür.</strong> Der Vorteil des Archetype-Modells ist die dichte,
           ununterbrochene Iteration. Bezahlt wird er bei strukturellen Änderungen: Verliert E1, der
-          Drache, seine Flugfähigkeit, ändert sich seine Signatur, und es muss komplett von
-          Archetype A nach Archetype B umziehen. Dabei wandert nicht nur die entfernte Komponente
+          Drache, seine Flugfähigkeit, ändert sich seine Signatur, also die genaue Kombination
+          seiner Komponenten. Es muss komplett von Archetype A nach Archetype B umziehen. Dabei
+          wandert nicht nur die entfernte Komponente
           <code>Flying</code>, sondern auch <code>Position</code>, <code>Velocity</code> und
           <code>Health</code> in die neue Tabelle mit.
         </div>
         <p>
           Beide Modelle schließen sich nicht gegenseitig aus. Bevy speichert standardmäßig in
           Tabellen und bietet Sparse Sets als Alternative für Komponenten an, die häufig hinzugefügt
-          und entfernt werden. flecs verwendet ebenfalls Archetypes, erlaubt aber zusätzlich
-          Sparse-Komponenten außerhalb der Tabellen. Artisan besitzt im aktuellen Stand nur das
+          und entfernt werden <a class="cite" href="./quellen.html#ref-9">[9]</a>. Flecs verwendet ebenfalls Archetypes, erlaubt aber zusätzlich
+          Sparse-Komponenten außerhalb der Tabellen <a class="cite" href="./quellen.html#ref-10">[10]</a>. Artisan besitzt im aktuellen Stand nur das
           Archetype-Modell, keine solche Ausweichmöglichkeit.
         </p>
         <p>
-          Wie stark sich dieser Zielkonflikt tatsächlich auswirkt, misst die Evaluation getrennt für
-          dichte Iteration, strukturelle Änderungen und wahlfreien Zugriff.
+          Wie stark sich dieser Zielkonflikt tatsächlich auswirkt, misst die Evaluation getrennt:
+          bei dichter Iteration über zusammenhängende Spalten, bei strukturellen Änderungen der
+          Komponentenkombination und beim wahlfreien Zugriff auf einzelne Entities.
           <a class="inline-link" href="./evaluation.html#ergebnisse">Zur Messreihe</a>
         </p>
       </section>
@@ -178,10 +183,11 @@
       <section id="caches">
         <h2>Warum zusammenhängende Daten schneller sind</h2>
         <p>
-          Der Prozessor liest Werte nicht einzeln aus dem Arbeitsspeicher, sondern in Blöcken
-          benachbarter Bytes, den Cache Lines. Werden Werte nacheinander im Speicher gelesen,
-          landen die nächsten benötigten Werte oft schon im Cache, bevor sie überhaupt angefragt
-          wurden. Dieses Prinzip heißt räumliche Lokalität.
+          Zwischen Prozessor und Arbeitsspeicher liegt ein kleiner, schneller Zwischenspeicher, der
+          CPU-Cache. Der Prozessor lädt Werte daraus nicht einzeln, sondern in Blöcken benachbarter
+          Bytes, den Cache Lines. Werden Werte nacheinander im Speicher gelesen, liegen die nächsten
+          benötigten Werte oft schon im Cache, bevor sie ausdrücklich angefragt werden. Dieses
+          Prinzip heißt räumliche Lokalität.
         </p>
         <p>
           Archetype-Spalten sind für genau dieses Muster gebaut: Alle Werte eines Komponententyps
@@ -189,6 +195,12 @@
           <code>Velocity</code> braucht, lädt dadurch keine Namen, Materialien oder Kollisionsformen
           mit, nur weil diese zufällig zum selben Entity gehören.
         </p>
+        <figure>
+          <img src="./images/diagram_cache_locality.svg" alt="Cache-Line-Effizienz: Array of Structures vs. Structure of Arrays">
+          <figcaption class="dek">
+            Abb. 1: Speicheranordnung und Cache-Line-Auslastung: Beispielrechnung für ein 64-Byte-Layout (AoS mit 37,5 % vs. Archetype-Spalten mit 100 % Auslastung).
+          </figcaption>
+        </figure>
         <p>
           Das erklärt, warum ein Vorteil zu erwarten ist. Es belegt ihn aber noch nicht: Wie viel
           davon in der Praxis ankommt, hängt zusätzlich von der Query-Implementierung, der Zahl der
@@ -200,12 +212,39 @@
       <section id="wasm">
         <h2>Wie Rust in den Browser kommt</h2>
         <p>
-          JavaScript ist dynamisch typisiert, verwaltet Speicher automatisch und lässt kaum
-          Kontrolle darüber, wo genau ein Wert im Speicher landet. Moderne JavaScript-Engines
-          übersetzen häufig durchlaufenen Code zwar zur Laufzeit in schnellen Maschinencode, diese
-          Optimierung beruht aber auf Annahmen über beobachtete Typen. Ändern sich diese Annahmen,
-          kann die Engine den optimierten Pfad wieder verwerfen. Auch wann genau die
-          Garbage Collection läuft, bestimmt nicht die Anwendung.
+          <strong>Rust in Kürze.</strong> Rust ist eine kompilierte, statisch typisierte
+          Systemprogrammiersprache ohne Garbage Collector. Der Compiler verfolgt, wem ein Wert
+          gehört und wie lange Verweise darauf gültig sind. Dadurch verbindet Rust eine ähnlich
+          genaue Kontrolle über Speicher und Laufzeitkosten wie C oder C++ mit Prüfungen, die viele
+          ungültige Speicherzugriffe und konkurrierende Schreibzugriffe bereits beim Kompilieren
+          verhindern. Die stabile Version 1.0 erschien 2015
+          <a class="cite" href="./quellen.html#ref-14">[14]</a>.
+        </p>
+        <p>
+          <strong>Warum Rust?</strong> Artisan hätte grundsätzlich auch in C oder C++ entwickelt
+          werden können; beide Sprachen lassen sich nach WebAssembly übersetzen und erlauben
+          ebenfalls ein kontrolliertes Speicherlayout. Rust wurde nicht gewählt, weil es
+          automatisch schneller wäre, sondern wegen seiner zusätzlichen Sicherheitsprüfungen und
+          seines passenden Werkzeug-Ökosystems. Cargo verwaltet Build und Abhängigkeiten,
+          <code>wasm-bindgen</code> verbindet Rust mit JavaScript und
+          <code>wasm-bindgen-rayon</code> überträgt Rayons Parallelisierungsmodell auf Web Workers.
+          Derselbe Engine-Kern lässt sich als WebAssembly-Modul für den Browser und nativ für Tests
+          und Benchmarks kompilieren.
+        </p>
+        <p>
+          Rust macht hardwarenahe, potenziell unsichere Operationen nicht überflüssig. Artisan
+          verwendet intern gezielt <code>unsafe</code>-Code, etwa für direkte Speicherzugriffe. Der
+          Vorteil besteht darin, solche Stellen sichtbar einzugrenzen und nach außen eine möglichst
+          sichere Schnittstelle bereitzustellen.
+        </p>
+        <p>
+          JavaScript ist dynamisch typisiert: Eine Variable kann zur Laufzeit Werte unterschiedlicher
+          Typen aufnehmen. Außerdem verwaltet die Sprache Speicher automatisch. Moderne
+          JavaScript-Engines übersetzen häufig ausgeführten Code zwar zur Laufzeit in Maschinencode,
+          also direkt ausführbare Prozessorbefehle. Diese Optimierung beruht jedoch auf Annahmen über
+          die beobachteten Typen und kann bei Änderungen wieder verworfen werden. Auch den Zeitpunkt
+          der Garbage Collection, der automatischen Freigabe nicht mehr benötigten Speichers,
+          bestimmt nicht die Anwendung.
         </p>
         <p>
           Für ein Archetype-ECS ist vor allem der fehlende Zugriff auf das Speicherlayout ein
@@ -215,23 +254,28 @@
           Ausführungsformat für genau den rechen- und speicherintensiven Teil, den Engine-Kern.
         </p>
         <p>
-          <strong>WebAssembly</strong> ist ein sicheres, portables Low-Level-Format. Es definiert ein
-          Binärformat, ein lesbares Textformat und die Semantik einer stackbasierten virtuellen
-          Maschine. Das Prinzip ähnelt Java-Bytecode in der JVM: Beide laufen in einer
-          kontrollierten Umgebung und werden dort in Maschinencode übersetzt. WebAssembly ist
-          jedoch schlanker und schreibt weder ein Klassenmodell noch Garbage Collection vor.
-          Programme in Rust, C oder C++ lassen sich in dieses WebAssembly-Format übersetzen. Der
-          Browser validiert das erzeugte Modul und führt es anschließend interpretiert oder in
-          echten Maschinencode übersetzt aus. Ein WebAssembly-Modul ist also kein fertiges natives
-          Programm für eine bestimmte CPU, sondern ein Zwischenformat, das der Browser selbst weiterverarbeitet
-          <a class="cite" href="./quellen.html#literatur">[1-2]</a>.
+          <strong>WebAssembly</strong>, kurz Wasm, ist ein sicheres, portables und hardwarenahes
+          Codeformat. Es wurde von der WebAssembly-Arbeitsgruppe des W3C standardisiert und ist seit
+          2019 ein offizieller Webstandard. Die verbreiteten Browser unterstützen es. Wasm ersetzt
+          JavaScript nicht, sondern ergänzt es vor allem bei rechenintensiven Programmteilen
+          <a class="cite" href="./quellen.html#ref-15">[15]</a>.
         </p>
         <p>
-          Ausgeführt wird das Modul in einer Sandbox. Es hat keinen freien Zugriff auf das
-          Betriebssystem, das DOM oder andere Browserobjekte, sondern nur auf das, was die
-          Umgebung ausdrücklich als Funktion importiert oder exportiert bereitstellt. WebAssembly
-          ersetzt JavaScript damit nicht, es arbeitet mit ihm zusammen
-          <a class="cite" href="./quellen.html#literatur">[2]</a>.
+          WebAssembly definiert ein kompaktes Binärformat, ein lesbares Textformat und die Regeln
+          einer virtuellen Maschine. Ihre Befehle arbeiten mit einem internen Stapel von Werten und
+          werden vom Browser validiert. Anschließend kann der Browser sie interpretieren oder in
+          Maschinencode übersetzen. Programme in Rust, C oder C++ lassen sich in dieses Format
+          kompilieren. Ein WebAssembly-Modul ist daher kein fertiges Programm für eine bestimmte
+          CPU, sondern ein Zwischenformat, das die jeweilige Laufzeitumgebung weiterverarbeitet
+          <a class="cite" href="./quellen.html#ref-1">[1]</a>.
+        </p>
+        <p>
+          Ausgeführt wird das Modul in einer Sandbox, also einer vom restlichen System abgegrenzten
+          Umgebung. Es hat keinen freien Zugriff auf das Betriebssystem, das Document Object Model
+          (DOM) der Webseite oder andere Browserobjekte. Verfügbar sind nur Funktionen und Werte,
+          die die Umgebung ausdrücklich in das Modul importiert oder aus ihm exportiert. Den Zugang
+          zu Browser-APIs vermittelt deshalb weiterhin JavaScript
+          <a class="cite" href="./quellen.html#ref-2">[2]</a>.
         </p>
       </section>
 
@@ -239,9 +283,9 @@
         <h2>Die Grenze zwischen Rust und JavaScript</h2>
         <p>
           Rust und JavaScript arbeiten in unterschiedlichen Umgebungen. Über den Speicher des
-          WebAssembly-Moduls können sie trotzdem dieselben Daten nutzen. Vereinfacht ist dieser
-          Speicher eine lange Reihe von Bytes. Rust legt dort zum Beispiel die Positionen aller
-          Entities ab.
+          WebAssembly-Moduls können sie trotzdem dieselben Daten nutzen. Dieser lineare Speicher ist
+          vereinfacht eine lange, zusammenhängende Reihe von Bytes. Rust legt dort zum Beispiel die
+          Positionen aller Entities ab.
         </p>
         <p>
           JavaScript kann diesen Speicher als <code>ArrayBuffer</code> lesen. Ein TypedArray legt
@@ -249,11 +293,12 @@
           Beispiel als Kommazahlen. Kennt JavaScript Startadresse, Datentyp und Länge einer
           Komponentenspalte, kann es deren Werte direkt lesen. Es muss dafür weder jedes Entity
           einzeln abfragen noch Kopien als JavaScript-Objekte anlegen
-          <a class="cite" href="./quellen.html#literatur">[3]</a>.
+          <a class="cite" href="./quellen.html#ref-3">[3]</a>.
         </p>
         <p>
           Der Austausch ist dennoch nicht kostenlos. Einzelne Zahlen lassen sich einfach
-          übergeben. Strings und komplexe Objekte müssen dagegen umgewandelt oder kopiert werden.
+          übergeben. Strukturierte Rust-Daten, die JavaScript inhaltlich lesen soll, müssen an der
+          aktuellen Artisan-Schnittstelle dagegen beschrieben, umgewandelt oder kopiert werden.
           Auch viele kleine Aufrufe zwischen Rust und JavaScript kosten Zeit. Ein gebündelter
           Zugriff auf einen größeren Speicherbereich ist deshalb meist effizienter.
         </p>
@@ -263,7 +308,7 @@
           ein Archetype-Wechsel kann die Position eines Entity verändern. JavaScript darf alte
           Speicherverweise deshalb nicht dauerhaft behalten, sondern muss sie bei Änderungen
           erneuern.
-          <a class="cite" href="./quellen.html#literatur">[3]</a>
+          <a class="cite" href="./quellen.html#ref-3">[3]</a>
         </div>
         <p>
           Artisans Speicherbrücke nutzt genau dieses Prinzip: Die Komponentendaten bleiben im
@@ -275,26 +320,34 @@
       <section id="nebenlaeufigkeit">
         <h2>Arbeit auf mehrere Threads verteilen</h2>
         <p>
-          JavaScript läuft im Hauptkontext einer Seite über einen einzigen Event Loop. Web Workers
-          eröffnen zusätzliche Ausführungskontexte auf Hintergrundthreads, tauschen mit dem
-          Hauptthread aber normalerweise kopierte Nachrichten aus, keine gemeinsamen Daten.
+          JavaScript verarbeitet Aufgaben im Hauptkontext einer Seite normalerweise über einen
+          einzigen Event Loop, also eine Warteschlange nacheinander abgearbeiteter Ereignisse. Web
+          Workers eröffnen zusätzliche Ausführungskontexte auf Hintergrundthreads. Sie tauschen
+          Nachrichten mit dem Hauptthread aus; Daten werden dabei strukturiert kopiert oder ihr
+          Speicher wird übertragen. Gleichzeitig gemeinsam nutzbarer Speicher entsteht dadurch
+          noch nicht.
         </p>
         <p>
-          Ein <code>SharedArrayBuffer</code> durchbricht das: Mehrere Worker können denselben
-          Speicherblock gleichzeitig lesen und schreiben. Sicher wird der Zugriff dadurch allein
-          noch nicht, gleichzeitige Schreibzugriffe können weiterhin Data Races erzeugen. Die
-          Anwendung muss Arbeit konfliktfrei aufteilen oder auf atomare Operationen zurückgreifen.
+          Ein <code>SharedArrayBuffer</code> stellt einen solchen gemeinsam nutzbaren Speicherblock
+          bereit. Mehrere Worker können ihn gleichzeitig lesen und schreiben. Sicher wird der
+          Zugriff dadurch allein noch nicht: Ungeordnete gleichzeitige Zugriffe auf dieselben Daten
+          können ein Data Race erzeugen, dessen Ergebnis vom zufälligen zeitlichen Ablauf abhängt.
+          Die Anwendung muss Arbeit deshalb konfliktfrei aufteilen oder atomare Operationen nutzen,
+          die einen einzelnen Zugriff unteilbar ausführen.
           Aus Sicherheitsgründen muss die Seite außerdem von Inhalten anderer Websites abgeschottet
           sein. So kann der geteilte Speicher nicht zum Auslesen fremder Daten missbraucht werden.
-          Der Server aktiviert diesen Modus mit den beiden Headern
+          Der Server aktiviert diese Cross-Origin-Isolation mit den beiden HTTP-Headern
           <code>Cross-Origin-Opener-Policy</code> und <code>Cross-Origin-Embedder-Policy</code>.
         </p>
         <p>
-          Im Rust-Ökosystem stellt Rayon datenparallele Iteratoren und einen Thread-Pool bereit.
-          <code>wasm-bindgen-rayon</code> verbindet dieses Modell mit Web Workers und einem
-          geteilten WebAssembly-Speicher. Artisan exportiert die Initialisierung dieses Thread-Pools
-          und nutzt Rayon sowohl für parallele Query-Iteration als auch für die parallele Ausführung
-          verträglicher Systeme <a class="cite" href="./quellen.html#literatur">[11-12]</a>.
+          Rayon ist eine Rust-Bibliothek für Datenparallelität: Sie verteilt unabhängige Teile einer
+          Schleife auf einen Thread-Pool, also eine wiederverwendbare Gruppe von Arbeitsthreads.
+          <code>wasm-bindgen-rayon</code> ist kein Browserstandard, sondern verbindet dieses Modell
+          mit Web Workers und einem geteilten WebAssembly-Speicher. Artisan exportiert die
+          Initialisierung des Pools und nutzt Rayon für parallele Query-Iteration sowie für die
+          parallele Ausführung verträglicher Systeme
+          <a class="cite" href="./quellen.html#ref-11">[11]</a>
+          <a class="cite" href="./quellen.html#ref-12">[12]</a>.
         </p>
       </section>
 
@@ -302,8 +355,8 @@
         <h2>Wie aus Daten ein Bild wird</h2>
         <p>
           Eine Grafikkarte ist auf die gleichzeitige Verarbeitung vieler gleichartiger Operationen
-          ausgelegt. Beim klassischen Rasterisierungs-Rendering verarbeitet sie zuerst geometrische
-          Eckpunkte und erzeugt daraus Bildfragmente. Ein <em>Vertex Buffer</em> hält die
+          ausgelegt. Bei der Rasterisierung werden geometrische Formen aus Eckpunkten und Dreiecken
+          in Bildpunkte auf dem Bildschirm umgerechnet. Ein <em>Vertex Buffer</em> hält die
           Geometriedaten, etwa die Ecken eines Dreiecks. Ein <em>Vertex Shader</em> transformiert
           diese Punkte in den für die Darstellung nötigen Koordinatenraum, ein
           <em>Fragment Shader</em> bestimmt danach für jedes erzeugte Bildfragment unter anderem
@@ -311,58 +364,73 @@
         </p>
         <p>
           Ein <em>Draw Call</em> weist die Grafikkarte an, eine Geometrie mit einem bestimmten
-          Zustand zu zeichnen. Seine Kosten liegen nicht nur in der eigentlichen Geometrieverarbeitung:
-          Vorher müssen CPU und Treiber den Befehl kodieren, Zustände und Ressourcen referenzieren
-          und die Arbeit übergeben. Viele kleine Draw Calls können deshalb einen CPU-seitigen
-          Engpass erzeugen, selbst wenn die Grafikkarte pro Aufruf kaum etwas zu tun hat.
+          Zustand zu zeichnen. Seine Kosten liegen nicht nur in der Geometrieverarbeitung: Vorher
+          müssen der Hauptprozessor (CPU), der Browser und der Grafikkartentreiber den Befehl
+          kodieren, benötigte Speicherobjekte referenzieren und die Arbeit an die GPU übergeben.
+          Viele kleine Draw Calls können deshalb einen CPU-seitigen Engpass erzeugen, selbst wenn
+          die Grafikkarte pro Aufruf kaum etwas zu tun hat.
         </p>
         <p>
-          CPU- und GPU-Speicher sind außerdem getrennte Bereiche. Daten aus dem JavaScript- oder
-          WebAssembly-Speicher lassen sich nicht einfach als Vertex Buffer verwenden. Die Anwendung
-          muss dafür einen eigenen <code>GPUBuffer</code> anlegen und Daten explizit übertragen,
-          zum Beispiel mit <code>GPUQueue.writeBuffer</code>. Dieser Schritt bleibt nötig, selbst
-          wenn JavaScript den ursprünglichen Wert zuvor ganz ohne Kopie aus dem WASM-Speicher
-          gelesen hat.
+          WebGPU behandelt den Speicher der Webseite und GPU-Ressourcen als getrennte Bereiche,
+          selbst wenn CPU und integrierte GPU physisch denselben Arbeitsspeicher nutzen. Daten aus
+          dem JavaScript- oder WebAssembly-Speicher lassen sich daher nicht unmittelbar als Vertex
+          Buffer verwenden. Die Anwendung legt einen <code>GPUBuffer</code> an und überträgt Daten
+          beispielsweise mit <code>GPUQueue.writeBuffer</code>. Dieser Schritt bleibt nötig, selbst
+          wenn JavaScript den ursprünglichen Wert zuvor ohne Kopie aus dem Wasm-Speicher gelesen hat.
         </p>
       </section>
 
       <section id="webgl">
         <h2>Warum WebGPU statt WebGL?</h2>
         <p>
-          <strong>WebGL</strong> bildet die ältere OpenGL-ES-API für den Browser ab und arbeitet als
-          Zustandsmaschine. Ein Aufruf bindet zum Beispiel einen Buffer oder ein Shader-Programm an
-          den aktuell aktiven Kontext, ein späterer Draw Call verwendet dann den in diesem Moment
-          gültigen Zustand. Die Wirkung eines einzelnen Zeichenbefehls hängt damit von der ganzen
-          Kette vorausgegangener Zustandsänderungen ab, nicht nur von seinen eigenen Parametern.
-          Das erschwert Validierung, Fehlersuche und Parallelisierung sowohl im Treiber als auch im
-          Browser selbst.
+          <strong>WebGL</strong> wird von der Khronos Group standardisiert. Die erste Version
+          erschien 2011, basiert auf OpenGL ES und brachte breit verfügbare, hardwarebeschleunigte
+          3D-Grafik ohne Plugin in den Browser
+          <a class="cite" href="./quellen.html#ref-6">[6]</a>. WebGL arbeitet als
+          Zustandsmaschine: Ein Aufruf bindet zum Beispiel einen Buffer oder ein Shader-Programm an
+          den aktiven Kontext, ein späterer Draw Call verwendet den dann gültigen Zustand. Die
+          Wirkung eines Zeichenbefehls hängt damit von vorausgegangenen Zustandsänderungen ab, nicht
+          nur von seinen eigenen Parametern. Das erschwert Validierung, Fehlersuche und
+          Parallelisierung im Treiber und im Browser.
         </p>
         <p>
-          <strong>WebGPU</strong> wurde deshalb nicht als nächste WebGL-Version entworfen, sondern
-          als eigenständiges Modell für moderne Grafikkarten. Zustände werden nicht mehr implizit
-          gesetzt und stillschweigend vorausgesetzt, sondern in expliziten Objekten gebündelt und
-          einmal erzeugt <a class="cite" href="./quellen.html#literatur">[4]</a>.
+          <strong>WebGPU</strong> wird von der W3C-Arbeitsgruppe GPU for the Web gemeinsam mit
+          Browser- und Hardwareherstellern entwickelt. Die API ist als moderner Nachfolger von
+          WebGL gedacht und orientiert sich an heutigen hardwarenahen Grafik-APIs wie Vulkan,
+          Metal und Direct3D 12; sie ist jedoch kein direkt kompatibler Ersatz. Zustände werden
+          nicht mehr stillschweigend vorausgesetzt, sondern in expliziten Objekten gebündelt
+          <a class="cite" href="./quellen.html#ref-4">[4]</a>.
         </p>
+        <div class="note">
+          <strong>Stand August 2026.</strong> WebGPU befindet sich noch im
+          Candidate-Recommendation-Prozess des W3C. Es ist in aktuellen Chromium-Browsern und
+          Safari sowie auf mehreren Firefox-Plattformen verfügbar. Auf einzelnen Kombinationen aus
+          Browser, Betriebssystem und Hardware, insbesondere Teilen von Linux und Android, bleibt
+          die Unterstützung uneinheitlich
+          <a class="cite" href="./quellen.html#ref-4">[4]</a>
+          <a class="cite" href="./quellen.html#ref-16">[16]</a>.
+        </div>
         <p>
           Zentral dafür ist die <code>GPURenderPipeline</code>: Sie bündelt Shader, Vertex-Layout
           und feste Pipelinezustände in einem Objekt, das einmal erstellt und danach mit einem
           einzigen Befehl aktiviert wird. Ein <em>Command Encoder</em> zeichnet GPU-Operationen auf
-          und erzeugt daraus einen <em>Command Buffer</em>, der gesammelt über eine Queue
-          eingereicht wird. Befehle hängen dadurch nicht mehr von einem einzigen globalen Zustand
-          ab, sondern referenzieren ihre Ressourcen innerhalb klar abgegrenzter Passes und
-          Pipelines. Größere, in sich abgeschlossene Arbeitseinheiten geben der Implementierung
-          außerdem mehr Spielraum für Planung und Optimierung, ohne dass WebGPU dafür auf jede
-          Prüfung verzichtet: validiert wird weiterhin, nur ein größerer Teil davon läuft
-          asynchronisiert auf der eigenen Geräte-Timeline statt bei jedem einzelnen Aufruf.
+          und erzeugt daraus einen <em>Command Buffer</em>, also eine vorbereitete Befehlsliste. Eine
+          Queue nimmt solche Listen gesammelt zur Ausführung an. Befehle hängen dadurch nicht mehr
+          von einem einzigen globalen Zustand ab, sondern referenzieren ihre Ressourcen innerhalb
+          klar abgegrenzter Render- oder Compute-Passes. Größere, in sich abgeschlossene
+          Arbeitseinheiten geben der Implementierung mehr Spielraum für Planung und Optimierung.
+          WebGPU validiert die Befehle weiterhin, meldet einen Teil der Fehler aber erst später und
+          nicht unmittelbar im auslösenden JavaScript-Aufruf.
         </p>
         <p>
           Neben Renderpipelines kennt WebGPU auch <em>Compute Pipelines</em> für allgemeine
           parallele Berechnungen, unabhängig von der festen Abfolge aus Vertex- und
-          Fragmentverarbeitung. Beide Pipelinearten werden in WGSL beschrieben, der zu WebGPU
-          gehörenden Shading-Sprache <a class="cite" href="./quellen.html#literatur">[4-5]</a>.
-          Artisans reguläre Batch-Pipeline nutzt für die hier betrachtete
-          Darstellung vor allem Renderpipelines mit Instancing; aus der vorhandenen
-          Compute-Unterstützung von WebGPU folgt keine konkrete Nutzung in jedem Renderpfad.
+          Fragmentverarbeitung. Die programmierbaren Stufen beider Pipelinearten werden in der
+          WebGPU Shading Language (WGSL) geschrieben; weitere Zustände legt die Anwendung über
+          WebGPU-Objekte fest <a class="cite" href="./quellen.html#ref-5">[5]</a>. Artisans
+          reguläre Renderpipeline gruppiert passende Objekte zu Batches, also gemeinsam
+          verarbeiteten Gruppen, und zeichnet sie per Instancing. Aus der Compute-Unterstützung von
+          WebGPU folgt keine konkrete Nutzung in jedem Renderpfad.
         </p>
       </section>
 
@@ -370,38 +438,50 @@
         <h2>Viele Objekte mit wenigen Befehlen zeichnen</h2>
         <p>
           Beim <strong>Instancing</strong> zeichnet ein einziger Draw Call dieselbe Geometrie
-          mehrfach. Die Vertexdaten des Meshes werden dabei nur einmal übertragen, pro Instanz
-          unterscheiden sich lediglich zusätzliche Werte wie Position oder Materialfarbe.
+          mehrfach. Die Vertexdaten des Meshes, also des geometrischen Modells, werden dabei nur
+          einmal bereitgestellt. Pro Instanz unterscheiden sich lediglich zusätzliche Werte wie
+          Position oder Materialfarbe.
         </p>
         <p>
           Die Zahl der Draw Calls sinkt dadurch nur, wenn sich mehrere Objekte tatsächlich
-          gemeinsam verarbeiten lassen. Unterschiedliche Meshes, Shader, Texturen oder andere
-          Pipelinezustände erzwingen getrennte Batches. Eine Engine muss deshalb selbst bestimmen,
-          welche Entities zu einem zusammenhängenden instanzierten Aufruf zusammengefasst werden
-          können.
+          gemeinsam verarbeiten lassen. In Artisans aktueller Pipeline führen unterschiedliche
+          Meshes, Shader, Texturen oder andere Pipelinezustände zu getrennten Batches. Andere
+          Renderer können einige dieser Unterschiede mit Techniken wie Texturatlanten oder
+          erweiterten Draw-Verfahren zusammenfassen. Eine Engine muss deshalb bestimmen, welche
+          Entities gemeinsam instanziert gezeichnet werden können.
         </p>
         <p>
-          In Artisan läuft diese Auswahl im Rust- und WASM-Kern, JavaScript setzt anschließend nur
+          In Artisan läuft diese Auswahl im Rust- und Wasm-Kern, JavaScript setzt anschließend nur
           die daraus abgeleiteten Draw Calls ab. Die Pipeline ist damit CPU-gesteuert und nutzt
-          GPU-Instancing. Bei einer vollständig GPU-driven Pipeline bleiben dagegen auch Simulation,
-          Sichtbarkeitsprüfung und Instanzdaten auf der Grafikkarte. Das kann bei sehr vielen
-          einfachen Objekten schneller sein, weil pro Frame weniger Daten übertragen werden müssen.
+          GPU-Instancing. Bei einer vollständig GPU-gesteuerten, häufig als GPU-driven bezeichneten
+          Pipeline bleiben dagegen auch Simulation, Sichtbarkeitsprüfung und Instanzdaten auf der
+          Grafikkarte. Das kann bei sehr vielen einfachen Objekten schneller sein, weil pro Frame,
+          also pro berechnetem Bild, weniger Daten übertragen werden müssen.
           <a class="inline-link" href="./architektur.html#rendering">Zur Pipeline</a>
         </p>
         <p>
           Die Demo <a href="../murmuration/">Murmuration</a> zeigt CPU- und
           GPU-Simulation im Vergleich. Bei der CPU-Simulation ist jeder Würfel ein ECS-Entity und
           wird in Rust aktualisiert. Danach zeichnet WebGPU alle Würfel per Instancing. Bei der
-          GPU-Simulation liegen die Partikel direkt in einem GPU-Buffer und werden dort von einem
-          Compute Shader aktualisiert. Das ECS enthält dann nur die Konfiguration der gesamten
+          GPU-Simulation liegen die Daten der Würfel direkt in einem GPU-Buffer und werden dort von
+          einem Compute Shader, einem Rechenprogramm auf der GPU, aktualisiert. Das ECS enthält dann
+          nur die Konfiguration der gesamten
           Simulation. Das Rendering übernimmt in beiden Modi die GPU. Oben links kann unter
           Simulation path zwischen ECS - CPU und GPU compute gewechselt werden.
         </p>
+        <figure>
+          <img src="./images/diagram_sim_paths.svg" alt="Vergleich der Simulationspfade: CPU/ECS-Instancing vs. GPU-Compute">
+          <figcaption class="dek">
+            Abb. 2: Simulationspfade im Vergleich: CPU-basierte ECS-Logik mit WebGPU-Instancing vs. direkte GPU-Compute-Simulation.
+          </figcaption>
+        </figure>
         <p>
-          Auf dem Testsystem mit Intel Core i5-13600KF und RTX 4070 erreicht die Demo bei 60 FPS
+          Auf dem Testsystem mit Intel Core i5-13600KF und RTX 4070 erreicht die Demo bei 60 Bildern
+          pro Sekunde (FPS)
           etwa 1,35 Millionen gleichzeitig simulierte und dargestellte ECS-Entities. Im
-          GPU-Compute-Pfad sind ohne Frustum Culling etwa 10 Millionen Partikel möglich. Mit
-          Frustum Culling waren in den getesteten Ansichten etwa 1,2- bis 4-mal so viele Partikel
+          GPU-Compute-Pfad sind ohne Frustum Culling etwa 10 Millionen Würfel möglich. Frustum
+          Culling überspringt Würfel außerhalb des sichtbaren Kamerabereichs. Mit dieser
+          Sichtbarkeitsprüfung waren in den getesteten Ansichten etwa 1,2- bis 4-mal so viele Würfel
           möglich.
         </p>
       </section>

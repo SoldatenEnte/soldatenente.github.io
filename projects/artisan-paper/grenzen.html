@@ -24,11 +24,16 @@
         vollständig, auf jedem Gerät gleich leistungsfähig oder grundsätzlich schneller als
         etablierte ECS-Implementierungen ist.
       </p>
+      <p class="dek">
+        Dieses Kapitel setzt die in den <a href="./grundlagen.html">Grundlagen</a> erklärten
+        Begriffe voraus und beschreibt konkrete Einschränkungen der aktuellen Implementierung.
+      </p>
 
       <section id="handles">
         <h2>API- und Speicherverträge</h2>
         <p>
-          Rust-interne Entity-Handles bestehen aus einer numerischen ID und einer Generation.
+          Ein Entity-Handle ist die Kennung, über die Programmteile später wieder auf ein Entity
+          verweisen. Rust-interne Handles bestehen aus einer numerischen ID und einer Generation.
           Gelöschte IDs können wiederverwendet werden; die erhöhte Generation unterscheidet das
           neue Entity von einem alten Handle. Mehrere JavaScript-Schnittstellen übertragen jedoch
           nur die numerische ID. Ein auf JavaScript-Seite gespeichertes Handle ist nach
@@ -36,10 +41,13 @@
           eine robuste öffentliche API müsste JavaScript ebenfalls ID und Generation erhalten.
         </p>
         <p>
-          Direkte Speicherzeiger und die darauf angelegten TypedArrays können außerdem durch das
-          Wachstum einer Komponentenspalte, einen Archetype-Wechsel oder das Wachstum des
-          WebAssembly-Speichers ungültig werden. Der JavaScript-Query-Cache prüft Strukturzähler
-          und Bufferidentität pro Anfrage und baut betroffene Arrays bei einem Cache Miss neu auf.
+          Ein Speicherzeiger bezeichnet die Adresse eines Werts. Solche direkten Zeiger und die
+          darauf angelegten TypedArrays können durch das Wachstum einer Komponentenspalte, einen
+          Archetype-Wechsel oder das Wachstum des WebAssembly-Speichers ungültig werden. Der
+          JavaScript-Query-Cache bewahrt bereits berechnete Speicheransichten zur Wiederverwendung
+          auf. Pro Anfrage vergleicht er einen Strukturzähler, der Änderungen an der ECS-Anordnung
+          erfasst, und die Identität des zugrunde liegenden Speicherbuffers. Passen diese Werte
+          nicht mehr, liegt ein Cache Miss vor und die betroffenen Arrays werden neu aufgebaut.
           Einzelne außerhalb dieses Caches gespeicherte Zeiger bleiben dennoch an dieselben
           Lebensdauerregeln gebunden. Diese Regeln sind beherrschbar, machen die direkte
           Speicherbrücke aber fehleranfälliger als eine vollständig gekapselte Schnittstelle.
@@ -49,17 +57,20 @@
       <section id="scheduler">
         <h2>Laufzeit und Korrektheit</h2>
         <p>
-          Die zeilenbezogene Änderungserkennung setzt einen getrackten Schreibpfad voraus. Ein
-          gewöhnlicher Query-Zugriff mit <code>&amp;mut T</code> aktualisiert nur den
-          Änderungswert der gesamten Spalte, er markiert nicht jede tatsächlich geschriebene Zeile.
-          Filter, die eine genaue Aussage pro Entity benötigen, müssen einen der getrackten
-          Schreibpfade verwenden.
+          Die zeilenbezogene Änderungserkennung setzt einen nachverfolgten Schreibpfad voraus, der
+          jede veränderte Zeile ausdrücklich markiert. Ein gewöhnlicher veränderlicher
+          Query-Zugriff, in Rust als <code>&amp;mut T</code> geschrieben, aktualisiert nur den
+          Änderungswert der gesamten Spalte. Er markiert nicht jede tatsächlich geschriebene Zeile.
+          Filter, die eine genaue Aussage pro Entity benötigen, müssen deshalb einen der
+          nachverfolgten Schreibpfade verwenden.
         </p>
         <p>
-          Die Label-Abhängigkeiten des Schedulers bleiben unvollständig. Sie bestimmen eine
-          topologische Reihenfolge, verhindern bei kompatiblen Datenzugriffen aber nicht, dass zwei
-          geordnete Systeme anschließend in dieselbe parallele Stage gepackt werden. Eine
-          belastbare Ordnung allein durch Labels erfordert eine Korrektur des Schedulers.
+          Systeme können Labels tragen und über Vorher-/Nachher-Abhängigkeiten geordnet werden. Der
+          Scheduler berechnet daraus eine topologische Reihenfolge, in der jede angegebene
+          Abhängigkeit vor ihrem Nachfolger liegt. Diese Logik bleibt jedoch unvollständig: Bei
+          kompatiblen Datenzugriffen können zwei so geordnete Systeme anschließend in derselben
+          parallelen Stage landen, also in einer Gruppe gleichzeitig ausgeführter Systeme. Eine
+          belastbare Ordnung allein durch Labels erfordert daher eine Korrektur des Schedulers.
         </p>
       </section>
 
@@ -76,8 +87,10 @@
           Daraus folgt nicht, dass Artisan allgemein schneller als flecs oder Bevy ist. Die Suite
           bildet typische, aber nur ausgewählte Situationen ab und misst keine parallelen Systeme,
           komplexen Beziehungen, große Anwendungsgraphen oder den vollständigen Funktionsumfang
-          der Frameworks. Außerdem unterscheiden sich Sprache und Compiler: rustc erzeugt die
-          beiden Rust-Runner, MSVC den flecs-Runner. Diese Codegenerierung ist Teil des Ergebnisses.
+          der Frameworks. Außerdem unterscheiden sich Sprache und Compiler, also die Programme, die
+          Quellcode in ausführbaren Maschinencode übersetzen. <code>rustc</code> erzeugt die beiden
+          Messprogramme für Rust, während der Microsoft C/C++ Compiler (MSVC) das flecs-Programm
+          erzeugt. Unterschiede dieser Codegenerierung sind Teil des Ergebnisses.
         </p>
         <p>
           Die Einzelwerte zeigen zudem echte Zielkonflikte. flecs ist beim zufälligen Zugriff und
@@ -101,14 +114,18 @@
           WebAssembly und WebGPU stellen standardisierte Bausteine für rechen- und grafikintensive
           Webanwendungen bereit. Web Workers und <code>SharedArrayBuffer</code> ermöglichen die für
           den Rayon-Pfad benötigte Form geteilter Arbeit. Damit sind datenintensive Spiele und
-          Simulationen im Browser technisch realistisch <a class="cite" href="./quellen.html#literatur">[2, 4]</a>.
+          Simulationen im Browser technisch realistisch
+          <a class="cite" href="./quellen.html#ref-2">[2]</a>
+          <a class="cite" href="./quellen.html#ref-4">[4]</a>.
         </p>
         <p>
           Der Browser bringt zugleich eigene Grenzen mit: Geräte und Implementierungen
           unterscheiden sich, geteilter Speicher benötigt zusätzliche Sicherheits-Header und
           große Anwendungen müssen ihre Assets zunächst übertragen und zwischenspeichern. WebGPU
           befindet sich zum Zeitpunkt dieser Arbeit außerdem noch im
-          W3C-Candidate-Recommendation-Prozess <a class="cite" href="./quellen.html#literatur">[4]</a>.
+          W3C-Candidate-Recommendation-Prozess. Das ist die fortgeschrittene Prüfphase vor einer
+          endgültigen W3C Recommendation, in der Implementierungen und Tests weiter abgeglichen
+          werden <a class="cite" href="./quellen.html#ref-4">[4]</a>.
           Verfügbarkeit, Treiberverhalten und Leistungswerte müssen deshalb auf den tatsächlich
           unterstützten Plattformen geprüft werden.
         </p>

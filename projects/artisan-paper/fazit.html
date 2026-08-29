@@ -18,7 +18,7 @@
     <aside class="doc-nav"></aside>
     <main class="doc-main">
 
-      <p class="kicker">Schlussbetrachtung</p>
+      <p class="kicker">Kapitel 7 · Schluss</p>
       <h1>Fazit</h1>
       <p class="lede">
         Moderne Webtechnologien reichen für leistungsfähige browsernative Spiele und Simulationen.
@@ -72,9 +72,10 @@
           einen CPU/ECS-Pfad, dessen simulierte Entities über WebGPU instanziert gezeichnet werden,
           sowie einen GPU-getriebenen Pfad, in dem Simulation und Instanzdaten auf der Grafikkarte
           verbleiben. In einem explorativen Lauf der Murmuration-Demo wurden auf einer GeForce RTX
-          4070 zehn Millionen Würfel ohne Frustum Culling mit 60 Bildern pro Sekunde dargestellt.
-          Das ist eine Demonstrationsbeobachtung, kein kontrollierter Engine-Vergleich und keine
-          Leistungszusage für andere Szenen, Geräte oder Browser.
+          4070 zehn Millionen Würfel ohne Frustum Culling, also ohne das Überspringen außerhalb des
+          Kamerabereichs liegender Würfel, mit 60 Bildern pro Sekunde dargestellt. Das ist eine
+          Demonstrationsbeobachtung, kein kontrollierter Engine-Vergleich und keine Leistungszusage
+          für andere Szenen, Geräte oder Browser.
         </p>
       </section>
 
@@ -103,7 +104,8 @@
           Verallgemeinerung: eine stabile API, sichere Handles und Speicheransichten, korrigierte
           Scheduler-Abhängigkeiten, bessere Werkzeuge sowie Messungen über mehrere Browser, Geräte
           und vollständige Spielszenen. Für den Renderer braucht es zusätzlich eine getrennte
-          Instrumentierung seiner CPU- und GPU-Phasen.
+          Instrumentierung seiner CPU- und GPU-Phasen, also Messpunkte, die den Zeitbedarf beider
+          Seiten unabhängig erfassen.
         </p>
         <p>
           Aus heutiger Sicht kann diese Architektur ein wichtiger Zukunftspfad für Spiele,
