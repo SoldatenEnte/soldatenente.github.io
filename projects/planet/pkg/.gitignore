@@ -1,0 +1,7 @@
+# Keep only the browser runtime required by the deployed Planet demo.
+*
+!.gitignore
+!planet.js
+!planet_bg.wasm
+!snippets/
+!snippets/**
