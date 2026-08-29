@@ -112,12 +112,15 @@
         </p>
         <div id="losses"></div>
         <div class="note" style="margin-top: 18px;">
-          <strong>Einordnung des wahlfreien Zugriffs:</strong> Der spürbare Abstand beim wahlfreien Lese- (1,41×) und
-          Schreibzugriff (1,75×) gegenüber Flecs liegt in der Struktur des Archetype-Modells begründet: Um eine
-          Komponente einer einzelnen Entity aufzulösen, müssen Entity-Index, Archetype-Tabelle, Spalten-ID und
-          Zeilen-Offset nacheinander adressiert werden. Flecs nutzt in C hochoptimierte direkte Tabellenzeiger.
-          Beim Schreibzugriff kommt in Artisan zusätzlich das automatische Aktualisieren der internen Änderungserkennung
-          (Change Detection) zum Tragen.
+          <strong>Ursache beim wahlfreien Zugriff:</strong> Ein Archetype-ECS ist darauf ausgelegt, Millionen
+          Entities in einem linearen Durchlauf (Streaming) über zusammenhängende Spalten zu aktualisieren.
+          Möchte man jedoch gezielt die Komponente einer einzelnen Entity abfragen oder verändern, erfordert
+          dies mehrere Suchschritte: Zuerst wird im Entity-Index nachgeschlagen, in welcher Tabelle und Zeile
+          die Entity liegt. Anschließend muss in dieser Tabelle die gesuchte Komponentenspalte ermittelt und
+          der Speicher-Offset berechnet werden. Flecs (in C) spart hier durch direkte Tabellenzeiger
+          Zwischenschritte ein. Beim Schreibzugriff (1,75×) kommt in Artisan zusätzlich das automatische
+          Aktualisieren der internen Änderungserkennung (Change Detection) hinzu, was bei einzelnen, verstreuten
+          Schreiboperationen messbare Zeit kostet.
         </div>
       </section>
 
