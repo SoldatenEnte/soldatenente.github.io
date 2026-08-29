@@ -217,10 +217,20 @@ async function start() {
     }
     requestAnimationFrame(frame);
   }
+  const loader = document.getElementById("artisan-loader");
+  if (loader) {
+    loader.classList.add("loaded");
+    setTimeout(() => loader.remove(), 450);
+  }
   requestAnimationFrame(frame);
 }
 
 start().catch((error) => {
   console.error(error);
   status.textContent = "Demo could not be started";
+  const loader = document.getElementById("artisan-loader");
+  if (loader) {
+    const sub = loader.querySelector(".artisan-loader-sub");
+    if (sub) sub.textContent = `Error: ${error.message || error}`;
+  }
 });

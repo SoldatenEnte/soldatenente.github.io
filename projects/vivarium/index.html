@@ -23,6 +23,50 @@
         height: 100%;
         outline: none;
       }
+      .artisan-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        background: radial-gradient(circle at center, #0a0f1d 0%, #030712 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        color: #e2e8f0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        user-select: none;
+        transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.4s;
+      }
+      .artisan-loader.loaded {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      .artisan-loader-spinner {
+        width: 30px;
+        height: 30px;
+        border: 2px solid rgba(255, 255, 255, 0.08);
+        border-top-color: #38bdf8;
+        border-radius: 50%;
+        animation: artisan-spin 0.75s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      }
+      .artisan-loader-text {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #cbd5e1;
+      }
+      .artisan-loader-sub {
+        font-size: 10px;
+        letter-spacing: 0.04em;
+        color: #64748b;
+        margin-top: -6px;
+      }
+      @keyframes artisan-spin {
+        to { transform: rotate(360deg); }
+      }
       .screen {
         position: absolute;
         top: 0;
@@ -491,6 +535,12 @@
         <div id="admin-status">Choose a tool to change the world.</div>
         <div class="control-hint">Left drag paints - Right or middle drag rotates - Wheel zooms - Esc clears</div>
       </div>
+    </div>
+
+    <div id="artisan-loader" class="artisan-loader">
+      <div class="artisan-loader-spinner"></div>
+      <div class="artisan-loader-text">Loading Simulation</div>
+      <div class="artisan-loader-sub">Initializing WebAssembly &amp; WebGPU</div>
     </div>
 
     <script src="./coi-serviceworker.js"></script>

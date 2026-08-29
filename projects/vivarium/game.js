@@ -996,6 +996,13 @@ async function start() {
     // only when it must) instead of leaking a fresh GPU buffer on every
     // change -- this demo used to hand-roll its own version-check-and-
     // reregister loop here that called assets.createMesh() unconditionally
+
+    // Mesh GPU-buffer sync happens automatically inside render3D() via the
+    // engine's own renderer.meshSyncer (packages/artisan-js/MeshSyncer.js),
+    // which updates an existing buffer in place (or grows/destroys+recreates
+    // only when it must) instead of leaking a fresh GPU buffer on every
+    // change -- this demo used to hand-roll its own version-check-and-
+    // reregister loop here that called assets.createMesh() unconditionally
     // on every vertex/color change and never freed the previous buffer.
     // With the periodic per-tile color repaint (sys_tick_face_color)
     // bumping color_version regularly, that leaked a full ~12MB planet mesh
@@ -1013,7 +1020,19 @@ async function start() {
 
     requestAnimationFrame(loop);
   };
+  const loader = document.getElementById("artisan-loader");
+  if (loader) {
+    loader.classList.add("loaded");
+    setTimeout(() => loader.remove(), 450);
+  }
   requestAnimationFrame(loop);
 }
 
-start();
+start().catch((err) => {
+  console.error(err);
+  const loader = document.getElementById("artisan-loader");
+  if (loader) {
+    const sub = loader.querySelector(".artisan-loader-sub");
+    if (sub) sub.textContent = `Error: ${err.message || err}`;
+  }
+});

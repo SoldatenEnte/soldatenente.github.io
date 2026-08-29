@@ -509,17 +509,24 @@ async function start() {
       requestAnimationFrame(loop);
     }
   };
+  const loader = document.getElementById("artisan-loader");
+  if (loader) {
+    loader.classList.add("loaded");
+    setTimeout(() => loader.remove(), 450);
+  }
   requestAnimationFrame(loop);
 }
 
 start().catch((e) => {
-  const loading = document.getElementById("loading");
+  const loader = document.getElementById("artisan-loader");
   const insecureWebGPU = !window.isSecureContext && !navigator.gpu;
-  loading.style.display = "flex";
-  loading.style.padding = "2rem";
-  loading.style.textAlign = "center";
-  loading.innerText = insecureWebGPU
-    ? "WebGPU is blocked because this LAN page uses HTTP. Open it through HTTPS, or mark this development origin as secure in Chrome flags."
-    : `Failed to start: ${e.message}`;
+  if (loader) {
+    const sub = loader.querySelector(".artisan-loader-sub");
+    if (sub) {
+      sub.textContent = insecureWebGPU
+        ? "WebGPU blocked: requires HTTPS or secure origin."
+        : `Failed to start: ${e.message}`;
+    }
+  }
   console.error(e);
 });

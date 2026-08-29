@@ -31,10 +31,51 @@
         display: block;
         width: 100vw;
         height: 100vh;
-        /* Nothing here pans or zooms, so let the browser skip its scroll and
-           pull-to-refresh gestures entirely — otherwise a tap that lands on the
-           canvas can bounce the whole page. */
         touch-action: none;
+      }
+      .artisan-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        background: radial-gradient(circle at center, #0a0f1d 0%, #030712 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        color: #e2e8f0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        user-select: none;
+        transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.4s;
+      }
+      .artisan-loader.loaded {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      .artisan-loader-spinner {
+        width: 30px;
+        height: 30px;
+        border: 2px solid rgba(255, 255, 255, 0.08);
+        border-top-color: #38bdf8;
+        border-radius: 50%;
+        animation: artisan-spin 0.75s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      }
+      .artisan-loader-text {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #cbd5e1;
+      }
+      .artisan-loader-sub {
+        font-size: 10px;
+        letter-spacing: 0.04em;
+        color: #64748b;
+        margin-top: -6px;
+      }
+      @keyframes artisan-spin {
+        to { transform: rotate(360deg); }
       }
       #toggle {
         position: absolute;
@@ -81,6 +122,16 @@
       body.touch #fullscreen {
         display: flex;
       }
+      .fps {
+        position: fixed; top: 20px; right: 20px; z-index: 10; margin: 0; padding: 8px 11px;
+        border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px;
+        background: rgba(3, 8, 15, 0.62); color: #b8cce2;
+        font-family: "Cascadia Mono", Consolas, monospace; font-size: 12px;
+        backdrop-filter: blur(8px); pointer-events: none;
+      }
+      body.touch .fps {
+        right: 65px;
+      }
       #ui[hidden] {
         display: none;
       }
@@ -118,6 +169,17 @@
         letter-spacing: 2.5px;
         text-transform: uppercase;
         color: var(--accent);
+      }
+      .desc {
+        margin: 6px 0 12px;
+        font-size: 0.70rem;
+        line-height: 1.45;
+        color: #94a3b8;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+        padding-bottom: 10px;
+      }
+      .desc strong {
+        color: #e2e8f0;
       }
       #close {
         flex: 0 0 auto;
@@ -280,11 +342,16 @@
         <button id="close" title="Close (H)" aria-label="Close">×</button>
       </div>
 
+      <div class="desc">
+        <strong>Pure GPU Compute &amp; Hardware Instancing:</strong> No per-entity CPU/ECS overhead. All rects reside in a GPU storage buffer, physics runs entirely in WebGPU compute shaders, and rendering executes via a single instanced draw call.
+      </div>
+
       <div class="section">
         <div class="label">Rects</div>
         <div class="btns">
-          <button data-count="10000">10k</button>
+          <button data-count="25000">25k</button>
           <button data-count="100000">100k</button>
+          <button data-count="250000">250k</button>
           <button data-count="500000">500k</button>
           <button data-count="1000000">1M</button>
           <button data-count="2000000">2M</button>
@@ -315,7 +382,13 @@
     </div>
 
     <div id="loading">Loading…</div>
+    <div id="artisan-loader" class="artisan-loader">
+      <div class="artisan-loader-spinner"></div>
+      <div class="artisan-loader-text">Loading Simulation</div>
+      <div class="artisan-loader-sub">Initializing WebAssembly &amp; WebGPU</div>
+    </div>
     <div id="hint">H stats - F fullscreen</div>
+    <p id="fps" class="fps">FPS 0</p>
 
     <script src="./coi-serviceworker.js"></script>
     <script type="module">await import("./game.js");</script>

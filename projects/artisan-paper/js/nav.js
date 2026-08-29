@@ -79,10 +79,11 @@ export const PAGES = [
     file: "grenzen.html",
     title: "Grenzen",
     sections: [
-      ["handles", "API- und Speicherverträge"],
-      ["scheduler", "Laufzeit und Korrektheit"],
-      ["messung", "Aussagekraft der Benchmarks"],
-      ["einordnung", "Grenzen als Web-Engine"],
+      ["browser", "Browser-Plattform und Sicherheitsrestriktionen"],
+      ["webgpu", "Grafik-Hardware und WebGPU"],
+      ["speicher", "Speicherbrücke und Entity-Lebenszyklus"],
+      ["scheduler", "Scheduler und Nebenläufigkeit"],
+      ["messung", "Aussagekraft der Benchmarks und Ökosystem"],
     ],
   },
   {

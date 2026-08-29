@@ -232,9 +232,10 @@ async function start() {
   const quadMeshId = renderer.assets.createMesh(quad.vertices, quad.indices);
 
   const params = new URLSearchParams(location.search);
-  // Modest by default: the point is that you can see rects on black. Turn it up
-  // from the panel — the cost of another zero is one float.
-  let count = parseInt(params.get("count") || "10000", 10);
+  const isTouch = matchMedia("(pointer: coarse)").matches;
+  const defaultCount = isTouch ? "25000" : "250000";
+  let count = parseInt(params.get("count") || defaultCount, 10);
+  if (!Number.isFinite(count) || count < 1) count = Number(defaultCount);
   // ?ui=0 (also off/false/hide/none) — start with no chrome at all, for
   // recording or a clean look. H still brings it back, so this is a starting
   // state rather than a mode you can get stuck in.
@@ -255,7 +256,7 @@ async function start() {
 
   function buildScene() {
     const asked = count;
-    if (!Number.isFinite(count) || count < 1) count = 10000;
+    if (!Number.isFinite(count) || count < 1) count = Number(defaultCount);
     count = Math.min(Math.floor(count), MAX_COUNT);
     el("note").innerText =
       asked > count
@@ -347,7 +348,7 @@ async function start() {
       setPanel(panel.hidden);
     }
   });
-  setPanel(false);
+  setPanel(!startChromeHidden);
 
   function toggleFullscreen() {
     if (!document.fullscreenElement) {
@@ -389,6 +390,8 @@ async function start() {
       fps = (frames * 1000) / (now - fpsLast);
       frames = 0;
       fpsLast = now;
+      const fpsEl = el("fps");
+      if (fpsEl) fpsEl.textContent = `FPS ${Math.round(fps)}`;
     }
 
     const aspect = canvas.width / Math.max(canvas.height, 1);
@@ -413,10 +416,19 @@ async function start() {
 
     requestAnimationFrame(loop);
   };
+  const loader = document.getElementById("artisan-loader");
+  if (loader) {
+    loader.classList.add("loaded");
+    setTimeout(() => loader.remove(), 450);
+  }
   requestAnimationFrame(loop);
 }
 
 start().catch((e) => {
-  document.getElementById("loading").innerText = `Failed to start: ${e.message}`;
+  const loader = document.getElementById("artisan-loader");
+  if (loader) {
+    const sub = loader.querySelector(".artisan-loader-sub");
+    if (sub) sub.textContent = `Failed to start: ${e.message}`;
+  }
   console.error(e);
 });

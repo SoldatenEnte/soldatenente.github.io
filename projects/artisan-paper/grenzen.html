@@ -20,122 +20,81 @@
 
       <h1>Grenzen</h1>
       <p class="lede">
-        Der Prototyp belegt, dass der Ansatz funktioniert. Er belegt noch nicht, dass Artisan
-        vollständig, auf jedem Gerät gleich leistungsfähig oder grundsätzlich schneller als
-        etablierte ECS-Implementierungen ist.
+        Der Prototyp zeigt, dass der Ansatz im Browser funktioniert. Artisan ist aber noch keine fertige Game-Engine. Einige Grenzen kommen direkt vom Browser, andere von der aktuellen Implementierung und ihrem frühen Entwicklungsstand.
       </p>
       <p class="dek">
         Dieses Kapitel setzt die in den <a href="./grundlagen.html">Grundlagen</a> erklärten
         Begriffe voraus und beschreibt konkrete Einschränkungen der aktuellen Implementierung.
       </p>
 
-      <section id="handles">
-        <h2>API- und Speicherverträge</h2>
+      <section id="browser">
+        <h2>Browser-Plattform und Sicherheitsrestriktionen</h2>
         <p>
-          Ein Entity-Handle ist die Kennung, über die Programmteile später wieder auf ein Entity
-          verweisen. Rust-interne Handles bestehen aus einer numerischen ID und einer Generation.
-          Gelöschte IDs können wiederverwendet werden; die erhöhte Generation unterscheidet das
-          neue Entity von einem alten Handle. Mehrere JavaScript-Schnittstellen übertragen jedoch
-          nur die numerische ID. Ein auf JavaScript-Seite gespeichertes Handle ist nach
-          Wiederverwendung seiner ID daher nicht durch denselben Generationstest geschützt. Für
-          eine robuste öffentliche API müsste JavaScript ebenfalls ID und Generation erhalten.
+          Webseiten laufen in einer abgeschotteten Umgebung. Das schützt den Nutzer, schränkt Spiele aber an einigen Stellen stärker ein als native Programme:
         </p>
+        <ul>
+          <li>
+            <strong>Eingaben:</strong> Einige Tastenkombinationen gehören dem Browser oder Betriebssystem, etwa <code>Ctrl+W</code>, <code>Ctrl+T</code> oder <code>F12</code>. Ein Spiel kann sie deshalb nicht zuverlässig selbst belegen. Auch <em>Keyboard Lock</em> und <em>Pointer Lock</em> benötigen eine vorherige Nutzeraktion oder den Vollbildmodus. Mit <code>Escape</code> kann der Nutzer diese Sperren wieder lösen.
+          </li>
+          <li>
+            <strong>Geteilter Speicher:</strong> Multithreading mit WebAssembly benötigt einen <code>SharedArrayBuffer</code>. Dafür muss der Server die Header <code>Cross-Origin-Opener-Policy</code> und <code>Cross-Origin-Embedder-Policy</code> setzen. Externe Inhalte lassen sich dann nur einbinden, wenn sie zu diesen Regeln passen.
+          </li>
+          <li>
+            <strong>Speichergröße:</strong> <code>wasm32</code> verwendet 32-Bit-Adressen und kann deshalb höchstens 4 GB Speicher adressieren. Die praktisch verfügbare Menge kann je nach Browser und Gerät kleiner sein. Sehr große Szenen oder viele unkomprimierte Assets stoßen dadurch früher an Grenzen als in einer nativen 64-Bit-Anwendung.
+          </li>
+        </ul>
+      </section>
+
+      <section id="webgpu">
+        <h2>Grafik-Hardware und WebGPU</h2>
         <p>
-          Ein Speicherzeiger bezeichnet die Adresse eines Werts. Solche direkten Zeiger und die
-          darauf angelegten TypedArrays können durch das Wachstum einer Komponentenspalte, einen
-          Archetype-Wechsel oder das Wachstum des WebAssembly-Speichers ungültig werden. Der
-          JavaScript-Query-Cache bewahrt bereits berechnete Speicheransichten zur Wiederverwendung
-          auf. Pro Anfrage vergleicht er einen Strukturzähler, der Änderungen an der ECS-Anordnung
-          erfasst, und die Identität des zugrunde liegenden Speicherbuffers. Passen diese Werte
-          nicht mehr, liegt ein Cache Miss vor und die betroffenen Arrays werden neu aufgebaut.
-          Einzelne außerhalb dieses Caches gespeicherte Zeiger bleiben dennoch an dieselben
-          Lebensdauerregeln gebunden. Diese Regeln sind beherrschbar, machen die direkte
-          Speicherbrücke aber fehleranfälliger als eine vollständig gekapselte Schnittstelle.
+          WebGPU bietet eine moderne Grafikschnittstelle im Browser <a class="cite" href="./quellen.html#ref-5">[5]</a>. Gegenüber nativen Schnittstellen bleiben dennoch Unterschiede:
         </p>
+        <ul>
+          <li>
+            <strong>Zusätzliche Prüfung:</strong> Der Browser prüft Pipelines, Ressourcen und Shader, bevor Befehle die Grafikkarte erreichen. Das schützt vor fehlerhaftem oder schädlichem Code, verursacht aber zusätzliche CPU-Arbeit.
+          </li>
+          <li>
+            <strong>Begrenzter Funktionsumfang:</strong> Funktionen wie hardwarebeschleunigtes Raytracing, Mesh Shader oder <em>Bindless Textures</em> gehören noch nicht überall zum verfügbaren WebGPU-Umfang.
+          </li>
+          <li>
+            <strong>Unterschiedliche Plattformen:</strong> Unterstützung und Treiberqualität unterscheiden sich weiterhin zwischen Browsern, Betriebssystemen und Geräten. Besonders auf mobilen Geräten kann das Ergebnis anders ausfallen als auf dem Testsystem dieser Arbeit.
+          </li>
+        </ul>
+      </section>
+
+      <section id="speicher">
+        <h2>Speicherbrücke und Entity-Lebenszyklus</h2>
+        <p>
+          Der direkte Zugriff von JavaScript auf den WebAssembly-Speicher spart Kopien, verlangt aber einen vorsichtigen Umgang mit Referenzen:
+        </p>
+        <ul>
+          <li>
+            <strong>Speicheransichten können veralten:</strong> Wächst der WebAssembly-Speicher oder wird eine Archetype-Tabelle verschoben, stimmen ältere Zeiger und <code>TypedArrays</code> nicht mehr. JavaScript muss solche Ansichten danach neu anfordern.
+          </li>
+          <li>
+            <strong>Entity-IDs können wiederverwendet werden:</strong> Innerhalb von Rust besteht ein Entity-Handle aus ID und Generation. Einige JavaScript-Schnittstellen übertragen bisher nur die ID. Wird sie nach dem Löschen erneut vergeben, kann eine alte JavaScript-Referenz versehentlich auf ein neues Entity zeigen.
+          </li>
+        </ul>
       </section>
 
       <section id="scheduler">
-        <h2>Laufzeit und Korrektheit</h2>
+        <h2>Scheduler und Nebenläufigkeit</h2>
         <p>
-          Die zeilenbezogene Änderungserkennung setzt einen nachverfolgten Schreibpfad voraus, der
-          jede veränderte Zeile ausdrücklich markiert. Ein gewöhnlicher veränderlicher
-          Query-Zugriff, in Rust als <code>&amp;mut T</code> geschrieben, aktualisiert nur den
-          Änderungswert der gesamten Spalte. Er markiert nicht jede tatsächlich geschriebene Zeile.
-          Filter, die eine genaue Aussage pro Entity benötigen, müssen deshalb einen der
-          nachverfolgten Schreibpfade verwenden.
-        </p>
-        <p>
-          Systeme können Labels tragen und über Vorher-/Nachher-Abhängigkeiten geordnet werden. Der
-          Scheduler berechnet daraus eine topologische Reihenfolge, in der jede angegebene
-          Abhängigkeit vor ihrem Nachfolger liegt. Diese Logik bleibt jedoch unvollständig: Bei
-          kompatiblen Datenzugriffen können zwei so geordnete Systeme anschließend in derselben
-          parallelen Stage landen, also in einer Gruppe gleichzeitig ausgeführter Systeme. Eine
-          belastbare Ordnung allein durch Labels erfordert daher eine Korrektur des Schedulers.
+          Der Scheduler führt Systeme parallel aus, wenn sich ihre Datenzugriffe nicht überschneiden. Abhängigkeiten über <code>before</code> und <code>after</code> werden zwar in eine Reihenfolge gebracht, erzwingen in der aktuellen Umsetzung aber nicht immer getrennte parallele Stufen. Zwei Systeme können deshalb gleichzeitig laufen, obwohl ihre Labels eine Ausführung nacheinander erwarten lassen. Diese Stelle muss vor einer stabilen öffentlichen API noch eindeutig gelöst werden.
         </p>
       </section>
 
       <section id="messung">
-        <h2>Aussagekraft der Benchmarks</h2>
-        <p>
-          In der festgelegten seriellen Suite ist Artisan in 20 von 34 Kategorien am schnellsten.
-          Im geometrischen Mittel liegt es näher am jeweils schnellsten Ergebnis als Bevy und
-          flecs. Damit ist die zulässige Aussage klar: Für diese Arbeitslasten, Versionen und
-          Konfigurationen ist Artisan eine sehr konkurrenzfähige und insgesamt schnellste
-          Implementierung.
-        </p>
-        <p>
-          Daraus folgt nicht, dass Artisan allgemein schneller als flecs oder Bevy ist. Die Suite
-          bildet typische, aber nur ausgewählte Situationen ab und misst keine parallelen Systeme,
-          komplexen Beziehungen, große Anwendungsgraphen oder den vollständigen Funktionsumfang
-          der Frameworks. Außerdem unterscheiden sich Sprache und Compiler, also die Programme, die
-          Quellcode in ausführbaren Maschinencode übersetzen. <code>rustc</code> erzeugt die beiden
-          Messprogramme für Rust, während der Microsoft C/C++ Compiler (MSVC) das flecs-Programm
-          erzeugt. Unterschiede dieser Codegenerierung sind Teil des Ergebnisses.
-        </p>
-        <p>
-          Die Einzelwerte zeigen zudem echte Zielkonflikte. flecs ist beim zufälligen Zugriff und
-          bei vereinzelten Änderungen schneller, während Artisan besonders bei mehreren linearen
-          Iterationen und strukturellen Arbeitslasten gewinnt. Die Ergebnisse sprechen deshalb
-          für die untersuchte Implementierung und ihre Schwerpunkte, nicht für die Überlegenheit
-          eines Speichermodells in jeder Situation.
-        </p>
-        <p>
-          Absolute Zeiten gelten nur für die dokumentierte Maschine. Auch relative Unterschiede
-          sollten nur innerhalb der geprüften Größen und Szenarien übertragen werden. Für den
-          Renderingpfad gibt es auf dieser Seite bewusst keinen Leistungsvergleich: Die Demos
-          zeigen seine Funktionsfähigkeit und Größenordnung, ersetzen aber keinen kontrollierten
-          Vergleich mit einer anderen Engine.
-        </p>
-      </section>
-
-      <section id="einordnung">
-        <h2>Grenzen als Web-Engine</h2>
-        <p>
-          WebAssembly und WebGPU stellen standardisierte Bausteine für rechen- und grafikintensive
-          Webanwendungen bereit. Web Workers und <code>SharedArrayBuffer</code> ermöglichen die für
-          den Rayon-Pfad benötigte Form geteilter Arbeit. Damit sind datenintensive Spiele und
-          Simulationen im Browser technisch realistisch
-          <a class="cite" href="./quellen.html#ref-2">[2]</a>
-          <a class="cite" href="./quellen.html#ref-4">[4]</a>.
-        </p>
-        <p>
-          Der Browser bringt zugleich eigene Grenzen mit: Geräte und Implementierungen
-          unterscheiden sich, geteilter Speicher benötigt zusätzliche Sicherheits-Header und
-          große Anwendungen müssen ihre Assets zunächst übertragen und zwischenspeichern. WebGPU
-          befindet sich zum Zeitpunkt dieser Arbeit außerdem noch im
-          W3C-Candidate-Recommendation-Prozess. Das ist die fortgeschrittene Prüfphase vor einer
-          endgültigen W3C Recommendation, in der Implementierungen und Tests weiter abgeglichen
-          werden <a class="cite" href="./quellen.html#ref-4">[4]</a>.
-          Verfügbarkeit, Treiberverhalten und Leistungswerte müssen deshalb auf den tatsächlich
-          unterstützten Plattformen geprüft werden.
-        </p>
-        <p>
-          Hinzu kommt die Produktreife: Artisan besitzt weder den Werkzeugumfang noch die
-          Plattformabdeckung etablierter Engines. Der Ansatz ist besonders interessant, wenn
-          sofortige Ausführung per URL, Web-Oberflächen und große datenorientierte Simulationen
-          wichtig sind. Er ist aber kein universeller Ersatz für native Engines oder deren
-          ausgereifte Editoren, Konsolenunterstützung und Ökosysteme.
-        </p>
+        <h2>Aussagekraft der Benchmarks und Ökosystem</h2>
+        <ul>
+          <li>
+            <strong>Benchmarks:</strong> Die Messungen untersuchen einzelne ECS-Operationen wie Iteration, Allokation und Archetype-Wechsel. Ein vollständiges Spiel mit Physik, Audio, Benutzeroberfläche und Netzwerk belastet eine Engine anders. Die Ergebnisse lassen sich daher nicht direkt auf jede Anwendung übertragen.
+          </li>
+          <li>
+            <strong>Werkzeuge und Auslieferung:</strong> Artisan besitzt noch keine visuellen Editoren, ausgereifte Asset-Pipeline oder das Ökosystem etablierter Engines. Im Browser müssen Assets außerdem zuerst übertragen und im verfügbaren Speicher gehalten werden.
+          </li>
+        </ul>
       </section>
 
       <div class="pager"></div>

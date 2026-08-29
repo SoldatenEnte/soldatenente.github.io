@@ -528,7 +528,7 @@ async function start() {
   const touchDefaultCount = matchMedia("(pointer: coarse)").matches ? "25000" : "250000";
   let count = parseInt(params.get("count") || touchDefaultCount, 10);
   if (!Number.isFinite(count) || count < 1) count = Number(touchDefaultCount);
-  let mode = params.get("mode") === "gpu" ? "gpu" : "cpu";
+  let mode = params.get("mode") === "cpu" ? "cpu" : "gpu";
   // Off by default: it is a genuine rendering optimisation rather than a change
   // to the scene, but the demo's headline number is "how many cubes can this
   // engine put on screen", and answering that while quietly not drawing most of
@@ -978,7 +978,7 @@ async function start() {
       setPanel(panel.hidden);
     }
   });
-  setPanel(false);
+  setPanel(!startChromeHidden);
 
   for (const b of document.querySelectorAll("[data-count]")) {
     b.addEventListener("click", async () => {
@@ -1008,12 +1008,6 @@ async function start() {
     b.addEventListener("click", () => {
       camMode = b.dataset.cam;
       // Ride and orbit look at completely different targets (the flow-field
-      // heading vs. the ellipse's centre-facing direction). Without this, the
-      // slow continuous ease from stepCameraFrame — deliberately gentle so a
-      // wandering ride target never snaps — would also govern this switch,
-      // so the view could take several seconds to catch up to a mode the
-      // user explicitly just picked. A manual mode switch is a discrete,
-      // deliberate action, unlike the continuous per-frame target drift, so
       // it gets the instant re-aim: the same "first frame" snap buildScene
       // already gets via camFrameReady starting false.
       resetCameraFrame();
@@ -1102,20 +1096,25 @@ async function start() {
       requestAnimationFrame(loop);
     }
   };
+  const loader = document.getElementById("artisan-loader");
+  if (loader) {
+    loader.classList.add("loaded");
+    setTimeout(() => loader.remove(), 450);
+  }
   requestAnimationFrame(loop);
 }
 
 start().catch((e) => {
-  const loading = document.getElementById("loading");
+  const loader = document.getElementById("artisan-loader");
   const insecureWebGPU = !window.isSecureContext && !navigator.gpu;
-  loading.style.display = "flex";
-  loading.style.padding = "2rem";
-  loading.style.textAlign = "center";
-  loading.style.lineHeight = "1.5";
-  loading.style.pointerEvents = "none";
-  loading.innerText = insecureWebGPU
-    ? "WebGPU is blocked because this LAN page uses HTTP. Open it through HTTPS, or mark this development origin as secure in Chrome flags."
-    : `Failed to start: ${e.message}`;
+  if (loader) {
+    const sub = loader.querySelector(".artisan-loader-sub");
+    if (sub) {
+      sub.textContent = insecureWebGPU
+        ? "WebGPU blocked: requires HTTPS or secure origin."
+        : `Failed to start: ${e.message}`;
+    }
+  }
 
   // Startup normally wires these controls later. Keep the panel available
   // when startup fails so a phone never presents visible but dead UI.

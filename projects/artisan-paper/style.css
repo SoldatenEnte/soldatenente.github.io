@@ -623,6 +623,9 @@ figure img {
   height: auto;
   display: block;
 }
+.theme-figure-dark { display: none; }
+:root[data-theme="dark"] .theme-figure-light { display: none; }
+:root[data-theme="dark"] .theme-figure-dark { display: block; }
 
 /* Vor- und Zurueck-Navigation am Seitenende. */
 .pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 72px; }
