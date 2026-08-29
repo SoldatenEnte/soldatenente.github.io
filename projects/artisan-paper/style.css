@@ -143,6 +143,29 @@ body {
 .masthead nav a[aria-current] { color: var(--ink); background: var(--wash); }
 
 .masthead .right { display: flex; align-items: center; gap: 10px; }
+.github-link {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--ink-3);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 6px 12px;
+  cursor: pointer;
+  box-shadow: none;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.github-link:hover {
+  background: var(--wash);
+  color: var(--ink);
+  border-color: var(--rule);
+}
+.github-link svg { width: 14px; height: 14px; flex: none; fill: currentColor; }
 .theme-toggle {
   flex: none;
   display: inline-flex;

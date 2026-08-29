@@ -1,4 +1,4 @@
-import init, { create_vivarium_engine, wasm_set_visualization } from "./pkg/planet.js?v=20260829-1";
+import init, { create_vivarium_engine, wasm_set_visualization } from "./pkg/planet.js";
 import { ArtisanApp } from "./engine/App.js";
 import { UIBridge } from "./engine/UIBridge.js";
 

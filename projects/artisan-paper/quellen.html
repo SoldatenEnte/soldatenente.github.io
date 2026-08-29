@@ -1,23 +1,128 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Quellen - Artisan</title>
-<script>try{if(localStorage.getItem("artisan-theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script><link rel="stylesheet" href="./style.css"></head><body><div class="wrap">
-<header class="masthead"><a class="wordmark" href="./index.html">Artisan</a><div class="right"><nav></nav></div></header><div class="doc"><aside class="doc-nav"></aside><main class="doc-main">
-<p class="kicker">Nachweise</p><h1>Quellen</h1><p class="lede">Die aufgeführten Standards und Veröffentlichungen belegen die allgemeinen technischen Grundlagen zu Entity-Component-Systemen, WebAssembly und WebGPU.</p>
-<section id="literatur"><h2>Literatur und Standards</h2><ol class="references">
-<li id="ref-1">Andreas Haas et al.: <a href="https://doi.org/10.1145/3062341.3062363">Bringing the Web up to Speed with WebAssembly</a>. PLDI 2017.</li>
-<li id="ref-2">WebAssembly Community Group: <a href="https://webassembly.org/docs/high-level-goals/">WebAssembly High-Level Goals</a>.</li>
-<li id="ref-3">WebAssembly Community Group: <a href="https://webassembly.org/getting-started/js-api/">Understanding the JavaScript API</a>.</li>
-<li id="ref-4">W3C GPU for the Web Working Group: <a href="https://www.w3.org/TR/webgpu/">WebGPU</a>.</li>
-<li id="ref-5">W3C GPU for the Web Working Group: <a href="https://www.w3.org/TR/WGSL/">WebGPU Shading Language</a>.</li>
-<li id="ref-6">Khronos Group: <a href="https://registry.khronos.org/webgl/specs/latest/1.0/">WebGL Specification</a>.</li>
-<li id="ref-7">Preston Briggs und Linda Torczon: An Efficient Representation for Sparse Sets. ACM Letters on Programming Languages and Systems 2(1-4), 1993, S. 59-69.</li>
-<li id="ref-8">Robert Nystrom: <a href="https://gameprogrammingpatterns.com/component.html">Game Programming Patterns: Component</a>. Genever Benning, 2014.</li>
-<li id="ref-9">Bevy Contributors: <a href="https://docs.rs/bevy_ecs/0.18.1/bevy_ecs/storage/index.html">Bevy ECS: Storage</a>.</li>
-<li id="ref-10">Sander Mertens und Flecs Contributors: <a href="https://www.flecs.dev/flecs/">Flecs Documentation</a>.</li>
-<li id="ref-11">Rayon Contributors: <a href="https://docs.rs/rayon/latest/rayon/">Rayon Documentation</a>.</li>
-<li id="ref-12">RReverser: <a href="https://github.com/RReverser/wasm-bindgen-rayon">wasm-bindgen-rayon</a>.</li>
-<li id="ref-13">Joshua M. Epstein und Robert Axtell: <a href="https://www.brookings.edu/books/growing-artificial-societies/">Growing Artificial Societies: Social Science from the Bottom Up</a>. Brookings Institution Press und MIT Press, 1996.</li>
-<li id="ref-14">Rust Core Team: <a href="https://blog.rust-lang.org/2015/05/15/Rust-1.0/">Announcing Rust 1.0</a>. 2015.</li>
-<li id="ref-15">W3C: <a href="https://www.w3.org/press-releases/2019/wasm/">WebAssembly Becomes a W3C Recommendation</a>. 2019.</li>
-<li id="ref-16">W3C GPU for the Web Community Group: <a href="https://github.com/gpuweb/gpuweb/wiki/Implementation-Status">Implementation Status</a>. Stand: August 2026.</li>
-</ol></section>
-<div class="pager"></div></main></div><footer><span>Artisan - Quellen</span></footer></div><script type="module" src="./js/nav.js"></script></body></html>
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quellen - Artisan</title>
+  <script>try{if(localStorage.getItem("artisan-theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <a class="wordmark" href="./index.html">Artisan</a>
+    <div class="right"><nav></nav></div>
+  </header>
+
+  <div class="doc">
+    <aside class="doc-nav"></aside>
+    <main class="doc-main">
+      <p class="kicker">Nachweise</p>
+      <h1>Quellen</h1>
+      <p class="lede">
+        Die aufgeführten Standards, Fachpublikationen und technischen Dokumentationen belegen die mathematischen und architektonischen Grundlagen zu Entity-Component-Systemen, WebAssembly und WebGPU.
+      </p>
+
+      <section id="literatur">
+        <h2>Literatur und Standards</h2>
+        <ol class="references">
+          <li id="ref-1">
+            <strong>Andreas Haas, Andreas Rossberg, Derek L. Schuff, Ben L. Titzer, Michael Holman, Dan Gohman, Luke Wagner, Alon Zakai und JF Bastien:</strong>
+            <a href="https://doi.org/10.1145/3062341.3062363" target="_blank" rel="noopener"><em>Bringing the Web up to Speed with WebAssembly</em></a>.
+            In: <em>Proceedings of the 38th ACM SIGPLAN Conference on Programming Language Design and Implementation (PLDI '17)</em>, ACM, 2017, S. 185–200. DOI: 10.1145/3062341.3062363.
+          </li>
+          <li id="ref-2">
+            <strong>WebAssembly Community Group:</strong>
+            <a href="https://webassembly.org/docs/high-level-goals/" target="_blank" rel="noopener"><em>WebAssembly High-Level Goals</em></a>.
+            Offizielle Projektdokumentation.
+          </li>
+          <li id="ref-3">
+            <strong>WebAssembly Community Group:</strong>
+            <a href="https://webassembly.org/getting-started/js-api/" target="_blank" rel="noopener"><em>Understanding the WebAssembly JavaScript API</em></a>.
+            Entwicklerleitfaden.
+          </li>
+          <li id="ref-4">
+            <strong>W3C WebAssembly Working Group:</strong>
+            <a href="https://www.w3.org/TR/wasm-js-api-2/" target="_blank" rel="noopener"><em>WebAssembly JavaScript Interface (Release 2.0)</em></a>.
+            W3C Candidate Recommendation Draft.
+          </li>
+          <li id="ref-5">
+            <strong>W3C GPU for the Web Working Group:</strong>
+            <a href="https://www.w3.org/TR/webgpu/" target="_blank" rel="noopener"><em>WebGPU Specification</em></a>.
+            W3C Candidate Recommendation Draft.
+          </li>
+          <li id="ref-6">
+            <strong>W3C GPU for the Web Working Group:</strong>
+            <a href="https://www.w3.org/TR/WGSL/" target="_blank" rel="noopener"><em>WebGPU Shading Language (WGSL)</em></a>.
+            W3C Candidate Recommendation Draft.
+          </li>
+          <li id="ref-7">
+            <strong>Khronos Group:</strong>
+            <a href="https://registry.khronos.org/webgl/specs/latest/1.0/" target="_blank" rel="noopener"><em>WebGL Specification 1.0 (Latest Revision)</em></a>.
+            Offizielle Schnittstellenspezifikation.
+          </li>
+          <li id="ref-8">
+            <strong>Preston Briggs und Linda Torczon:</strong>
+            <a href="https://doi.org/10.1145/176454.176484" target="_blank" rel="noopener"><em>An Efficient Representation for Sparse Sets</em></a>.
+            In: <em>ACM Letters on Programming Languages and Systems</em>, Vol. 2, Nr. 1–4, ACM, 1993, S. 59–69. DOI: 10.1145/176454.176484.
+          </li>
+          <li id="ref-9">
+            <strong>Robert Nystrom:</strong>
+            <a href="https://gameprogrammingpatterns.com/" target="_blank" rel="noopener"><em>Game Programming Patterns</em></a>.
+            Genever Benning, 2014 (insb. Kapitel <em>Component</em> und <em>Data Locality</em>).
+          </li>
+          <li id="ref-10">
+            <strong>Bevy Contributors:</strong>
+            <a href="https://docs.rs/bevy_ecs/0.18.1/bevy_ecs/storage/index.html" target="_blank" rel="noopener"><em>Module bevy_ecs::storage (Bevy 0.18.1)</em></a>.
+            Rustdoc Referenzdokumentation.
+          </li>
+          <li id="ref-11">
+            <strong>Sander Mertens und Flecs Contributors:</strong>
+            <a href="https://www.flecs.dev/flecs/" target="_blank" rel="noopener"><em>Flecs Documentation</em></a>.
+            Offizielle Engine- und API-Dokumentation.
+          </li>
+          <li id="ref-12">
+            <strong>Rayon Contributors:</strong>
+            <a href="https://docs.rs/rayon/1.12.0/rayon/" target="_blank" rel="noopener"><em>Rayon 1.12.0: Data Parallelism in Rust</em></a>.
+            Rustdoc Referenzdokumentation.
+          </li>
+          <li id="ref-13">
+            <strong>Ingvar Stepanyan:</strong>
+            <a href="https://github.com/RReverser/wasm-bindgen-rayon" target="_blank" rel="noopener"><em>wasm-bindgen-rayon: Rayon builder for WebAssembly</em></a>.
+            Open-Source-Adapter für Web Worker Thread-Pools.
+          </li>
+          <li id="ref-14">
+            <strong>Joshua M. Epstein und Robert Axtell:</strong>
+            <a href="https://www.brookings.edu/books/growing-artificial-societies/" target="_blank" rel="noopener"><em>Growing Artificial Societies: Social Science from the Bottom Up</em></a>.
+            Brookings Institution Press und MIT Press, 1996.
+          </li>
+          <li id="ref-15">
+            <strong>Rust Core Team:</strong>
+            <a href="https://blog.rust-lang.org/2015/05/15/Rust-1.0/" target="_blank" rel="noopener"><em>Announcing Rust 1.0</em></a>.
+            Offizielle Release-Ankündigung, 15. Mai 2015.
+          </li>
+          <li id="ref-16">
+            <strong>World Wide Web Consortium (W3C):</strong>
+            <a href="https://www.w3.org/press-releases/2019/wasm/" target="_blank" rel="noopener"><em>World Wide Web Consortium (W3C) brings a new language to the Web as WebAssembly becomes a W3C Recommendation</em></a>.
+            W3C Press Release, 5. Dezember 2019.
+          </li>
+          <li id="ref-17">
+            <strong>GPUWeb Contributors:</strong>
+            <a href="https://github.com/gpuweb/gpuweb/wiki/Implementation-Status" target="_blank" rel="noopener"><em>WebGPU Implementation Status</em></a>.
+            W3C GPU for the Web Community Group Wiki.
+          </li>
+        </ol>
+      </section>
+
+      <div class="pager"></div>
+    </main>
+  </div>
+
+  <footer>
+    <span>Artisan — Quellen</span>
+  </footer>
+</div>
+
+<script type="module" src="./js/nav.js"></script>
+</body>
+</html>
