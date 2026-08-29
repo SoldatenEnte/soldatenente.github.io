@@ -10,7 +10,7 @@
 // so in their environment panel.
 //
 // Include it before any module script:
-//   <script src="/coi-serviceworker.js"></script>
+//   <script src="./coi-serviceworker.js"></script>
 
 if (typeof window === "undefined") {
   // --- service worker scope ---
@@ -31,13 +31,18 @@ if (typeof window === "undefined") {
           const headers = new Headers(res.headers);
           headers.set("Cross-Origin-Embedder-Policy", "require-corp");
           headers.set("Cross-Origin-Opener-Policy", "same-origin");
-          return new Response(res.body, {
+
+          const isNullBodyStatus = [101, 204, 205, 304].includes(res.status);
+          return new Response(isNullBodyStatus ? null : res.body, {
             status: res.status,
             statusText: res.statusText,
             headers,
           });
         })
-        .catch((e) => console.error("[coi] ", e)),
+        .catch((e) => {
+          console.error("[coi] intercept error:", e);
+          return fetch(req);
+        }),
     );
   });
 } else {
