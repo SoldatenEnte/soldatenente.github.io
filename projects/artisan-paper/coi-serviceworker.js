@@ -32,6 +32,15 @@ if (typeof window === "undefined") {
           headers.set("Cross-Origin-Embedder-Policy", "require-corp");
           headers.set("Cross-Origin-Opener-Policy", "same-origin");
 
+          // Crucial fix for Firefox NS_ERROR_CORRUPTED_CONTENT:
+          // When fetch() decodes a compressed body (gzip/br), the stream res.body
+          // is already decompressed plain bytes. If Content-Encoding or compressed
+          // Content-Length remain in the synthetic Response headers, Firefox
+          // tries to re-decode or detects length mismatch and throws NS_ERROR_CORRUPTED_CONTENT.
+          headers.delete("Content-Encoding");
+          headers.delete("Content-Length");
+          headers.delete("Transfer-Encoding");
+
           const isNullBodyStatus = [101, 204, 205, 304].includes(res.status);
           return new Response(isNullBodyStatus ? null : res.body, {
             status: res.status,
