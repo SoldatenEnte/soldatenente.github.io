@@ -320,32 +320,25 @@
       <section id="nebenlaeufigkeit">
         <h2>Arbeit auf mehrere Threads verteilen</h2>
         <p>
-          JavaScript verarbeitet Aufgaben im Hauptkontext einer Seite normalerweise über einen
-          einzigen Event Loop, also eine Warteschlange nacheinander abgearbeiteter Ereignisse. Web
-          Workers eröffnen zusätzliche Ausführungskontexte auf Hintergrundthreads. Sie tauschen
-          Nachrichten mit dem Hauptthread aus; Daten werden dabei strukturiert kopiert oder ihr
-          Speicher wird übertragen. Gleichzeitig gemeinsam nutzbarer Speicher entsteht dadurch
-          noch nicht.
+          Viele Aufgaben einer Webanwendung laufen zunächst im Hauptthread. Muss dieser gleichzeitig
+          die Oberfläche bedienen und tausende Entities aktualisieren, kann die Darstellung ins
+          Stocken geraten. Web Workers erlauben deshalb, Rechenarbeit auf zusätzliche
+          Hintergrundthreads zu verteilen.
         </p>
         <p>
-          Ein <code>SharedArrayBuffer</code> stellt einen solchen gemeinsam nutzbaren Speicherblock
-          bereit. Mehrere Worker können ihn gleichzeitig lesen und schreiben. Sicher wird der
-          Zugriff dadurch allein noch nicht: Ungeordnete gleichzeitige Zugriffe auf dieselben Daten
-          können ein Data Race erzeugen, dessen Ergebnis vom zufälligen zeitlichen Ablauf abhängt.
-          Die Anwendung muss Arbeit deshalb konfliktfrei aufteilen oder atomare Operationen nutzen,
-          die einen einzelnen Zugriff unteilbar ausführen.
-          Aus Sicherheitsgründen muss die Seite außerdem von Inhalten anderer Websites abgeschottet
-          sein. So kann der geteilte Speicher nicht zum Auslesen fremder Daten missbraucht werden.
-          Der Server aktiviert diese Cross-Origin-Isolation mit den beiden HTTP-Headern
-          <code>Cross-Origin-Opener-Policy</code> und <code>Cross-Origin-Embedder-Policy</code>.
+          Damit diese Threads nicht für jede Nachricht Daten kopieren müssen, nutzt Artisan einen
+          gemeinsam nutzbaren WebAssembly-Speicher (<code>SharedArrayBuffer</code>). Die Aufgaben
+          werden so aufgeteilt, dass zwei Threads nicht dieselben Werte gleichzeitig verändern. Wo
+          sich Zugriffe nicht vermeiden lassen, sorgen atomare Operationen für eine definierte
+          Reihenfolge. Der Browser erlaubt diesen Speicher nur, wenn die Seite über die Header
+          <code>Cross-Origin-Opener-Policy</code> und <code>Cross-Origin-Embedder-Policy</code>
+          abgeschottet ist.
         </p>
         <p>
-          Rayon ist eine Rust-Bibliothek für Datenparallelität: Sie verteilt unabhängige Teile einer
-          Schleife auf einen Thread-Pool, also eine wiederverwendbare Gruppe von Arbeitsthreads.
-          <code>wasm-bindgen-rayon</code> ist kein Browserstandard, sondern verbindet dieses Modell
-          mit Web Workers und einem geteilten WebAssembly-Speicher. Artisan exportiert die
-          Initialisierung des Pools und nutzt Rayon für parallele Query-Iteration sowie für die
-          parallele Ausführung verträglicher Systeme
+          Für die eigentliche Verteilung verwendet Artisan <code>wasm-bindgen-rayon</code>. Rayon
+          teilt unabhängige Teile einer Query oder eines Systems auf mehrere Threads auf. Dadurch
+          können passende Entities gleichzeitig verarbeitet werden, während voneinander abhängige
+          Systeme weiterhin nacheinander laufen
           <a class="cite" href="./quellen.html#ref-11">[11]</a>
           <a class="cite" href="./quellen.html#ref-12">[12]</a>.
         </p>

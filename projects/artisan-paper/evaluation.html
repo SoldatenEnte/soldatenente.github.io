@@ -107,11 +107,18 @@
       <section id="schwaechen">
         <h2>Wo Artisan verliert</h2>
         <p class="dek">
-          Auch Kategorien, in denen eine andere Implementierung schneller ist, werden vollständig
-          ausgewiesen. Nur so lässt sich erkennen, für welche Arbeitslasten die Architektur
-          Vorteile oder Nachteile besitzt.
+          Für eine vollständige und sachliche Einordnung der Leistungscharakteristik führt die folgende
+          Übersicht alle Kategorien auf, in denen Flecs oder Bevy bessere Laufzeiten erzielen.
         </p>
         <div id="losses"></div>
+        <div class="note" style="margin-top: 18px;">
+          <strong>Einordnung des wahlfreien Zugriffs:</strong> Der spürbare Abstand beim wahlfreien Lese- (1,41×) und
+          Schreibzugriff (1,75×) gegenüber Flecs liegt in der Struktur des Archetype-Modells begründet: Um eine
+          Komponente einer einzelnen Entity aufzulösen, müssen Entity-Index, Archetype-Tabelle, Spalten-ID und
+          Zeilen-Offset nacheinander adressiert werden. Flecs nutzt in C hochoptimierte direkte Tabellenzeiger.
+          Beim Schreibzugriff kommt in Artisan zusätzlich das automatische Aktualisieren der internen Änderungserkennung
+          (Change Detection) zum Tragen.
+        </div>
       </section>
 
       <section id="umgebung">

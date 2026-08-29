@@ -159,7 +159,7 @@ function renderLosses(d) {
   }
   $("losses").innerHTML =
     `<div class="scroll-x"><table><thead><tr>
-      <th>Kategorie</th><th>Gruppe</th><th>Artisan ist</th><th>schnellste</th>
+      <th>Kategorie</th><th>Artisan ist</th><th>schnellste</th>
     </tr></thead><tbody>` +
     d.artisan_losses
       .map((l) => {
@@ -168,7 +168,6 @@ function renderLosses(d) {
         const row = d.rows.find((r) => r.id === l.id && r.label === l.label) ?? l;
         return `<tr>
           <td>${labelDE(row)}</td>
-          <td class="muted" style="text-align:right">${gruppeDE(l.group)}</td>
           <td class="num">${de(l.behind, 2)}x langsamer</td>
           <td style="text-align:right"><span class="swatch ${l.fastest}"></span>${ENGINE_LABEL[l.fastest] ?? l.fastest}</td>
         </tr>`;

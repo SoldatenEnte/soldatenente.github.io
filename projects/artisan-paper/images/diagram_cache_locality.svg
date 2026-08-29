@@ -1,61 +1,61 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 230" width="100%" height="auto" role="img" aria-label="Cache-Line-Effizienz: Array of Structures vs. Structure of Arrays">
-  <rect width="100%" height="100%" fill="#fafafa" rx="10"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="20 0 700 230" width="100%" height="auto" role="img" aria-label="Cache-Line-Effizienz: Array of Structures vs. Structure of Arrays">
 
   <text x="24" y="30" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="bold" fill="#14161a">64-Byte CPU-Cache-Line beim Durchlauf eines Bewegungssystems (Position und Velocity)</text>
 
   <!-- Block 1: AoS -->
   <g transform="translate(24, 48)">
     <text x="0" y="14" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="bold" fill="#14161a">1. Klassische Objektspeicherung (Array of Structures · AoS)</text>
-    <text x="692" y="14" text-anchor="end" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#6b707a">Beispielrechnung: 37,5 % (24 von 64 Bytes genutzt)</text>
+    <text x="692" y="14" text-anchor="end" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#6b707a">64 B je Objekt inkl. Padding: 37,5 % relevant</text>
     
     <rect x="0" y="24" width="692" height="42" rx="6" fill="#f4f5f8" stroke="#d8dbe0" stroke-width="1.2"/>
     
     <!-- Position 12B -->
-    <rect x="3" y="28" width="100" height="34" rx="4" fill="#fdf1e6" stroke="#f3d9bb"/>
-    <text x="53" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="10.5" font-weight="bold" fill="#7a3607">Position (12 B)</text>
+    <rect x="3" y="28" width="126" height="34" rx="4" fill="#fdf1e6" stroke="#f3d9bb"/>
+    <text x="66" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="10.5" font-weight="bold" fill="#7a3607">Position (12 B)</text>
     
     <!-- Velocity 12B -->
-    <rect x="106" y="28" width="100" height="34" rx="4" fill="#fdf1e6" stroke="#f3d9bb"/>
-    <text x="156" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="10.5" font-weight="bold" fill="#7a3607">Velocity (12 B)</text>
+    <rect x="132" y="28" width="126" height="34" rx="4" fill="#fdf1e6" stroke="#f3d9bb"/>
+    <text x="195" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="10.5" font-weight="bold" fill="#7a3607">Velocity (12 B)</text>
 
     <!-- Unused fields -->
-    <rect x="209" y="28" width="138" height="34" rx="4" fill="#ffffff" stroke="#d8dbe0" stroke-dasharray="3 2"/>
-    <text x="278" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#9a9fa8">Name / String (24 B)</text>
+    <rect x="261" y="28" width="254" height="34" rx="4" fill="#ffffff" stroke="#d8dbe0" stroke-dasharray="3 2"/>
+    <text x="388" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#9a9fa8">Name / String (24 B)</text>
 
-    <rect x="350" y="28" width="75" height="34" rx="4" fill="#ffffff" stroke="#d8dbe0" stroke-dasharray="3 2"/>
-    <text x="387" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#9a9fa8">HP (4 B)</text>
+    <rect x="518" y="28" width="42" height="34" rx="4" fill="#ffffff" stroke="#d8dbe0" stroke-dasharray="3 2"/>
+    <text x="539" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="9" fill="#9a9fa8">HP 4 B</text>
 
-    <rect x="428" y="28" width="90" height="34" rx="4" fill="#ffffff" stroke="#d8dbe0" stroke-dasharray="3 2"/>
-    <text x="473" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#9a9fa8">Mesh-ID (8 B)</text>
+    <rect x="563" y="28" width="83" height="34" rx="4" fill="#ffffff" stroke="#d8dbe0" stroke-dasharray="3 2"/>
+    <text x="604.5" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="9" fill="#9a9fa8">Mesh-ID 8 B</text>
 
-    <!-- Entity 2 Teil -->
-    <rect x="521" y="28" width="100" height="34" rx="4" fill="#fdf1e6" stroke="#f3d9bb"/>
-    <text x="571" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="10.5" font-weight="bold" fill="#7a3607">E1: Position</text>
-
-    <rect x="624" y="28" width="65" height="34" rx="4" fill="#f4f5f8" stroke="#d8dbe0"/>
-    <text x="656" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="10" fill="#9a9fa8">...</text>
+    <rect x="649" y="28" width="40" height="34" rx="4" fill="#eef0f3" stroke="#d8dbe0"/>
+    <text x="669" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="8.5" fill="#9a9fa8">Pad 4 B</text>
   </g>
 
   <!-- Block 2: SoA / Archetype -->
   <g transform="translate(24, 136)">
     <text x="0" y="14" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11.5" font-weight="bold" fill="#7a3607">2. Archetype-Spaltenspeicher (Structure of Arrays · SoA)</text>
-    <text x="692" y="14" text-anchor="end" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="bold" fill="#7a3607">Nutzungsgrad: 100 % (Sequenzieller Datenstrom)</text>
+    <text x="692" y="14" text-anchor="end" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="bold" fill="#7a3607">64 von 64 B sind Positionsdaten</text>
     
     <rect x="0" y="24" width="692" height="42" rx="6" fill="#f4f5f8" stroke="#d8dbe0" stroke-width="1.2"/>
     
-    <rect x="3" y="28" width="132" height="34" rx="4" fill="#fdf1e6" stroke="#f3d9bb"/>
-    <text x="69" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="10.5" font-weight="bold" fill="#7a3607">E0: Position (12 B)</text>
+    <rect x="3" y="28" width="125" height="34" rx="4" fill="#fdf1e6" stroke="#f3d9bb"/>
+    <text x="65.5" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="10" font-weight="bold" fill="#7a3607">E0: Position (12 B)</text>
 
-    <rect x="138" y="28" width="132" height="34" rx="4" fill="#fdf1e6" stroke="#f3d9bb"/>
-    <text x="204" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="10.5" font-weight="bold" fill="#7a3607">E1: Position (12 B)</text>
+    <rect x="131" y="28" width="125" height="34" rx="4" fill="#fdf1e6" stroke="#f3d9bb"/>
+    <text x="193.5" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="10" font-weight="bold" fill="#7a3607">E1: Position (12 B)</text>
 
-    <rect x="273" y="28" width="132" height="34" rx="4" fill="#fdf1e6" stroke="#f3d9bb"/>
-    <text x="339" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="10.5" font-weight="bold" fill="#7a3607">E2: Position (12 B)</text>
+    <rect x="259" y="28" width="125" height="34" rx="4" fill="#fdf1e6" stroke="#f3d9bb"/>
+    <text x="321.5" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="10" font-weight="bold" fill="#7a3607">E2: Position (12 B)</text>
 
-    <rect x="408" y="28" width="132" height="34" rx="4" fill="#fdf1e6" stroke="#f3d9bb"/>
-    <text x="474" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="10.5" font-weight="bold" fill="#7a3607">E3: Position (12 B)</text>
+    <rect x="387" y="28" width="125" height="34" rx="4" fill="#fdf1e6" stroke="#f3d9bb"/>
+    <text x="449.5" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="10" font-weight="bold" fill="#7a3607">E3: Position (12 B)</text>
 
-    <rect x="543" y="28" width="145" height="34" rx="4" fill="#fdf1e6" stroke="#f3d9bb"/>
-    <text x="615" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="10.5" font-weight="bold" fill="#7a3607">E4: Position (12 B)</text>
+    <rect x="515" y="28" width="125" height="34" rx="4" fill="#fdf1e6" stroke="#f3d9bb"/>
+    <text x="577.5" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="10" font-weight="bold" fill="#7a3607">E4: Position (12 B)</text>
+
+    <rect x="643" y="28" width="45" height="34" rx="4" fill="#f8dfc8" stroke="#e7bc91"/>
+    <text x="665.5" y="50" text-anchor="middle" font-family="Consolas, monospace" font-size="8.5" font-weight="bold" fill="#7a3607">E5: 4 B</text>
+
+    <text x="0" y="82" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10.5" fill="#6b707a">Velocity wird aus einer separaten, ebenso zusammenhängenden Spalte gelesen.</text>
   </g>
 </svg>
